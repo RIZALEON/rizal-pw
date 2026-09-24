@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#5b2d8e">
+  <meta name="description" content="TRUEBLAST — fire exactly 1.0 Я between sibling wallets, then produce a full pipe report.">
+  <title>TRUEBLAST — rizal.pw</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="banner">status: prepping · dry-run only until Decider arms</div>
+  <div class="wrap">
+    <header class="hero">
+      <img class="crown" src="/ya-crown.png" width="180" height="180" alt="Я crown coin" style="width:min(160px,40vw)">
+      <h1>TRUEBLAST</h1>
+      <p class="tagline">From the device you are on, fire exactly <strong>1.0 Я</strong> into the sibling device wallet. The transfer is logged on public trackers, then a full pipe report is produced.</p>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="intent">
+        <h2 id="intent">Purpose + intent</h2>
+        <p>TRUEBLAST proves the twin is alive across Mac desktop wallet ↔ iPhone mobile wallet (and iOS↔iOS bot link). Public explorers are mirrors; clay on-device remains source of truth. NonNuclear: nothing spends until the Decider arms.</p>
+        <p>Report buckets: <strong>PERFECTION</strong> / <strong>PECULIARITY</strong> / <strong>STRANGENESS</strong> → <strong>VERDICT</strong>. Last TOKENBLAST (probe-only) verdict: <span class="verdict">peculiar-but-alive</span></p>
+      </section>
+
+      <section class="panel" aria-labelledby="pair">
+        <h2 id="pair">Device pair</h2>
+        <div class="diagram" role="img" aria-label="Desktop wallet, Mobile wallet, and iOS bot link">
+          <div class="node">Desktop wallet<br><span style="font-size:.75rem;font-weight:600;color:var(--muted)">Mac</span></div>
+          <div class="arrow" aria-hidden="true">↕</div>
+          <div class="node">Mobile wallet<br><span style="font-size:.75rem;font-weight:600;color:var(--muted)">iPhone</span></div>
+          <div class="arrow" aria-hidden="true">↕</div>
+          <div class="node">iOS bot link<br><span style="font-size:.75rem;font-weight:600;color:var(--muted)">iOS ↔ iOS</span></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="log">
+        <h2 id="log">Report log</h2>
+        <p style="font-size:.88rem;color:var(--muted)">Source: <a href="/trueblast/log.json"><code>/trueblast/log.json</code></a></p>
+        <div id="reports"><div class="empty-state">No TRUEBLAST entries yet. Dry-run only until Decider arms.</div></div>
+      </section>
+
+      <nav class="nav" aria-label="Related">
+        <a class="btn" href="/">← Mind app</a>
+        <a class="btn ghost" href="https://rizal.info/open.html">Open data</a>
+        <a class="btn ghost" href="https://github.com/rizalward/rizal.pw">Source</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer" style="margin-top:1.5rem">
+      <a href="https://github.com/rizalward/rizal.pw">Source</a>
+      <a href="/">Mind app</a>
+      <a href="https://rizal.info/open.html">Open data</a>
+    </footer>
+  </div>
+  <script>
+  (function () {
+    var box = document.getElementById("reports");
+    fetch("log.json").then(function (r) { return r.json(); }).then(function (data) {
+      var entries = (data && data.entries) || [];
+      if (!entries.length) return;
+      box.innerHTML = "";
+      entries.forEach(function (e) {
+        var card = document.createElement("article");
+        card.className = "card";
+        var sig = e.signature || "";
+        var sigLink = sig
+          ? '<a href="https://solscan.io/tx/' + sig + '" rel="noopener">' + sig.slice(0, 12) + "…</a>"
+          : "—";
+        function bucket(name, arr) {
+          var items = (arr || []).map(function (x) { return "<li>" + String(x).replace(/</g,"&lt;") + "</li>"; }).join("");
+          return '<div class="bucket"><strong>' + name + "</strong><ul>" + (items || "<li>—</li>") + "</ul></div>";
+        }
+        card.innerHTML =
+          "<h3>" + (e.timestamp || "") + " · " + (e.from_device || "?") + " → " + (e.to_device || "?") +
+          " · " + (e.amount_ui || "1") + " Я</h3>" +
+          "<p>tx: " + sigLink + "</p>" +
+          bucket("PERFECTION", e.perfection) +
+          bucket("PECULIARITY", e.peculiarity) +
+          bucket("STRANGENESS", e.strangeness) +
+          '<div class="verdict">' + (e.verdict || "—") + "</div>";
+        box.appendChild(card);
+      });
+    }).catch(function () {
+      box.innerHTML = '<div class="empty-state">Could not load log.json</div>';
+    });
+  })();
+  </script>
+</body>
+</html>

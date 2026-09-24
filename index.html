@@ -2,37 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rizal · rizal.pw</title>
-  <meta name="description" content="Rizal / PROJECT Я — rizal.pw">
-  <style>
-    :root { color-scheme: dark light; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100vh; display: grid; place-items: center;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #0b0c0e; color: #e8e6e3;
-    }
-    main {
-      max-width: 28rem; padding: 2rem 1.5rem; text-align: center;
-      border: 1px solid #2a2d33; border-radius: 1rem;
-      background: #12141a;
-    }
-    .mark {
-      font-size: 2.75rem; line-height: 1; letter-spacing: 0.06em;
-      color: #c9a227; margin: 0 0 0.75rem;
-    }
-    h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 0.5rem; }
-    p { margin: 0; color: #9a9690; font-size: 0.95rem; line-height: 1.5; }
-    .domain { margin-top: 1.25rem; font-size: 0.8rem; color: #6e6a64; letter-spacing: 0.04em; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#5b2d8e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ЯBOT">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="ЯBOT Mind — offline conversation and notes recorder. Clay Mind tape on the web.">
+  <title>ЯBOT Mind — rizal.pw</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main>
-    <p class="mark" aria-hidden="true">Я</p>
-    <h1>Rizal</h1>
-    <p>PROJECT Я — a quiet landing for rizal.pw.</p>
-    <p class="domain">rizal.pw</p>
-  </main>
+  <a class="sr-only" href="#composer">Skip to composer</a>
+  <div class="app-shell">
+    <header class="app-top">
+      <h1>
+        <img class="crown-mini" src="/ya-crown.png" width="36" height="36" alt="">
+        ЯBOT
+        <span class="chip talk" aria-hidden="true">TALK</span>
+      </h1>
+      <div class="tape-meta">
+        <span id="tape-count">Mind tape: 0 entries</span>
+        <span id="net-pill" class="offline-pill">OFFLINE-READY</span>
+      </div>
+      <p class="device-notice">Entries are stored on this device. Export to share.</p>
+      <div class="tools">
+        <button type="button" id="btn-export" title="Download Mind tape">Export Mind tape</button>
+        <label class="file-btn" title="Import .jsonl">Import<input type="file" id="import-file" accept=".jsonl,application/jsonl,text/plain,.json"></label>
+        <button type="button" id="btn-amend" title="Next entry will amend the last matching selection">Amend last</button>
+      </div>
+      <div class="search-row">
+        <label class="sr-only" for="search">Search transcript</label>
+        <input type="search" id="search" placeholder="Search transcript…" autocomplete="off" enterkeyhint="search">
+      </div>
+    </header>
+
+    <main id="transcript" class="transcript" aria-live="polite" aria-relevant="additions"></main>
+
+    <p class="tiny-link">NEVER-DELETE · device: web · no network from this app</p>
+    <footer class="site-footer">
+      <a href="https://github.com/rizalward/rizal.pw">Source</a>
+      <a href="/trueblast/">TRUEBLAST</a>
+      <a href="https://rizal.info/open.html">Open data</a>
+    </footer>
+
+    <footer class="composer" id="composer">
+      <div class="mode-row" role="group" aria-label="Entry type">
+        <label>Kind</label>
+        <button type="button" class="toggle active" data-mode="conversation" id="mode-conv">Conversation</button>
+        <button type="button" class="toggle" data-mode="note" id="mode-note">Note</button>
+      </div>
+      <div class="lane-row" role="group" aria-label="Lane">
+        <label>Lane</label>
+        <button type="button" class="toggle active" data-lane="conversation">conversation</button>
+        <button type="button" class="toggle" data-lane="command">command</button>
+        <button type="button" class="toggle" data-lane="action">action</button>
+      </div>
+      <div class="speaker-row" id="speaker-row">
+        <label for="speaker">Who</label>
+        <button type="button" class="toggle active" data-speaker="USER" id="spk-user">USER</button>
+        <button type="button" class="toggle" data-speaker="ASSISTANT" id="spk-asst">ASSISTANT</button>
+        <input class="speaker-input" id="speaker" type="text" value="USER" maxlength="64" aria-label="Speaker name" autocomplete="off">
+      </div>
+      <div class="input-bar">
+        <button type="button" class="btn-plus" id="btn-plus" title="Focus input" aria-label="Focus input">+</button>
+        <textarea id="text" rows="1" placeholder="Record into the Mind…" enterkeyhint="send" aria-label="Entry text"></textarea>
+        <button type="button" class="btn-send" id="btn-send">Send</button>
+      </div>
+      <p id="amend-hint" class="tiny-link" hidden style="margin:0.35rem 0 0;color:var(--amber)"></p>
+    </footer>
+  </div>
+  <script src="/mind.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function () {});
+      });
+    }
+  </script>
 </body>
 </html>

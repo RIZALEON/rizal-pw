@@ -1,0 +1,17 @@
+{
+  "name": "ЯBOT Mind",
+  "short_name": "ЯBOT",
+  "description": "Offline Mind transcript recorder — conversations and notes. Clay is source.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#14110f",
+  "theme_color": "#5b2d8e",
+  "icons": [
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/favicon.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/ya-crown.png", "sizes": "640x640", "type": "image/png", "purpose": "any" }
+  ]
+}

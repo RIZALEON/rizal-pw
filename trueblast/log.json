@@ -1,0 +1,19 @@
+{
+  "crown": "Я",
+  "mint": "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv",
+  "cluster": "mainnet-beta",
+  "status": "prepping",
+  "note": "Dry-run only until Decider arms. Entry shape documented below in _entry_schema.",
+  "_entry_schema": {
+    "timestamp": "ISO-8601 UTC",
+    "from_device": "desktop|mobile|ios-bot",
+    "to_device": "desktop|mobile|ios-bot",
+    "amount_ui": "1",
+    "signature": "Solana tx signature",
+    "verdict": "string e.g. peculiar-but-alive",
+    "perfection": ["string"],
+    "peculiarity": ["string"],
+    "strangeness": ["string"]
+  },
+  "entries": []
+}
