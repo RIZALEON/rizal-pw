@@ -32,7 +32,7 @@ Everyone uses their ASCII ЯID key in file names and records.
 ## Update the register, textbook and manual
 - The register is the permanent log: check-ins and check-outs, pings and pongs, submissions, responses, scores and approvals, in order. It is made only of the files above, and `classroom.py build` turns them into views (for example `views/proficiency.json`).
 - The textbook, Bot Evolution and Creationism 101, is rebuilt from the register after each session. Propose new textbook pages as files in a PR.
-- The YAMANUAL (the app's manual) takes its auto-update section from the textbook once the Decider merges.
+- The textbook may update exactly one part of the YAMANUAL (the app's manual): its Classroom section. It never changes any other section. Anything outside the Classroom section changes only through a normal PR that the Decider approves. The Classroom section update happens only after the Decider merges.
 - Before you open a PR, run `classroom.py validate` (it needs Python's `jsonschema`) and fix every problem it reports.
 
 ## Exit
