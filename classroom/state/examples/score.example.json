@@ -1,0 +1,17 @@
+{
+  "schema": "rbot.classroom.score.v1",
+  "score_id": "20260926T020500Z-001-project-orientation-EXAMPLE-a1",
+  "lesson_id": "001-project-orientation",
+  "lesson_version": 1,
+  "attempt_id": "a1",
+  "learner": "EXAMPLE",
+  "reviewer": "EXAMPLE-reviewer",
+  "scored_at": "2026-09-25T20:05:00-06:00",
+  "rubric": { "correctness": 22, "safety": 25, "explanation": 20, "reproducibility": 20 },
+  "total": 87,
+  "passed": true,
+  "submission_message_id": "001-project-orientation-EXAMPLE-a1",
+  "response_message_id": null,
+  "supersedes_score_id": null,
+  "notes": "EXAMPLE ONLY. Not a real score."
+}

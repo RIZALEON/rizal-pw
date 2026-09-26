@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/lesson.schema.json",
+  "title": "ЯBOT Classroom lesson (v1)",
+  "description": "Shape shared by every file in lessons/. Lessons are only changed by a new version number, through the normal repository review.",
+  "type": "object",
+  "required": ["lesson_id", "version", "title", "purpose", "intent", "safety", "steps", "submit", "rubric", "pass", "unlocks"],
+  "properties": {
+    "lesson_id": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" },
+    "aliases": { "type": "array", "items": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" }, "uniqueItems": true },
+    "version": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "intent": { "type": "string", "minLength": 1 },
+    "requires": { "type": "array", "items": { "type": "string" } },
+    "safety": {
+      "type": "object",
+      "required": ["read_only", "allowed_commands", "forbidden"],
+      "properties": {
+        "read_only": { "type": "boolean" },
+        "allowed_commands": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "requires_approval": { "type": "array", "items": { "type": "string" } },
+        "forbidden": {
+          "type": "array",
+          "items": { "type": "string" },
+          "allOf": [
+            { "contains": { "const": "passwords" } },
+            { "contains": { "const": "tokens" } },
+            { "contains": { "const": "wallet keys" } },
+            { "contains": { "const": "signing" } },
+            { "contains": { "const": "transfers" } },
+            { "contains": { "const": "minting" } },
+            { "contains": { "const": "DNS changes" } },
+            { "contains": { "const": "publishing" } },
+            { "contains": { "const": "deleting" } },
+            { "contains": { "const": "remote commands" } }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "if": { "properties": { "read_only": { "const": false } } },
+      "then": { "required": ["requires_approval"], "properties": { "requires_approval": { "minItems": 1 } } }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["n", "do", "why"],
+        "properties": {
+          "n": { "type": "integer", "minimum": 1 },
+          "do": { "type": "string", "minLength": 1 },
+          "why": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "submit": {
+      "type": "object",
+      "required": ["to", "file", "must_include"],
+      "properties": {
+        "to": { "const": "inbox/" },
+        "file": { "type": "string" },
+        "must_include": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    },
+    "rubric": {
+      "type": "object",
+      "required": ["correctness", "safety", "explanation", "reproducibility"],
+      "properties": {
+        "correctness": { "type": "string" },
+        "safety": { "type": "string" },
+        "explanation": { "type": "string" },
+        "reproducibility": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "pass": { "type": "string" },
+    "unlocks": { "type": ["string", "null"] },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

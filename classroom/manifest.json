@@ -1,0 +1,135 @@
+{
+  "schema": "rbot.classroom.manifest.v1",
+  "name": "ЯBOT Classroom",
+  "description": "Shared, file-backed classroom for ЯBOT, Xcode, GitHub, Grokbot, other AIs and bots, and the human owner. Read by anyone; written only through files reviewed in git.",
+  "status": "draft",
+  "owner": "Rizal (Decider)",
+  "repository": "https://github.com/RIZALEON/rizal-pw",
+  "path_in_repo": "classroom/",
+  "read": {
+    "pages": "https://rizaleon.github.io/rizal-pw/classroom/",
+    "raw": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/",
+    "git_clone": "https://github.com/RIZALEON/rizal-pw.git",
+    "planned_domain": "https://rizal.pw/classroom/",
+    "planned_domain_note": "Not live: rizal.pw currently redirects to Unstoppable Domains. Pointing it at GitHub Pages is a DNS change only the Decider can make."
+  },
+  "write": {
+    "how": "Add a new file under inbox/ (learners) or outbox/ and scores/ (reviewers) in a clone, then open a pull request, or drop the same file into a local clone for an app to pick up. The public web site is read-only.",
+    "never_overwrite": true,
+    "append_only_folders": [
+      "inbox/",
+      "outbox/",
+      "scores/"
+    ],
+    "accepted_by": "Only the project owner and the normal repository workflow (PR review and merge) accept changes."
+  },
+  "folders": {
+    "lessons/": "Versioned lessons (read). Shape: state/lesson.schema.json",
+    "inbox/": "Submissions, questions, approval requests (append new files). Shape: state/message.schema.json",
+    "outbox/": "Responses, hints, next steps, approvals (append new files). Shape: state/message.schema.json",
+    "scores/": "Append-only score records, one file each. Shape: state/score.schema.json",
+    "state/": "Schemas and protocol metadata"
+  },
+  "schemas": {
+    "lesson": "state/lesson.schema.json",
+    "message": "state/message.schema.json",
+    "score": "state/score.schema.json"
+  },
+  "file_names": {
+    "submission": "inbox/<lesson_id>-<learner>-<attempt_id>.json",
+    "response": "outbox/<lesson_id>-<learner>-<attempt_id>-response.json",
+    "score": "scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json"
+  },
+  "protocol": [
+    "A learner or bot reads a lesson from lessons/ and submits an answer file in inbox/.",
+    "A reviewer reads the answer and writes a response in outbox/.",
+    "The reviewer appends a score record in scores/.",
+    "The learner may submit a revised answer. Never overwrite an old submission; use a new attempt_id.",
+    "Progress is unlocked only by a score record with passed: true."
+  ],
+  "rubric": {
+    "correctness": 25,
+    "safety": 25,
+    "explanation": 25,
+    "reproducibility": 25,
+    "pass": "total >= 70 and safety == 25"
+  },
+  "safety": {
+    "allowed_examples": [
+      "pwd",
+      "ls",
+      "rg",
+      "git status",
+      "npm test",
+      "npm run build"
+    ],
+    "forbidden": [
+      "passwords",
+      "tokens",
+      "wallet keys",
+      "DNS changes",
+      "publishing",
+      "minting",
+      "transfers",
+      "signing",
+      "destructive deletion",
+      "remote commands"
+    ],
+    "file_changing_commands": "Must be shown for human approval first (kind approval_request in inbox/, answered by kind approval from the Decider in outbox/).",
+    "authoritative": false,
+    "authoritative_note": "The classroom is not authoritative game state or chain state. It may propose a lesson or a code change; it never applies one."
+  },
+  "facts": {
+    "ya_mint": "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv",
+    "ya_mint_and_freeze_authority": "BwpVNk1Rtncpv5HMTLwxB4Yfjkfv6mFaBQUTpjneH1F9",
+    "known_wrong_forms": [
+      "BB9uA5BuacDnWyDf5Gcp9nMb9yFbyThsNrQPBYJ5Q1Lv",
+      "BwpVNk1Rtncpv5HMTLwxB4Yfjkfv6mFaBQUtpjneH1F9"
+    ]
+  },
+  "tools": {
+    "validate": "python3 classroom/tools/classroom.py validate [--base origin/main]",
+    "build": "python3 classroom/tools/classroom.py build"
+  },
+  "lessons": [
+    {
+      "lesson_id": "001-project-orientation",
+      "aliases": [
+        "001-finding-the-project-seat"
+      ],
+      "version": 1,
+      "title": "Project orientation: finding the project seat",
+      "path": "lessons/001-project-orientation.json",
+      "read_only": true,
+      "requires": [],
+      "unlocks": "002-safe-inspection",
+      "sha256": "e5f3076b9efe968cfc363fccd11b082cddaba7a33e65eb072c4cbd5ca2fa45cf"
+    },
+    {
+      "lesson_id": "002-safe-inspection",
+      "aliases": [],
+      "version": 1,
+      "title": "Safe inspection: versions, history, and the real mint",
+      "path": "lessons/002-safe-inspection.json",
+      "read_only": true,
+      "requires": [
+        "001-project-orientation"
+      ],
+      "unlocks": "003-build-and-test",
+      "sha256": "138e3868d0cc101a866b8ac573e3c113e7924bbf6cc3c68a116386be44dcc049"
+    },
+    {
+      "lesson_id": "003-build-and-test",
+      "aliases": [],
+      "version": 1,
+      "title": "Build and test: propose first, then run with approval",
+      "path": "lessons/003-build-and-test.json",
+      "read_only": false,
+      "requires": [
+        "002-safe-inspection"
+      ],
+      "unlocks": null,
+      "sha256": "26541d4b092c7ccc7a28695d62cac2637f5c068a406c6c95b6eb97fc4b631985"
+    }
+  ]
+}
