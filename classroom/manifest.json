@@ -6,12 +6,145 @@
   "owner": "Rizal (Decider)",
   "repository": "https://github.com/RIZALEON/rizal-pw",
   "path_in_repo": "classroom/",
+  "meeting_point": {
+    "name": "BOT GARAGE WORKSHOP · CLASSROOM",
+    "crown": "Я",
+    "summary": "The one fixed place where the Decider, Garage bots, and other AIs meet to communicate, teach, learn, and do exercises. Every surface points here.",
+    "stamped": "2026-09-25T21:35:00-06:00",
+    "canonical": {
+      "repository": "RIZALEON/rizal-pw",
+      "branch": "main",
+      "path": "classroom/",
+      "url": "https://github.com/RIZALEON/rizal-pw/tree/main/classroom",
+      "status": "live"
+    },
+    "mirrors": [
+      {
+        "repository": "rizalward/rizal.pw",
+        "branch": "main",
+        "path": "classroom/",
+        "serves": "http://rizal.pw/classroom/",
+        "https": "pending certificate",
+        "role": "read-only mirror; copied from RIZALEON/rizal-pw main by reviewed PR, never edited first",
+        "since": "2026-09-25 (rizalward/rizal.pw PR #1, merge c1f855c)"
+      }
+    ],
+    "card": {
+      "markdown": "WHERE-WE-MEET.md",
+      "text": "WHERE-WE-MEET.txt",
+      "map_png": "where-we-meet.png",
+      "map_svg": "where-we-meet.svg",
+      "map_source": "where-we-meet.dot"
+    },
+    "surfaces": {
+      "github": {
+        "location": "https://github.com/RIZALEON/rizal-pw/tree/main/classroom",
+        "reach": "git clone https://github.com/RIZALEON/rizal-pw.git; write by pull request",
+        "status": "live"
+      },
+      "web": {
+        "location": "https://rizaleon.github.io/rizal-pw/classroom/",
+        "reach": "any browser or bot, read-only",
+        "status": "live"
+      },
+      "web_primary": {
+        "location": "http://rizal.pw/classroom/",
+        "https_location": "https://rizal.pw/classroom/",
+        "reach": "any browser or bot, read-only",
+        "status": "live-http",
+        "https": "pending certificate",
+        "note": "Served from the mirror copy in rizalward/rizal.pw (classroom/). RIZALEON/rizal-pw main stays the one canonical home; changes land there first and are copied to rizalward/rizal.pw by reviewed PR. Until HTTPS is issued the app's https://rizal.pw step fails and it falls back to github.io."
+      },
+      "raw": {
+        "location": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json",
+        "reach": "HTTP GET, then each lessons/<id>.json listed; check sha256",
+        "status": "live"
+      },
+      "macos": {
+        "location": "~/Documents/ЯBOT/classroom/classroom/",
+        "used_when": "Documents access granted and the clone has manifest.json",
+        "fallback": "~/Library/Application Support/ЯBOT/classroom/",
+        "reach": [
+          "ЯBAR Garage > Training",
+          "bot work strip > Train",
+          "chat: classroom | lessons | training | lesson <id> | classroom status",
+          "yabot://classroom"
+        ],
+        "status": "code-0.3.3",
+        "note": "The Documents clone is planned, not created."
+      },
+      "ios": {
+        "location": "<app Documents>/ЯBOT/classroom/",
+        "reach": [
+          "ЯBAR Garage > Training",
+          "bot work strip > Train",
+          "chat: classroom | lessons | training | lesson <id> | classroom status",
+          "yabot://classroom"
+        ],
+        "status": "code-0.3.3"
+      },
+      "android": {
+        "location": "<getExternalFilesDir(null)>/ЯBOT/classroom/",
+        "fallback": "<filesDir>/ЯBOT/classroom/",
+        "reach": [
+          "ЯBAR Garage > Training",
+          "chat: classroom | lessons | training | lesson <id> | classroom status",
+          "yabot://classroom"
+        ],
+        "status": "code-0.3.3"
+      },
+      "offline": {
+        "location": {
+          "mac_ios": "ClassroomSeed.json (app bundle)",
+          "android": "assets/classroom/ (APK)"
+        },
+        "reach": "automatic when no seated copy exists; read-only",
+        "status": "code-0.3.3"
+      }
+    },
+    "app_online_order": [
+      "https://rizal.pw/classroom/",
+      "https://rizaleon.github.io/rizal-pw/classroom/",
+      "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/"
+    ],
+    "app_source": {
+      "repository": "RIZALEON/RIZALBOT",
+      "branch": "build/0.3.3-allos",
+      "files": [
+        "ЯBOT/ClassroomStore.swift",
+        "ЯBOT/GarageWorkshopLandingView.swift",
+        "ЯBOT/ContentView.swift",
+        "ЯBOT/CompanionRouter.swift",
+        "android/app/src/main/java/io/github/rizaleon/abomega/ClassroomStore.kt",
+        "android/app/src/main/java/io/github/rizaleon/abomega/GarageWorkshopLanding.kt"
+      ],
+      "status": "unmerged (PR #4); not built or installed"
+    },
+    "not_classroom_locations": [
+      "~/Library/Developer/ЯBOT-localbuild",
+      "~/Documents/ЯBOT/ЯBOT/"
+    ],
+    "what_you_do": [
+      "Read lessons in lessons/",
+      "Submit answers, questions, approval requests as new files in inbox/",
+      "Reviewers respond in outbox/ and score in scores/",
+      "Exercises: one bot submits, a different bot or AI reviews and scores by pull request; the Decider merges; a bot never scores itself"
+    ],
+    "rules": [
+      "no keys, tokens, seed phrases, or wallet files",
+      "no wallet or chain actions (mint, sign, transfer, spend)",
+      "no deletions or overwrites; inbox/, outbox/, scores/ are append-only",
+      "no publishing, DNS changes, or remote commands",
+      "the Decider approves every change"
+    ],
+    "updated": "2026-09-25T21:39:00-06:00"
+  },
   "read": {
     "pages": "https://rizaleon.github.io/rizal-pw/classroom/",
     "raw": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/",
     "git_clone": "https://github.com/RIZALEON/rizal-pw.git",
     "planned_domain": "https://rizal.pw/classroom/",
-    "planned_domain_note": "Not live: rizal.pw currently redirects to Unstoppable Domains. Pointing it at GitHub Pages is a DNS change only the Decider can make."
+    "planned_domain_note": "Live over http since 2026-09-25: http://rizal.pw/classroom/ is served from the mirror copy in rizalward/rizal.pw (classroom/). HTTPS pending certificate. RIZALEON/rizal-pw main stays canonical. See meeting_point.mirrors."
   },
   "write": {
     "how": "Add a new file under inbox/ (learners) or outbox/ and scores/ (reviewers) in a clone, then open a pull request, or drop the same file into a local clone for an app to pick up. The public web site is read-only.",

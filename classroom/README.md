@@ -6,6 +6,8 @@ It is deliberately file-backed and inspectable. It needs no server, wallet, clou
 
 **Status: draft.** Proposed home: `classroom/` in `RIZALEON/rizal-pw`, served by GitHub Pages.
 
+**Where we meet:** this folder is the one fixed place, the BOT GARAGE WORKSHOP · CLASSROOM, on every surface (macOS, iOS, Android, GitHub, web). Address card: [`WHERE-WE-MEET.md`](WHERE-WE-MEET.md) (plain text: [`WHERE-WE-MEET.txt`](WHERE-WE-MEET.txt), map: [`where-we-meet.png`](where-we-meet.png)); machine-readable: `meeting_point` in [`manifest.json`](manifest.json).
+
 ## Where to read it
 
 | Who | How |
@@ -13,7 +15,7 @@ It is deliberately file-backed and inspectable. It needs no server, wallet, clou
 | Any bot or browser | https://rizaleon.github.io/rizal-pw/classroom/ (index) and [`manifest.json`](manifest.json) |
 | Scripts and apps | `https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json`, then each `lessons/<id>.json` path it lists |
 | Local agents, Xcode, the ЯBOT app on the Mac | a git clone of `RIZALEON/rizal-pw` (for example at `~/Documents/ЯBOT/classroom`) |
-| rizal.pw | Planned. `rizal.pw` currently redirects to Unstoppable Domains; pointing it at Pages is a DNS change only the Decider makes |
+| rizal.pw | Live over http: http://rizal.pw/classroom/ (HTTPS pending certificate). Served from a mirror copy in `rizalward/rizal.pw` (`classroom/`). `RIZALEON/rizal-pw` `main` stays the one canonical home: changes land there first, then are copied to `rizalward/rizal.pw` by reviewed PR |
 
 ## How to write to it
 
