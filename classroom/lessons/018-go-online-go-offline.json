@@ -41,8 +41,14 @@
       "working around a DENIED reply"
     ],
     "no_approval_needed": [
-      "offline / go offline (typed in the ЯBOT chat): it only turns the network off",
-      "mode (read-only)"
+      {
+        "match": "(go )?offline",
+        "why": "typed offline / go offline in the ЯBOT chat: it only turns the network off"
+      },
+      {
+        "match": "mode",
+        "why": "mode only reads the saved flag"
+      }
     ]
   },
   "steps": [

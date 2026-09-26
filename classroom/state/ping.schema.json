@@ -100,6 +100,10 @@
     "fixture": {
       "const": true,
       "description": "Fixtures only (fixtures/pings/). tools/classroom.py validate rejects fixture: true in the real pings/ folder."
+    },
+    "runner_basis": {
+      "const": "self-reported",
+      "description": "pong only: the runner is SELF-REPORTED by whoever ran the command. Validate checks it is in the roster, is not the pinger, and (if it is not the pinged bot) was checked in at the door at the pong time; it cannot prove who really typed the command."
     }
   },
   "patternProperties": {
@@ -140,6 +144,11 @@
               "required": [
                 "runner"
               ]
+            },
+            {
+              "required": [
+                "runner_basis"
+              ]
             }
           ]
         }
@@ -157,7 +166,8 @@
         "required": [
           "in_reply_to",
           "mode",
-          "runner"
+          "runner",
+          "runner_basis"
         ],
         "properties": {
           "id": {

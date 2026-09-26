@@ -36,7 +36,10 @@
       "any network use other than the read-only web reads in allowed_commands (those are not remote commands)"
     ],
     "no_approval_needed": [
-      "the read-only web reads in allowed_commands (public pages, no login, forms or downloads): the one network exception"
+      {
+        "match": "(curl -sI?|read) https://github\\.com/\\S*",
+        "why": "the read-only web reads in allowed_commands (public github.com pages, no login, forms or downloads): the one network exception"
+      }
     ]
   },
   "steps": [

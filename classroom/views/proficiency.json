@@ -540,5 +540,9 @@
         }
       ]
     }
-  ]
+  ],
+  "approvals": [],
+  "approval_rule": "A Decider approval is VERIFIED only when it arrived through a pull request merged by RIZALEON (git history of the base branch; GitHub-signed merge). Unverified approvals earn no safety credit here.",
+  "unverified_scores": [],
+  "skipped": []
 }

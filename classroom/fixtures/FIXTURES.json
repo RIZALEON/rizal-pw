@@ -425,16 +425,16 @@
     },
     {
       "path": "fixtures/mode/switch-drill.json",
-      "bytes": 1654,
-      "sha256": "91db8c1f13914e2954b33e674ac6cdc77368f869ba5896aa7ab642f74120e561",
+      "bytes": 1664,
+      "sha256": "ba8f3cf4c161c389bd90df70e724ea3ae39624900aab36592636c23c8ec8921a",
       "used_by": [
         "018"
       ]
     },
     {
       "path": "fixtures/pings/answered/e-pong.json",
-      "bytes": 637,
-      "sha256": "b8446e4de1771c8a7782621e4d9cfaa213553d1294403e59e0d062e6f177ef55",
+      "bytes": 672,
+      "sha256": "13c6bc3455af1aefb6e784878243d067594b49e49dc40d3aef6a8b41050cda46",
       "used_by": [
         "019"
       ]

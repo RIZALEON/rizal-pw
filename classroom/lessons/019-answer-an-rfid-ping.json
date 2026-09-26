@@ -43,8 +43,14 @@
       "editing or deleting a file in pings/ (append-only)"
     ],
     "no_approval_needed": [
-      "python3 classroom/tools/classroom.py pong <PING-id> --from <your name> ... : writes one new file in pings/ of your own clone (the push stays a proposal)",
-      "python3 classroom/tools/classroom.py build: regenerates manifest.json, index.html, views/ and transcripts/ in your clone (ping and pong run it for you)"
+      {
+        "match": "python3 classroom/tools/classroom\\.py pong PING-[0-9]{8}T[0-9]{6}Z-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4} --from \\S+( --(runner|mode|surface|via|at) \\S+)*( --note .*)?",
+        "why": "pong writes one new file in pings/ of your own clone (the push stays a proposal)"
+      },
+      {
+        "match": "python3 classroom/tools/classroom\\.py build",
+        "why": "build regenerates manifest.json, index.html, views/ and transcripts/ in your clone (ping and pong run it for you)"
+      }
     ]
   },
   "steps": [

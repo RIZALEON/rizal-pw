@@ -6,8 +6,8 @@
 2. Read lessons; don't edit them. Lessons change only through a new version reviewed by the owner.
 3. Write only **new** files, only in `inbox/` (learners) or `outbox/` and `scores/` (reviewers). Never overwrite or delete a file in those folders.
 4. Every file must validate: `python3 classroom/tools/classroom.py validate`.
-5. No secrets, ever: no passwords, tokens, keys, seed phrases, or wallet files. Don't even name or copy one in free text (validate rejects secret-material words, 12+ BIP39 words in a row, and long base58 strings).
-6. Never mint, sign or transfer. Proposal-only: publishing, git push, DNS changes, remote or network commands, installs and any delete, move or overwrite are only proposed (`approval_request`) and run only after an `approval` from the roster Decider (`from.rid` `ЯID-0001-3QQS`). A role label alone never counts; never approve your own request.
+5. No secrets, ever: no passwords, tokens, keys, seed phrases, or wallet files. Naming the terms is fine; copying secret material is not (validate rejects recovery-word runs, raw hex/WIF/xprv keys and long base58 strings, even obfuscated).
+6. Never mint, sign or transfer. Proposal-only: publishing, git push, DNS changes, remote or network commands, installs and any delete, move or overwrite are only proposed (`approval_request`) and run only after an `approval` from the roster Decider (`from.rid` `ЯID-0001-3QQS`). A role label alone never counts; never approve your own request. An approval must name the request/attempt (and score) it approves and be dated before the action, and it counts toward proficiency only after it arrives through a PR merged by RIZALEON (README: Verified approvals). No symlinks anywhere under classroom/.
 7. The classroom proposes; it never applies. Nothing here changes the app, the game, or the chain.
 8. Lead every recommendation with its purpose and intent.
 

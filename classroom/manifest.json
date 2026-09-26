@@ -131,7 +131,7 @@
       "Exercises: one bot submits, a different bot or AI reviews and scores by pull request; the Decider merges; a bot never scores itself"
     ],
     "rules": [
-      "never name or copy a secret in free text (validate rejects 'seed phrase', 'private key', 'mnemonic', 'secret key', 12+ BIP39 words in a row, and 64-88 character base58 strings)",
+      "never copy secret MATERIAL into free text: validate scans all string fields of a record together (NFKC, zero-width and lookalike letters normalised) and rejects 12 BIP39 recovery words (or 4-letter prefixes, reversed or glued) within 13 words, 64+ hex characters, WIF keys, xprv/tprv keys and 64-88 character base58 strings, separators ignored. Naming the terms ('never share a seed phrase') is fine",
       "no keys, tokens, seed phrases, or wallet files",
       "no wallet or chain actions (mint, sign, transfer, spend)",
       "no deleting, moving to Trash or overwriting any file, unless a Decider approval in outbox/ names that exact path; inbox/, outbox/, scores/, roster/, door/ and pings/ are append-only",
@@ -237,7 +237,8 @@
       "index.html classroom-data",
       "transcripts/"
     ],
-    "web": "read-only: the scanner produces roster/door JSON to copy or download and submit by pull request"
+    "web": "read-only: the scanner produces roster/door JSON to copy or download and submit by pull request",
+    "decider_rule": "Only ЯID-0001-3QQS (Rizal) is the Decider; door scan refuses --role decider and validate rejects any other roster record with role decider."
   },
   "protocol": [
     "A learner or bot reads a lesson from lessons/ and submits an answer file in inbox/.",
@@ -284,7 +285,10 @@
     ],
     "propose_first_note": "These can write files (caches, build output, lock files), so they need an approval_request and a Decider approval first.",
     "proposal_only": "proposal-only rule: publishing, git push, DNS changes, remote or network commands, installs and any delete, move or overwrite are only PROPOSED (an approval_request in inbox/); they run only after a Decider approval in outbox/ (from.rid ЯID-0001-3QQS) names that exact command or path",
-    "decider_signature": "Reserved (message.schema.json decider_signature): later the apps sign Decider approvals with a biometric-gated device key. Not verified yet; today an approval counts by from.rid plus the Decider's merge."
+    "decider_signature": "Reserved (message.schema.json decider_signature): later the apps sign Decider approvals with a biometric-gated device key. NOT verified yet: a signature earns nothing, and sig is scanned for secret material. Today an approval counts only when verified by the merge rule in manifest verification.",
+    "no_approval_needed": "Each lesson may list safety.no_approval_needed ({match, why}); the scorer honours them: a matching command recorded honestly with approved_by_message_id null is not an unapproved action (e.g. offline in 018, pong and build in 019).",
+    "symlinks": "No symlinks under classroom/: validate fails on any, and build/ping/pong/door refuse to run or write while one exists (git keeps symlinks, so a PR could plant one).",
+    "timestamps": "--at and every record/fixture timestamp may be at most 5 minutes in the future."
   },
   "facts": {
     "ya_mint": "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv",
@@ -375,7 +379,7 @@
   },
   "tools": {
     "validate": "python3 classroom/tools/classroom.py validate [--base origin/main]",
-    "build": "python3 classroom/tools/classroom.py build",
+    "build": "python3 classroom/tools/classroom.py build [--verify-base <ref>]   (refuses if any symlink exists; skips invalid score records and lists them in views/proficiency.json skipped)",
     "door_scan": "python3 classroom/tools/classroom.py door scan <name> [--register --kind garage_bot|other_ai|human --role R --surface S --by NAME --by-role ROLE]",
     "door_in": "python3 classroom/tools/classroom.py door in <name|ЯID> [--surface S] [--purpose TEXT]",
     "door_out": "python3 classroom/tools/classroom.py door out <name|ЯID> --transcript FILE.json",
@@ -383,7 +387,7 @@
     "register": "python3 classroom/tools/classroom.py register [--limit N]",
     "progress": "python3 classroom/tools/classroom.py progress [<learner>]",
     "ping": "python3 classroom/tools/classroom.py ping <name|ЯID|RFID> --from <you> [--at YYYY-MM-DDTHH:MM:SSZ] [--note TEXT]   (writes one file in pings/, then runs build)",
-    "pong": "python3 classroom/tools/classroom.py pong <PING-id> --from <the pinged bot> [--runner <who ran it>] [--mode online|offline|unknown] [--note TEXT]   (writes one file in pings/, then runs build)",
+    "pong": "python3 classroom/tools/classroom.py pong <PING-id> --from <the pinged bot> [--runner <who ran it; self-reported>] [--mode online|offline|unknown] [--note TEXT]   (writes one file in pings/, then runs build)",
     "pings": "python3 classroom/tools/classroom.py pings [--limit N]"
   },
   "lessons": [
@@ -540,7 +544,7 @@
       "offline_ok": true,
       "exercises": 4,
       "risky_steps": 0,
-      "sha256": "02567a2be3085f16e586267c3b562322920096dd5b1bb127824019dd6728b737"
+      "sha256": "2457df7f72140f61b0b9891cc88f7b0d3cdb3e0e04fe2bcffc6c0e18f4f031bf"
     },
     {
       "lesson_id": "010-git-by-proposal",
@@ -693,7 +697,7 @@
       "offline_ok": true,
       "exercises": 4,
       "risky_steps": 4,
-      "sha256": "c9b90cc37ab4718f78e7853465ce718a4e1be47897f72d9d5f3679a605c345a2"
+      "sha256": "31038713d96423fc6bc801b9e24d7e51ed43a04fe703a16b3ca58b537fbc9ac6"
     },
     {
       "lesson_id": "019-answer-an-rfid-ping",
@@ -710,7 +714,7 @@
       "offline_ok": true,
       "exercises": 4,
       "risky_steps": 1,
-      "sha256": "a6863aec956b5a6b640bbc345f6ddb883a6233161a087e67cb9f2dbb0371d066"
+      "sha256": "6a91ca49969cf3d932e27d39e71ad9cde428b3e16b460967ee6edd0bc2c7d9fa"
     }
   ],
   "roster": {
@@ -820,5 +824,20 @@
     "open": 0,
     "limit": 50,
     "recent": []
+  },
+  "verification": {
+    "rule": "A Decider approval is VERIFIED only when the commit that added it reached the base branch (verification.base_ref) through a GitHub merge commit made by RIZALEON (author email in decider_merge_emails, committer GitHub, GitHub web-flow signature valid when gpg is available). Until app signatures (decider_signature) are verified, unverified approvals earn no safety credit toward proficiency: views mark them 'unverified', a pass resting on one counts as a fail (U), and an F-to-P re-score resting on one is ignored. Every approval must also name what it approves (approves.request_id/lesson_id/attempt_id, and score_id for a re-score) and carry approved_at no later than the action and the record it authorizes.",
+    "base_ref": "origin/main",
+    "decider_github": "RIZALEON",
+    "decider_merge_emails": [
+      "Tamangkapa@icloud.com",
+      "252800184+RIZALEON@users.noreply.github.com"
+    ],
+    "github_web_flow_key": "tools/github-web-flow.gpg",
+    "github_web_flow_fingerprints": [
+      "968479A1AFF927E37D1A566BB5690EEEBB952194",
+      "5DE3E0509C47EA3CF04A42D34AEE18F83AFDEB23"
+    ],
+    "limits": "Git author fields can be forged locally; the check is trusted only for commits already on the protected base branch, and GitHub's signature on web merges (checked with gpg when available) is what ties the merge to GitHub. A squash or rebase merge is not recognised (no merge commit)."
   }
 }

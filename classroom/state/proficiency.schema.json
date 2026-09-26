@@ -174,7 +174,7 @@
                 },
                 "history": {
                   "type": "string",
-                  "description": "P/F per scored attempt, oldest first; '·' when none."
+                  "description": "P/F per scored attempt, oldest first; U = a pass resting on an unverified approval (no safety credit, counts as a fail); '·' when none."
                 },
                 "practice": {
                   "type": "integer",
@@ -188,6 +188,73 @@
         },
         "additionalProperties": false
       }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "message_id",
+          "path",
+          "status",
+          "why"
+        ],
+        "properties": {
+          "message_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "verified",
+              "unverified"
+            ]
+          },
+          "why": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Every Decider approval in outbox/ and whether it is VERIFIED (arrived through a pull request merged by RIZALEON)."
+    },
+    "approval_rule": {
+      "type": "string"
+    },
+    "unverified_scores": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Scores resting on an unverified approval: no safety credit (a pass counts as a fail, U), or an F-to-P re-score ignored."
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "problems"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "problems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Score records that fail validation (or rest on a file that does); never counted."
     }
   },
   "additionalProperties": false

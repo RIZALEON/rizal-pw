@@ -108,6 +108,12 @@
           "output_excerpt": {
             "type": "string",
             "maxLength": 4000
+          },
+          "ran_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$",
+            "description": "When the command ran (UTC). Defaults to the submission's created_at. Must be at or after the cited approval's approved_at."
           }
         },
         "additionalProperties": false,
@@ -183,7 +189,7 @@
     },
     "decider_signature": {
       "type": "object",
-      "description": "RESERVED HOOK, NOT VERIFIED YET. Later the ЯBOT apps will sign a Decider approval with a device key that only unlocks after the Decider's biometric check (Face ID / Touch ID / Android BiometricPrompt; key kept in the Secure Enclave or Android Keystore, never exported). The signature covers the canonical JSON of this message without decider_signature. Today tools/classroom.py validate only checks the shape; an approval counts because from.rid is the roster Decider and the Decider merges the PR. Only public material goes here: never a private key or any secret.",
+      "description": "RESERVED HOOK, NOT VERIFIED YET. Later the ЯBOT apps will sign a Decider approval with a device key that only unlocks after the Decider's biometric check (Face ID / Touch ID / Android BiometricPrompt; key kept in the Secure Enclave or Android Keystore, never exported). The signature covers the canonical JSON of this message without decider_signature. Today tools/classroom.py validate only checks the shape and scans sig for secret material; a signature earns nothing and an approval counts because from.rid is the roster Decider and the Decider merges the PR. Only public material goes here: never a private key or any secret.",
       "required": [
         "alg",
         "key_id",
@@ -223,6 +229,40 @@
         }
       },
       "additionalProperties": false
+    },
+    "approves": {
+      "type": "object",
+      "description": "approval only: exactly what this approval is bound to. request_id must equal in_reply_to; lesson_id and attempt_id must equal this message's and the request's. score_id (optional) names the one score an F-to-P re-score may supersede. Citing the approval from any other attempt, or for any other score, fails validate.",
+      "required": [
+        "request_id",
+        "lesson_id",
+        "attempt_id"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$"
+        },
+        "lesson_id": {
+          "type": "string",
+          "pattern": "^[0-9]{3}-[a-z0-9-]+$"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "score_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "description": "approval only: when the Decider approved (UTC). Must be no earlier than the request and no later than created_at, and no later than every command it authorizes (commands_run ran_at, or the submission's created_at)."
     }
   },
   "patternProperties": {
@@ -254,7 +294,9 @@
       },
       "then": {
         "required": [
+          "approved_at",
           "approved_commands",
+          "approves",
           "in_reply_to"
         ],
         "properties": {
