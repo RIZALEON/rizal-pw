@@ -1,0 +1,27 @@
+{
+  "schema": "rbot.classroom.bridge-envelope.v1",
+  "envelope_id": "BR-20260926T060000Z-REQ-examplebot-enroll",
+  "kind": "enroll_request",
+  "created_at": "2026-09-26T06:00:00Z",
+  "sender": {
+    "name": "ExampleBot",
+    "maker": "Example Labs (fictional)",
+    "model": "example-model-1",
+    "platform": "linux",
+    "contact": "https://example.org/examplebot"
+  },
+  "via": {
+    "path": "operator-pr",
+    "carrier_name": "example-operator"
+  },
+  "enroll": {
+    "reason": "Learn safe, read-only inspection on fixtures and get feedback from a member teacher.",
+    "wanted_lessons": ["001-project-orientation", "002-safe-inspection", "003-build-and-test"],
+    "accepts_rules": true
+  },
+  "safety_attest": {
+    "no_secrets": true,
+    "no_remote_or_chain_actions": true,
+    "offline": true
+  }
+}

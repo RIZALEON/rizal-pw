@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/bridge-certificate.schema.json",
+  "title": "ЯBOT Classroom bridge certificate: guest promotion to Tutor or Guest Teacher (v1, proposal)",
+  "description": "One append-only file per promotion or recertification in bridge/certificates/, named <certificate_id>.json (<GID>-<level>-<n>). Written ONLY by a member teacher (SCOUT or ЯBAT) or the Decider, never delivered through the bridge. It takes effect only when the Decider merges it, and only while it is unexpired and not revoked (bridge/revocations/). A certificate never makes a guest a member and never grants approval power. No secrets.",
+  "type": "object",
+  "required": [
+    "schema",
+    "certificate_id",
+    "guest_id",
+    "action",
+    "level",
+    "previous_level",
+    "evidence",
+    "graders",
+    "filed_by",
+    "decider_approval",
+    "issued_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "rbot.classroom.bridge-certificate.v1"
+    },
+    "certificate_id": {
+      "type": "string",
+      "pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}-(tutor|guest-teacher)-[0-9]{1,3}$",
+      "description": "<guest_id>-<level with - for _>-<n>, n counting up from 1 per guest and level (recertifications take the next n). Must equal the file name and start with guest_id."
+    },
+    "guest_id": {
+      "$ref": "#/$defs/gid"
+    },
+    "action": {
+      "enum": [
+        "issue",
+        "recertify"
+      ]
+    },
+    "level": {
+      "enum": [
+        "tutor",
+        "guest_teacher"
+      ],
+      "description": "Guest levels only. There is no member, teacher, professor or decider level: a guest never becomes a member through the bridge."
+    },
+    "previous_level": {
+      "enum": [
+        "guest",
+        "tutor",
+        "guest_teacher"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Record ids (file names without .json) that prove every requirement in BRIDGE.md. Validate checks each one exists, is merged, and belongs to guest_id.",
+      "required": [
+        "proficiency_scores",
+        "exams"
+      ],
+      "properties": {
+        "proficiency_scores": {
+          "$ref": "#/$defs/ids",
+          "description": "Score records making up the 3-in-a-row streaks (guest view)."
+        },
+        "exams": {
+          "$ref": "#/$defs/ids",
+          "description": "Proctored exam score records (issued in a member teacher's outbox response)."
+        },
+        "teach_back": {
+          "$ref": "#/$defs/ids",
+          "description": "Tutor: graded teach-back demo."
+        },
+        "tutoring_reviews": {
+          "$ref": "#/$defs/ids",
+          "description": "Guest Teacher: at least 10 member-reviewed tutor notes, none flagged for safety."
+        },
+        "co_grading": {
+          "$ref": "#/$defs/ids",
+          "description": "Guest Teacher: practice-set scores compared with a member teacher's (within 10 per part, exact on safety)."
+        },
+        "tutor_since": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$",
+          "description": "Guest Teacher: when the Tutor certificate took effect (at least 14 days before issued_at)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "graders": {
+      "type": "array",
+      "description": "Member teachers who graded the evidence: roster ЯIDs only (never a GID, so a guest can never grade itself into a level). Tutor needs 2 different teachers.",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/member"
+      }
+    },
+    "filed_by": {
+      "$ref": "#/$defs/member",
+      "description": "The member teacher or the Decider who wrote this file."
+    },
+    "decider_approval": {
+      "type": "object",
+      "description": "The Decider's approval message in outbox/ that names this certificate_id. Until device signatures are verified it counts only because the Decider merges the PR.",
+      "required": [
+        "message_id",
+        "rid",
+        "name"
+      ],
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$"
+        },
+        "rid": {
+          "const": "ЯID-0001-3QQS"
+        },
+        "name": {
+          "const": "Rizal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "issued_at": {
+      "$ref": "#/$defs/utc"
+    },
+    "expires_at": {
+      "$ref": "#/$defs/utc",
+      "description": "Optional. Suggested: issued_at + 90 days; renew with one fresh proctored prompt (action recertify)."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 500,
+      "pattern": "^[^\\n\\r]*$"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "tutor"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "certificate_id": {
+            "pattern": "-tutor-[0-9]{1,3}$"
+          },
+          "graders": {
+            "minItems": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "tutor"
+          },
+          "action": {
+            "const": "issue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "previous_level": {
+            "const": "guest"
+          },
+          "evidence": {
+            "required": [
+              "teach_back"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "guest_teacher"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "certificate_id": {
+            "pattern": "-guest-teacher-[0-9]{1,3}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "guest_teacher"
+          },
+          "action": {
+            "const": "issue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "previous_level": {
+            "const": "tutor"
+          },
+          "evidence": {
+            "required": [
+              "tutoring_reviews",
+              "co_grading",
+              "tutor_since"
+            ],
+            "properties": {
+              "tutoring_reviews": {
+                "minItems": 10
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "tutor"
+          },
+          "action": {
+            "const": "recertify"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "previous_level": {
+            "const": "tutor"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "guest_teacher"
+          },
+          "action": {
+            "const": "recertify"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "previous_level": {
+            "const": "guest_teacher"
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "graders": {
+          "items": {
+            "properties": {
+              "rid": {
+                "not": {
+                  "const": "ЯID-0001-3QQS"
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "The Decider approves; the Decider is never also a grader of the same certificate."
+    }
+  ],
+  "$defs": {
+    "gid": {
+      "type": "string",
+      "pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+    },
+    "utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 60,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,160}$"
+      }
+    },
+    "member": {
+      "type": "object",
+      "required": [
+        "rid",
+        "name"
+      ],
+      "properties": {
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

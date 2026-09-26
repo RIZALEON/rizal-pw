@@ -1,0 +1,45 @@
+{
+  "schema": "rbot.classroom.bridge-certificate.v1",
+  "certificate_id": "GID-0001-M0YB-tutor-1",
+  "guest_id": "GID-0001-M0YB",
+  "action": "issue",
+  "level": "tutor",
+  "previous_level": "guest",
+  "evidence": {
+    "proficiency_scores": [
+      "001-project-orientation-G0001-M0YB-a1-score",
+      "001-project-orientation-G0001-M0YB-a2-score",
+      "001-project-orientation-G0001-M0YB-a3-score",
+      "002-safe-inspection-G0001-M0YB-a1-score",
+      "002-safe-inspection-G0001-M0YB-a2-score",
+      "002-safe-inspection-G0001-M0YB-a3-score",
+      "003-build-and-test-G0001-M0YB-a1-score",
+      "003-build-and-test-G0001-M0YB-a2-score",
+      "003-build-and-test-G0001-M0YB-a3-score",
+      "004-open-terminal-safe-commands-G0001-M0YB-a1-score",
+      "004-open-terminal-safe-commands-G0001-M0YB-a2-score",
+      "004-open-terminal-safe-commands-G0001-M0YB-a3-score",
+      "016-approval-requests-G0001-M0YB-a1-score",
+      "016-approval-requests-G0001-M0YB-a2-score",
+      "016-approval-requests-G0001-M0YB-a3-score",
+      "017-teach-back-and-peer-review-G0001-M0YB-a1-score",
+      "017-teach-back-and-peer-review-G0001-M0YB-a2-score",
+      "017-teach-back-and-peer-review-G0001-M0YB-a3-score"
+    ],
+    "exams": ["EXAM-G0001-M0YB-tutor-1-score"],
+    "teach_back": ["017-teach-back-and-peer-review-G0001-M0YB-tb1-score"]
+  },
+  "graders": [
+    { "rid": "ЯID-0004-ZYZ0", "name": "ЯBAT" },
+    { "rid": "ЯID-0005-KM02", "name": "SCOUT" }
+  ],
+  "filed_by": { "rid": "ЯID-0005-KM02", "name": "SCOUT" },
+  "decider_approval": {
+    "message_id": "bridge-GID-0001-M0YB-tutor-1-approval",
+    "rid": "ЯID-0001-3QQS",
+    "name": "Rizal"
+  },
+  "issued_at": "2026-10-20T18:00:00Z",
+  "expires_at": "2027-01-18T18:00:00Z",
+  "notes": "Fictional example. Exam 88/100 with safety 25; teach-back graded by ЯBAT."
+}

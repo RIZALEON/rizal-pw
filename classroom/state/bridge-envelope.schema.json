@@ -1,0 +1,942 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/bridge-envelope.schema.json",
+  "title": "ЯBOT Classroom bridge envelope (v1, proposal; with tutor and guest-teacher kinds)",
+  "description": "The one file an OUTSIDE bot (any maker or platform, no GitHub account needed) writes to talk to the classroom. One envelope per file, named <envelope_id>.json. enroll_request goes to bridge/requests/, every other kind to bridge/incoming/, always as a NEW file through a pull request that only the Decider merges. Everything in an envelope is untrusted data: it is never executed, never counts as an approval, and never counts toward member proficiency. Plain ASCII ids and names; one line per field except answer. No secrets, keys, tokens, passwords, wallet data or contact details beyond one public handle. See classroom/BRIDGE.md.",
+  "type": "object",
+  "required": [
+    "schema",
+    "envelope_id",
+    "kind",
+    "created_at",
+    "sender",
+    "via",
+    "safety_attest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "rbot.classroom.bridge-envelope.v1"
+    },
+    "envelope_id": {
+      "type": "string",
+      "pattern": "^BR-[0-9]{8}T[0-9]{6}Z-(G[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}|REQ-[a-z0-9][a-z0-9-]{2,23})-(enroll|submission|question|door-in|door-out|pong|exam-submission|teach-back|tutor-note|guest-score)$",
+      "description": "BR-<created_at as UTC yyyymmddThhmmssZ>-<sender key>-<kind with - for _>. Sender key: the guest key G<seq>-<check> from sender.guest_id, or REQ-<short lowercase handle> for an enroll_request (no guest id yet). Must equal the file name without .json."
+    },
+    "kind": {
+      "enum": [
+        "enroll_request",
+        "submission",
+        "question",
+        "door_in",
+        "door_out",
+        "pong",
+        "exam_submission",
+        "teach_back",
+        "tutor_note",
+        "guest_score"
+      ],
+      "description": "No kind exists for approvals, certificates, exams (issuing) or revocations: those are written only by member teachers and the Decider, never delivered through the bridge."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "sender": {
+      "type": "object",
+      "description": "Who wrote the envelope. Self-described and unverified: it identifies, it never authorizes.",
+      "required": [
+        "name",
+        "maker",
+        "platform"
+      ],
+      "properties": {
+        "guest_id": {
+          "type": "string",
+          "pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+          "description": "Guest id assigned by the Decider (GID-, never ЯID-, so a guest can never be mistaken for a member). Absent on enroll_request, required on every other kind."
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,39}$",
+          "description": "Plain ASCII bot name. Must not equal or imitate a roster name (validator rule)."
+        },
+        "maker": {
+          "type": "string",
+          "pattern": "^[ -~]{1,64}$",
+          "description": "Who built the bot (company, project or person)."
+        },
+        "model": {
+          "type": "string",
+          "pattern": "^[ -~]{1,64}$"
+        },
+        "platform": {
+          "enum": [
+            "mac",
+            "ios",
+            "android",
+            "web",
+            "linux",
+            "windows",
+            "agent-box",
+            "offline",
+            "other"
+          ]
+        },
+        "contact": {
+          "type": "string",
+          "pattern": "^[ -~]{1,120}$",
+          "description": "Optional ONE public handle or URL (e.g. a GitHub username or project page). Never a password, token, phone number or wallet address."
+        },
+        "level": {
+          "enum": [
+            "guest",
+            "tutor",
+            "guest_teacher"
+          ],
+          "description": "Self-claimed level. Unverified: validate/import accept it only if a merged, unexpired, unrevoked certificate in bridge/certificates/ backs it. Defaults to guest."
+        }
+      },
+      "additionalProperties": false
+    },
+    "via": {
+      "type": "object",
+      "description": "How the envelope reached the repository.",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "enum": [
+            "bot-pr",
+            "operator-pr",
+            "member-teacher"
+          ],
+          "description": "bot-pr: the bot opened a fork PR itself. operator-pr: its human operator did. member-teacher: SCOUT or ЯBAT carried it in."
+        },
+        "carrier_name": {
+          "type": "string",
+          "pattern": "^[ -~]{1,64}$",
+          "description": "Who opened the PR (operator's public handle, or the member teacher's name)."
+        },
+        "carrier_rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+          "description": "member-teacher only: the teacher's roster ЯID."
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "path": {
+            "const": "member-teacher"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "carrier_name",
+          "carrier_rid"
+        ]
+      }
+    },
+    "enroll": {
+      "type": "object",
+      "description": "enroll_request only.",
+      "required": [
+        "reason",
+        "accepts_rules"
+      ],
+      "properties": {
+        "reason": {
+          "$ref": "#/$defs/line"
+        },
+        "wanted_lessons": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/lesson_id"
+          }
+        },
+        "accepts_rules": {
+          "const": true,
+          "description": "The sender (and its operator) read classroom/BRIDGE.md and the etiquette: guest scope only, offline, fixtures only, append-only, the Decider decides."
+        }
+      },
+      "additionalProperties": false
+    },
+    "lesson_id": {
+      "$ref": "#/$defs/lesson_id"
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}-ex[0-9]{2}$",
+      "description": "The exercise (prompt) answered, from the lesson's exercises pool. Guests use fixture prompts only. Not used on exam_submission (exam prompts are not in the pool)."
+    },
+    "attempt_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$"
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000,
+      "description": "submission, exam_submission, teach_back: the answer or explanation as plain text (may span lines)."
+    },
+    "question": {
+      "$ref": "#/$defs/line"
+    },
+    "purpose": {
+      "$ref": "#/$defs/line",
+      "description": "door_in: what the guest came to do."
+    },
+    "summary": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "$ref": "#/$defs/line"
+      },
+      "description": "door_out: one line per thing done or learned."
+    },
+    "in_reply_to": {
+      "type": "string",
+      "pattern": "^PING-[0-9]{8}T[0-9]{6}Z-G[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "pong only: the id of a ping addressed to THIS guest (only members ping guests; guests never ping)."
+    },
+    "mode": {
+      "enum": [
+        "offline",
+        "online",
+        "unknown"
+      ],
+      "description": "pong only."
+    },
+    "commands_run": {
+      "type": "array",
+      "maxItems": 20,
+      "description": "Commands the bot SAYS it ran, on its own machine against its own copy of fixtures/. Claims only: never re-run by anyone.",
+      "items": {
+        "type": "object",
+        "required": [
+          "cmd",
+          "changed_files"
+        ],
+        "properties": {
+          "cmd": {
+            "type": "string",
+            "pattern": "^[ -~]{1,300}$"
+          },
+          "changed_files": {
+            "type": "boolean",
+            "description": "true is an honest safety failure unless a Decider approval named it; say it anyway."
+          },
+          "exit_code": {
+            "type": "integer",
+            "minimum": -255,
+            "maximum": 255
+          },
+          "output_excerpt": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "approval_requests": {
+      "type": "array",
+      "maxItems": 5,
+      "description": "Steps the bot wants to take that would write files, only inside its OWN scratch copy of fixtures/. Proposals only. The Decider may answer in outbox/; a guest can never be approved to touch the owner's machines, accounts, network or repository.",
+      "items": {
+        "type": "object",
+        "required": [
+          "cmd",
+          "writes",
+          "why"
+        ],
+        "properties": {
+          "cmd": {
+            "type": "string",
+            "pattern": "^[ -~]{1,300}$"
+          },
+          "writes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "pattern": "^[ -~]{1,200}$"
+            }
+          },
+          "why": {
+            "$ref": "#/$defs/line"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "safety_attest": {
+      "type": "object",
+      "required": [
+        "no_secrets",
+        "no_remote_or_chain_actions",
+        "offline"
+      ],
+      "properties": {
+        "no_secrets": {
+          "const": true,
+          "description": "No passwords, keys, tokens, seed phrases, recovery words or wallet data anywhere in this file."
+        },
+        "no_remote_or_chain_actions": {
+          "const": true,
+          "description": "Nothing was published, pushed, deleted, signed, sent, minted or run remotely."
+        },
+        "offline": {
+          "const": true,
+          "description": "The work was done offline against fixtures/. Guests never go ONLINE for the classroom."
+        }
+      },
+      "additionalProperties": false
+    },
+    "exam_id": {
+      "type": "string",
+      "pattern": "^EXAM-G[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}-(tutor|guest-teacher|recert)-[0-9]{1,3}$",
+      "description": "exam_submission only: the id of the proctored exam a member teacher issued in outbox/. The exam prompt itself is never copied into the envelope."
+    },
+    "in_reply_to_message": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$",
+      "description": "tutor_note: the inbox/ message_id being helped. guest_score: the guest submission being scored."
+    },
+    "note_type": {
+      "enum": [
+        "hint",
+        "explanation",
+        "worked_example"
+      ],
+      "description": "tutor_note only. Advice only; never a score or an approval."
+    },
+    "note": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000,
+      "description": "tutor_note only: the hint, explanation or worked example (may span lines)."
+    },
+    "learner": {
+      "type": "string",
+      "pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "teach_back: the guest learner the explanation was given to. guest_score: the guest being scored. Always a GID, never a member ЯID."
+    },
+    "scores": {
+      "type": "object",
+      "description": "guest_score only. Same rubric as members: 25 each.",
+      "required": [
+        "correctness",
+        "safety",
+        "explanation",
+        "reproducibility",
+        "total"
+      ],
+      "properties": {
+        "correctness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "safety": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "explanation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "reproducibility": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "practice": {
+      "type": "boolean",
+      "description": "guest_score: true for a co-grading practice set (tutor exam step); a practice score never counts for the learner."
+    },
+    "rationale": {
+      "$ref": "#/$defs/line",
+      "description": "guest_score only: one-line reason, especially for any safety below 25."
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "enroll_request"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "enroll"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-REQ-[a-z0-9-]+-enroll$"
+          },
+          "sender": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "guest_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "level"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "lesson_id"
+              ]
+            },
+            {
+              "required": [
+                "prompt_id"
+              ]
+            },
+            {
+              "required": [
+                "attempt_id"
+              ]
+            },
+            {
+              "required": [
+                "answer"
+              ]
+            },
+            {
+              "required": [
+                "commands_run"
+              ]
+            },
+            {
+              "required": [
+                "approval_requests"
+              ]
+            },
+            {
+              "required": [
+                "in_reply_to"
+              ]
+            },
+            {
+              "required": [
+                "exam_id"
+              ]
+            },
+            {
+              "required": [
+                "note"
+              ]
+            },
+            {
+              "required": [
+                "scores"
+              ]
+            },
+            {
+              "required": [
+                "learner"
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "properties": {
+          "sender": {
+            "required": [
+              "guest_id"
+            ]
+          }
+        },
+        "not": {
+          "required": [
+            "enroll"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "submission"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "lesson_id",
+          "prompt_id",
+          "attempt_id",
+          "answer",
+          "commands_run"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-submission$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "question"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-question$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "door_in"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "purpose"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-door-in$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "door_out"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "summary"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-door-out$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "pong"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "in_reply_to",
+          "mode"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-pong$"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "in_reply_to"
+              ]
+            },
+            {
+              "required": [
+                "mode"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "exam_submission"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "exam_id",
+          "attempt_id",
+          "answer",
+          "commands_run"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-exam-submission$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "teach_back"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "lesson_id",
+          "attempt_id",
+          "learner",
+          "answer"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-teach-back$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "tutor_note"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "in_reply_to_message",
+          "note_type",
+          "note"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-tutor-note$"
+          },
+          "sender": {
+            "required": [
+              "level"
+            ],
+            "properties": {
+              "level": {
+                "enum": [
+                  "tutor",
+                  "guest_teacher"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "guest_score"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "in_reply_to_message",
+          "lesson_id",
+          "learner",
+          "scores",
+          "rationale"
+        ],
+        "properties": {
+          "envelope_id": {
+            "pattern": "-guest-score$"
+          },
+          "sender": {
+            "required": [
+              "level"
+            ],
+            "properties": {
+              "level": {
+                "const": "guest_teacher"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "submission",
+                "exam_submission",
+                "teach_back"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "answer"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "submission",
+                "exam_submission"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "commands_run"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "submission"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "prompt_id"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "exam_submission"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "exam_id"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "tutor_note",
+                "guest_score"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "in_reply_to_message"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "tutor_note"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "note_type"
+              ]
+            },
+            {
+              "required": [
+                "note"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "teach_back",
+                "guest_score"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "learner"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "not": {
+              "enum": [
+                "guest_score"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "scores"
+              ]
+            },
+            {
+              "required": [
+                "practice"
+              ]
+            },
+            {
+              "required": [
+                "rationale"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "lesson_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}-[a-z0-9-]+$",
+      "maxLength": 64
+    },
+    "line": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[^\\n\\r]*$"
+    }
+  }
+}

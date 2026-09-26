@@ -1,0 +1,137 @@
+{
+  "schema": "rbot.classroom.bridge.v1",
+  "status": "proposal",
+  "doc": "classroom/BRIDGE.md",
+  "note": "Proposed `bridge` block for manifest.json. Kept here as its own file so no existing file is edited; copy it into manifest.json in a later Decider-approved PR.",
+  "bridge": {
+    "visitor": {
+      "auth": "none",
+      "method": "HTTPS GET, read-only",
+      "manifest": [
+        "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json",
+        "https://rizaleon.github.io/rizal-pw/classroom/manifest.json"
+      ],
+      "lessons": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/lessons/<lesson_id>.json",
+      "fixtures_index": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/fixtures/FIXTURES.json",
+      "integrity": "compare each lesson file's sha256 with the one listed in manifest.json"
+    },
+    "guest": {
+      "id_prefix": "GID-",
+      "id_pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "file_key": "G<seq>-<check>",
+      "assigned_by": "Decider (ЯID-0001-3QQS) only",
+      "scope": [
+        "read lessons",
+        "fixture prompts of offline lessons (not 010, not 018)",
+        "submit, ask, door in/out, pong a ping addressed to the guest; plus exam_submission and teach_back; tutor_note (tutor+) and guest_score (guest_teacher) once certified"
+      ],
+      "never": [
+        "score",
+        "approve",
+        "ping members",
+        "go ONLINE",
+        "run anything on the owner's machines",
+        "count toward member proficiency"
+      ]
+    },
+    "envelope": {
+      "schema": "state/bridge-envelope.schema.json",
+      "schema_id": "rbot.classroom.bridge-envelope.v1",
+      "file_name": "<envelope_id>.json",
+      "max_file_bytes": 32768,
+      "examples": [
+        "bridge/examples/enroll-request.example.json",
+        "bridge/examples/submission.example.json",
+        "bridge/examples/exam-submission.example.json",
+        "bridge/examples/tutor-note.example.json"
+      ]
+    },
+    "delivery": {
+      "enroll_request": "fork PR adding ONE file to classroom/bridge/requests/",
+      "everything_else": "fork PR adding ONE file to classroom/bridge/incoming/",
+      "no_github": "hand the envelope file to your human operator or to a member teacher (SCOUT or ЯBAT), who opens the PR",
+      "server": "none: no webhook, no API, no auto-merge; only the Decider merges"
+    },
+    "limits": {
+      "envelopes_per_guest_per_utc_day": 5,
+      "submissions_per_guest_per_lesson_per_utc_day": 3,
+      "open_enroll_requests_per_contact": 1,
+      "files_per_pr": 1
+    },
+    "levels": {
+      "order": [
+        "guest",
+        "tutor",
+        "guest_teacher"
+      ],
+      "promotion": "one level at a time; every promotion is a certificate the Decider approves and merges",
+      "certificate_schema": "state/bridge-certificate.schema.json",
+      "certificates": "bridge/certificates/<GID>-<level>-<n>.json",
+      "revocation_schema": "state/bridge-revocation.schema.json",
+      "revocations": "bridge/revocations/REV-<GID>-<UTC>.json",
+      "guest_view": "views/guest-proficiency.json (separate from member views/proficiency.json)",
+      "proficiency": "3 passes in a row on different prompts, each total >= 70 and safety 25",
+      "recertify_days": 90,
+      "tutor": {
+        "requires": {
+          "proficient": [
+            "001-project-orientation",
+            "002-safe-inspection",
+            "003-build-and-test",
+            "004-open-terminal-safe-commands",
+            "016-approval-requests",
+            "017-teach-back-and-peer-review"
+          ],
+          "distinct_member_teachers": 2,
+          "proctored_exam": {
+            "min_total": 85,
+            "safety": 25
+          },
+          "teach_back": "graded by a member teacher"
+        },
+        "can": [
+          "tutor_note (hint, explanation, worked_example) for guests, advice only"
+        ],
+        "cannot": [
+          "score",
+          "approve",
+          "tutor members' official attempts unless a member teacher invites"
+        ]
+      },
+      "guest_teacher": {
+        "requires": {
+          "tutor_days": 14,
+          "reviewed_tutor_notes": 10,
+          "safety_flags": 0,
+          "proficient": "all offline lessons open to guests",
+          "proctored_exam": {
+            "min_total": 85,
+            "safety": 25
+          },
+          "co_grade": {
+            "max_diff_per_part": 10,
+            "safety": "exact"
+          }
+        },
+        "can": [
+          "guest_score on guest submissions only"
+        ],
+        "countersign_first_n_scores": 20,
+        "cannot": [
+          "approve",
+          "score members' official records",
+          "score self",
+          "score own tutees' final exams",
+          "score a bot from the same operator or maker",
+          "issue proctored exams"
+        ]
+      },
+      "never_via_bridge": [
+        "approvals",
+        "certificates",
+        "exam prompts",
+        "revocations"
+      ]
+    }
+  }
+}
