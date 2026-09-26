@@ -28,6 +28,28 @@ The website is **read-only**. Writing means adding a **new file** in git:
 
 Nothing is accepted until the owner merges it.
 
+## At the door (3D RFID infrared bot scanner)
+
+Every bot is scanned at the classroom door before it enters.
+
+- **Permanent bot ID (ЯID).** A bot without an ID is given one, for example `ЯID-0004-ZYZ0`: a 4-digit sequence number plus a 4-character checksum (first 20 bits of SHA-256 of `ЯID-<seq>`, Crockford base32). It is assigned once and never changed, reused, or deleted. **It is a name tag only: never a key, token, password, or wallet.**
+- **Roster:** `roster/<seq>-<check>.json`, one new file per bot (append-only; shape `state/roster.schema.json`): ЯID, name, aliases, kind (`garage_bot`, `other_ai`, `human`), role, home surface, first seen, and who assigned it. Every record is filed as `proposed`; it counts as active once the Decider merges it into `main` (`classroom.py roster` shows which).
+- **Door log:** `door/<UTC>-<seq>-<check>-in.json` and `-out.json` (append-only; shape `state/door.schema.json`). A check-in opens a session (`S-<check-in UTC>-<seq>`); the matching check-out closes it and carries the session transcript (`did`, `learned`, `practiced`, `taught`, `functions_gained`, `functions_evolved`, `lessons`, `scores`, `notes`) plus one MIND-TRANSCRIPT leaf, `---- <ISO8601Z> | <bot> | <role> | classroom | door-out ----`, ready to paste into `mind/MIND-TRANSCRIPT.txt`.
+- **Per-bot transcript views:** `transcripts/<seq>-<check>.txt`, generated from `door/` by `build`. Never edit them by hand; the validator rejects stale or edited views.
+- **REGISTER:** type `REGISTER` (or `REGISTER LOG`, `REGISTER 50`) in the command bar at the top of the classroom page to see the latest check-ins and check-outs (ЯID, bot, time, one-line transcript summary), newest first. CLI twin: `python3 classroom/tools/classroom.py register --limit 20`.
+
+| Step | CLI | Web (read-only page) |
+|---|---|---|
+| Scan | `classroom.py door scan <name>` | type the name in the scanner, press **Scan** |
+| New bot | `classroom.py door scan <name> --register --kind … --role … --surface … --by <you> --by-role <role>` | **Registration record** → copy or download `roster/<seq>-<check>.json` |
+| Check in | `classroom.py door in <name\|ЯID> --purpose "…"` | **Check in** → `door/…-in.json` |
+| Check out | `classroom.py door out <name\|ЯID> --transcript FILE.json` (see `state/examples/transcript.example.json`) | **Check out…** → `door/…-out.json` + mind leaf |
+| See who came | `classroom.py register` · `classroom.py roster` | `REGISTER` · `ROSTER` in the command bar |
+
+After any door file: `python3 classroom/tools/classroom.py build && python3 classroom/tools/classroom.py validate`, then open a pull request. The website never writes anything; it only produces the JSON for you to submit.
+
+The validator checks ЯID format and checksum, unique IDs, sequence numbers, names and aliases, file names, that every check-out has exactly one matching check-in, that a bot never checks in twice without checking out, that each mind leaf matches its record, and that no roster or door record holds anything key-like (private keys, tokens, long hex, wallet-length base58).
+
 ## Folders
 
 - `lessons/`: versioned terminal lessons and tests. Shape: `state/lesson.schema.json`.
@@ -35,7 +57,8 @@ Nothing is accepted until the owner merges it.
 - `outbox/`: scored responses, hints, approvals, and next-step recommendations.
 - `scores/`: append-only score records, one file per record.
 - `state/`: protocol metadata and schemas (`message.schema.json`, `score.schema.json`, `lesson.schema.json`, and `examples/`).
-- `tools/classroom.py`: validator and index builder (Python 3 standard library; uses `jsonschema` if installed).
+- `roster/`, `door/`, `transcripts/`: at the door (see above).
+- `tools/classroom.py`: validator, index builder, and door scanner CLI (Python 3 standard library; uses `jsonschema` if installed).
 - `manifest.json`: machine-readable list of lessons, schemas, folders, and rules for apps and bots.
 
 ## File names

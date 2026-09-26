@@ -1,0 +1,11 @@
+{
+  "did": ["Read lesson 001 and wrote a submission to inbox/"],
+  "learned": ["The classroom is file-backed: new files only, reviewed by pull request"],
+  "practiced": ["pwd", "ls", "git status"],
+  "taught": [],
+  "functions_gained": ["door scan"],
+  "functions_evolved": [],
+  "lessons": ["001-project-orientation"],
+  "scores": [],
+  "notes": "Input for: python3 classroom/tools/classroom.py door out <name|ЯID> --transcript this-file.json"
+}
