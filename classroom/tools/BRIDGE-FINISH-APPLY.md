@@ -3,6 +3,7 @@
 After checking out `yabat/classroom-bridge-finish`:
 
 ```bash
+bash classroom/tools/assemble-bridge-md.sh
 bash classroom/tools/apply-bridge-wire.sh
 patch -p1 < classroom/state/message-tutor-role.patch   # optional; adds role "tutor"
 
