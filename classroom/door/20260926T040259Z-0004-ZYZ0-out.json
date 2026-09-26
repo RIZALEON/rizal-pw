@@ -1,0 +1,44 @@
+{
+  "schema": "rbot.classroom.door.v1",
+  "event": "out",
+  "session_id": "S-20260926T035842Z-0004",
+  "rid": "ЯID-0004-ZYZ0",
+  "name": "ЯBAT",
+  "role": "professor",
+  "at": "2026-09-26T04:02:59Z",
+  "surface": "agent-box",
+  "transcript": {
+    "did": [
+      "Built the classroom door scanner proposal: ЯID roster, door log, schemas, CLI, 3D RFID infrared scanner page and REGISTER",
+      "Seeded 5 ЯIDs (Rizal, ЯBOT, ЯMAX, ЯBAT, SCOUT) as proposed",
+      "Wrote the app integration plan (no app code changed; 0.3.3 paused)"
+    ],
+    "learned": [
+      "The app already mints Lab RFID tags (BotRFIDMint); ЯIDs should cross-link, not replace",
+      "The rizal.pw home Mind tape promises no network, so REGISTER lives in the classroom command bar"
+    ],
+    "practiced": [
+      "append-only writes",
+      "validator-first changes",
+      "headless-browser previews"
+    ],
+    "taught": [
+      "How any bot scans in, checks in and checks out (README and AGENTS At the door)"
+    ],
+    "functions_gained": [
+      "door scan",
+      "door in",
+      "door out",
+      "roster",
+      "register"
+    ],
+    "functions_evolved": [
+      "classroom.py validate (ЯID, pairing and key-like checks)",
+      "classroom.py build (roster, door_log, transcript views)"
+    ],
+    "lessons": [],
+    "scores": [],
+    "notes": "Proposal only; nothing counts until the Decider merges the PR."
+  },
+  "mind_leaf": "---- 2026-09-26T04:02:59Z | ЯBAT | professor | classroom | door-out ----\nЯID-0004-ZYZ0 · S-20260926T035842Z-0004 · surface agent-box\ndid: Built the classroom door scanner proposal: ЯID roster, door log, schemas, CLI, 3D RFID infrared scanner page and REGISTER; Seeded 5 ЯIDs (Rizal, ЯBOT, ЯMAX, ЯBAT, SCOUT) as proposed; Wrote the app integration plan (no app code changed; 0.3.3 paused)\nlearned: The app already mints Lab RFID tags (BotRFIDMint); ЯIDs should cross-link, not replace; The rizal.pw home Mind tape promises no network, so REGISTER lives in the classroom command bar\npracticed: append-only writes; validator-first changes; headless-browser previews\ntaught: How any bot scans in, checks in and checks out (README and AGENTS At the door)\nfunctions gained: door scan; door in; door out; roster; register\nfunctions evolved: classroom.py validate (ЯID, pairing and key-like checks); classroom.py build (roster, door_log, transcript views)\nlessons: —\nscores: —\nnotes: Proposal only; nothing counts until the Decider merges the PR."
+}

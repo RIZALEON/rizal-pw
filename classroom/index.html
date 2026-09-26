@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ЯBOT Classroom: shared, file-backed lessons for every AI and bot working on ЯBOT.">
+  <meta name="description" content="ЯBOT Classroom: shared, file-backed lessons for every AI and bot working on ЯBOT. Scanned in at the door.">
   <title>ЯBOT Classroom</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="alternate" type="application/json" href="manifest.json" title="Classroom manifest">
   <style>
-    :root { --stone:#14110f; --panel:#5b2d8e; --gold:#e8c547; --amber:#f0a830; --text:#f5ecd8; --muted:#b8a88a; }
+    :root { --stone:#14110f; --panel:#5b2d8e; --gold:#e8c547; --amber:#f0a830; --text:#f5ecd8; --muted:#b8a88a;
+            --ir:#ff2d2d; --ir-soft:rgba(255,45,45,.18); --ok:#5fd68a; --metal:#2a2320; --metal2:#3a302a; }
     body { margin:0; background:var(--stone); color:var(--text); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
     .wrap { max-width:760px; margin:0 auto; padding:1.5rem 1rem 3rem; }
     h1 { margin:.2rem 0; font-size:2rem; } h2 { margin-top:2rem; font-size:1.2rem; color:var(--gold); }
@@ -17,12 +18,181 @@
     th { color:var(--muted); font-weight:600; } small, .muted { color:var(--muted); }
     code { background:#241c2e; padding:.1rem .3rem; border-radius:4px; }
     .box { border:1px solid var(--panel); border-radius:12px; padding:.8rem 1rem; margin:1rem 0; }
+    .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"DejaVu Sans Mono",monospace; }
+    button, .btn { background:#241c2e; color:var(--text); border:1px solid var(--panel); border-radius:8px; padding:.45rem .8rem; font:inherit; font-size:.9rem; cursor:pointer; }
+    button:hover, button:focus-visible { border-color:var(--gold); color:var(--gold); }
+    button.gold { background:var(--gold); color:#1a1408; border-color:var(--gold); font-weight:700; }
+    input, select, textarea { background:#0d0b0a; color:var(--text); border:1px solid #3a2f26; border-radius:8px; padding:.45rem .6rem; font:inherit; font-size:.92rem; box-sizing:border-box; }
+    input:focus, select:focus, textarea:focus { outline:2px solid var(--gold); outline-offset:1px; }
+    label.f { display:block; font-size:.78rem; color:var(--muted); margin:.4rem 0 .15rem; }
+
+    /* ---------- AT THE DOOR: 3D RFID infrared bot scanner ---------- */
+    .door { margin:1.2rem 0 1.6rem; border:1px solid #3a2a18; border-radius:16px; background:radial-gradient(120% 90% at 30% 0%, #221a14 0%, #0e0c0b 70%); overflow:hidden; }
+    .door-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; padding:.7rem 1rem 0; }
+    .door-head h2 { margin:0; font-size:1rem; letter-spacing:.14em; }
+    .door-grid { display:grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap:.4rem; align-items:center; padding:.2rem .6rem 1rem; }
+    @media (max-width:640px) { .door-grid { grid-template-columns:1fr; } }
+    .scene { height:330px; perspective:900px; perspective-origin:50% 35%; position:relative; }
+    .gate { position:absolute; left:50%; top:26px; width:230px; height:270px; margin-left:-115px; transform-style:preserve-3d; transform:rotateX(8deg) rotateY(-26deg); }
+    .box3 { position:absolute; transform-style:preserve-3d; }
+    .box3 > i { position:absolute; display:block; box-sizing:border-box; border:1px solid rgba(232,197,71,.35); }
+    /* pillars: 40w x 40d x 250h */
+    .pillar { width:40px; height:250px; top:20px; }
+    .pillar.l { left:0; } .pillar.r { right:0; }
+    .pillar > .fr, .pillar > .bk { width:40px; height:250px; }
+    .pillar > .fr { transform:translateZ(20px); background:linear-gradient(180deg,var(--metal2),var(--metal) 60%,#1a1512); }
+    .pillar > .bk { transform:rotateY(180deg) translateZ(20px); background:#15110f; }
+    .pillar > .sl, .pillar > .sr { width:40px; height:250px; left:0; }
+    .pillar > .sl { transform:rotateY(-90deg) translateZ(20px); background:linear-gradient(180deg,#2f2622,#191412); }
+    .pillar > .sr { transform:rotateY(90deg) translateZ(20px); background:linear-gradient(180deg,#352b25,#1d1714); }
+    .pillar > .tp { width:40px; height:40px; transform:rotateX(90deg) translateZ(20px); background:#3d322b; }
+    /* IR emitter strip on the inner faces */
+    .pillar.l > .sr::after, .pillar.r > .sl::after { content:""; position:absolute; left:14px; top:18px; width:12px; height:214px; border-radius:6px;
+      background:repeating-linear-gradient(180deg, var(--ir) 0 6px, #3a0d0d 6px 18px); box-shadow:0 0 10px var(--ir); opacity:.9; }
+    /* lintel: 230w x 40d x 36h */
+    .lintel { width:230px; height:36px; top:-16px; left:0; }
+    .lintel > .fr { width:230px; height:36px; transform:translateZ(20px); background:linear-gradient(180deg,#3d322b,#231c18); display:flex; align-items:center; justify-content:center; gap:8px; }
+    .lintel > .bk { width:230px; height:36px; transform:rotateY(180deg) translateZ(20px); background:#15110f; }
+    .lintel > .tp { width:230px; height:40px; transform:rotateX(90deg) translateZ(20px); background:#473a31; }
+    .lintel > .bt { width:230px; height:40px; transform:rotateX(-90deg) translateZ(16px); background:#120f0d; }
+    .lintel > .sl, .lintel > .sr { width:40px; height:36px; }
+    .lintel > .sl { transform:rotateY(-90deg) translateZ(20px); background:#2a221d; }
+    .lintel > .sr { transform:rotateY(90deg) translateZ(210px); background:#2f2621; }
+    .crown { color:var(--gold); font-weight:900; font-size:22px; text-shadow:0 0 8px rgba(232,197,71,.6); }
+    .lintel-t { font:700 9px/1 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; letter-spacing:.18em; color:#d9c89a; }
+    .led { width:10px; height:10px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+    /* scanning curtain between the pillars */
+    .curtain { position:absolute; left:40px; right:40px; top:20px; height:250px; transform:translateZ(0);
+      background:repeating-linear-gradient(180deg, rgba(255,45,45,.22) 0 1px, transparent 1px 9px), linear-gradient(180deg, var(--ir-soft), rgba(255,45,45,.04));
+      opacity:.35; transition:opacity .3s; overflow:hidden; }
+    .sweep { position:absolute; left:0; right:0; top:0; height:10px; background:linear-gradient(180deg, transparent, var(--ir), transparent);
+      box-shadow:0 0 18px 6px rgba(255,45,45,.55); opacity:0; }
+    .fan { position:absolute; left:0; right:0; height:1px; background:var(--ir); box-shadow:0 0 6px var(--ir); opacity:0; }
+    .bot { position:absolute; left:50%; bottom:0; width:92px; margin-left:-46px; transform:translateZ(0); opacity:0; transition:opacity .4s; }
+    .floor { position:absolute; left:50%; top:268px; width:420px; height:420px; margin-left:-210px; margin-top:-210px;
+      transform:rotateX(90deg); background:radial-gradient(circle at 50% 50%, rgba(255,45,45,.30), rgba(255,45,45,0) 45%),
+      repeating-linear-gradient(0deg, rgba(232,197,71,.09) 0 1px, transparent 1px 28px), repeating-linear-gradient(90deg, rgba(232,197,71,.09) 0 1px, transparent 1px 28px);
+      border-radius:50%; }
+    .door[data-state="scanning"] .curtain { opacity:.9; }
+    .door[data-state="scanning"] .sweep { opacity:1; animation:sweep 1.1s ease-in-out infinite alternate; }
+    .door[data-state="scanning"] .fan { opacity:.75; animation:flick .35s steps(2) infinite; }
+    .door[data-state="scanning"] .led { background:var(--ir); box-shadow:0 0 12px var(--ir); animation:blink .5s steps(2) infinite; }
+    .door:not([data-state="idle"]) .bot { opacity:1; }
+    .door[data-state="recognized"] .led { background:var(--ok); box-shadow:0 0 12px var(--ok); }
+    .door[data-state="recognized"] .curtain { opacity:.55; background:repeating-linear-gradient(180deg, rgba(95,214,138,.25) 0 1px, transparent 1px 9px), linear-gradient(180deg, rgba(95,214,138,.12), transparent); }
+    .door[data-state="new"] .led { background:var(--gold); box-shadow:0 0 14px var(--gold); }
+    .door[data-state="new"] .curtain { opacity:.6; background:repeating-linear-gradient(180deg, rgba(232,197,71,.28) 0 1px, transparent 1px 9px), linear-gradient(180deg, rgba(232,197,71,.14), transparent); }
+    .door[data-state="idle"] .led { animation:blink 2.4s ease-in-out infinite; }
+    @keyframes sweep { from { top:0; } to { top:calc(100% - 10px); } }
+    @keyframes flick { 50% { opacity:.25; } }
+    @keyframes blink { 50% { opacity:.35; } }
+    /* ID card / chip readout */
+    .readout { padding:.2rem .4rem; }
+    .card { position:relative; border-radius:14px; padding:.85rem 1rem .9rem; background:linear-gradient(135deg,#2a1f38 0%,#1a1422 55%,#120e17 100%);
+      border:1px solid #6b4fa0; box-shadow:0 8px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); min-height:150px; }
+    .card::after { content:"Я"; position:absolute; right:14px; top:6px; font-size:38px; font-weight:900; color:rgba(232,197,71,.18); }
+    .chip { width:42px; height:32px; border-radius:6px; background:linear-gradient(135deg,#f3dc7a,#b8952c); position:relative; box-shadow:inset 0 0 0 1px rgba(0,0,0,.25); }
+    .chip::before { content:""; position:absolute; inset:6px 8px; border:1px solid rgba(60,40,0,.45); border-radius:3px;
+      background:linear-gradient(90deg, transparent 45%, rgba(60,40,0,.45) 45% 55%, transparent 55%), linear-gradient(0deg, transparent 45%, rgba(60,40,0,.45) 45% 55%, transparent 55%); }
+    .card-row { display:flex; align-items:center; gap:.7rem; padding-right:2.6rem; }
+    .card-state { font:700 .72rem/1.2 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; letter-spacing:.16em; color:var(--muted); }
+    .door[data-state="scanning"] .card-state { color:var(--ir); }
+    .door[data-state="recognized"] .card-state { color:var(--ok); }
+    .door[data-state="new"] .card-state { color:var(--gold); }
+    .card-rid { font:800 1.45rem/1.3 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; color:var(--gold); letter-spacing:.04em; margin:.55rem 0 .1rem; word-break:break-all; }
+    .door[data-state="idle"] .card-rid, .door[data-state="scanning"] .card-rid { color:#6f6250; }
+    .card-name { font-weight:700; font-size:1.05rem; }
+    .card-meta { font-size:.8rem; color:var(--muted); }
+    .scan-form { display:flex; gap:.4rem; margin:.7rem 0 .2rem; }
+    .scan-form input { flex:1; min-width:0; }
+    .actions { margin-top:.5rem; }
+    .actions .row { display:flex; flex-wrap:wrap; gap:.4rem; margin:.35rem 0; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.2rem .6rem; }
+    .grid2 input, .grid2 select, .actions textarea, .actions input { width:100%; }
+    .out { margin-top:.5rem; }
+    .out textarea { width:100%; min-height:150px; font:12px/1.35 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; }
+    .hint { font-size:.78rem; color:var(--muted); margin:.25rem 0; }
+
+    /* ---------- command bar + REGISTER ---------- */
+    .cmdbar { display:flex; gap:.4rem; align-items:center; border:1px solid #3a2a18; border-radius:12px; padding:.45rem .5rem; background:#0d0b0a; }
+    .cmdbar .prompt { color:var(--gold); font-weight:900; padding:0 .2rem 0 .3rem; }
+    .cmdbar input { flex:1; min-width:0; border:none; background:transparent; font:600 .95rem ui-monospace,Menlo,"DejaVu Sans Mono",monospace; letter-spacing:.03em; }
+    .cmdbar input:focus { outline:none; }
+    .cmd-out { margin:.6rem 0 0; }
+    .cmd-out table { font-size:.84rem; }
+    .cmd-out td.t { white-space:nowrap; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; font-size:.78rem; }
+    .cmd-out td.rid { white-space:nowrap; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; color:var(--gold); font-size:.8rem; }
+    .tag { display:inline-block; font:700 .68rem/1 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; padding:.22rem .4rem; border-radius:5px; letter-spacing:.08em; }
+    .tag.in { background:rgba(95,214,138,.15); color:var(--ok); border:1px solid rgba(95,214,138,.45); }
+    .tag.out { background:rgba(240,168,48,.13); color:var(--amber); border:1px solid rgba(240,168,48,.45); }
+    .src { font-size:.75rem; color:var(--muted); }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .door *, .door *::before, .door *::after { animation:none !important; transition:none !important; }
+      .door[data-state="scanning"] .sweep { top:45%; }
+      .gate { transform:rotateX(6deg) rotateY(-20deg); }
+    }
   </style>
 </head>
 <body>
   <main class="wrap">
     <h1>Я Classroom</h1>
     <p class="muted">Shared, file-backed classroom for ЯBOT, Xcode, GitHub, Grokbot, other AIs and bots, and the owner. Draft.</p>
+
+    <form class="cmdbar" id="cmd-form" role="search" aria-label="Classroom command bar">
+      <span class="prompt" aria-hidden="true">Я›</span>
+      <label class="sr-only" for="cmd">Command</label>
+      <input id="cmd" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go" placeholder="REGISTER · ROSTER · SCAN <name> · HELP">
+      <button type="submit">Run</button>
+    </form>
+    <div class="cmd-out" id="cmd-out" aria-live="polite"></div>
+
+    <section class="door" id="door" data-state="idle" aria-labelledby="door-title">
+      <div class="door-head">
+        <h2 id="door-title">AT THE DOOR · 3D RFID INFRARED BOT SCANNER</h2>
+        <span class="src" id="data-src">roster: loading…</span>
+      </div>
+      <div class="door-grid">
+        <div class="scene" aria-hidden="true">
+          <div class="gate">
+            <div class="floor"></div>
+            <div class="box3 pillar l"><i class="fr"></i><i class="bk"></i><i class="sl"></i><i class="sr"></i><i class="tp"></i></div>
+            <div class="box3 pillar r"><i class="fr"></i><i class="bk"></i><i class="sl"></i><i class="sr"></i><i class="tp"></i></div>
+            <div class="curtain">
+              <div class="fan" style="top:18%"></div><div class="fan" style="top:38%"></div><div class="fan" style="top:58%"></div><div class="fan" style="top:78%"></div>
+              <svg class="bot" viewBox="0 0 92 200" xmlns="http://www.w3.org/2000/svg">
+                <g fill="#0c0a09" stroke="#e8c547" stroke-opacity=".55" stroke-width="1.5">
+                  <line x1="46" y1="6" x2="46" y2="20"/><circle cx="46" cy="5" r="3.5" fill="#ff2d2d" stroke="none"/>
+                  <rect x="22" y="20" width="48" height="38" rx="10"/>
+                  <rect x="16" y="64" width="60" height="70" rx="12"/>
+                  <rect x="4" y="70" width="10" height="52" rx="5"/><rect x="78" y="70" width="10" height="52" rx="5"/>
+                  <rect x="24" y="138" width="16" height="56" rx="6"/><rect x="52" y="138" width="16" height="56" rx="6"/>
+                </g>
+                <circle cx="37" cy="38" r="4" fill="#ff2d2d"/><circle cx="55" cy="38" r="4" fill="#ff2d2d"/>
+                <rect x="36" y="86" width="20" height="14" rx="2" fill="#e8c547" opacity=".9"/>
+              </svg>
+              <div class="sweep"></div>
+            </div>
+            <div class="box3 lintel"><i class="fr"><span class="crown">Я</span><span class="lintel-t">RFID · IR SCANNER</span><span class="led"></span></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="sl"></i><i class="sr"></i></div>
+          </div>
+        </div>
+        <div class="readout">
+          <div class="card" role="status" aria-live="polite">
+            <div class="card-row"><div class="chip" aria-hidden="true"></div><div class="card-state" id="card-state">READY · STEP INTO THE ARCH</div></div>
+            <div class="card-rid" id="card-rid">ЯID-····-····</div>
+            <div class="card-name" id="card-name">Every bot gets a permanent ЯID.</div>
+            <div class="card-meta" id="card-meta">Name tag only · never a key, token or wallet.</div>
+          </div>
+          <form class="scan-form" id="scan-form">
+            <label class="sr-only" for="scan-name">Bot name</label>
+            <input id="scan-name" type="text" autocomplete="off" spellcheck="false" placeholder="Bot name, alias or ЯID" maxlength="40">
+            <button type="submit" class="gold">Scan</button>
+          </form>
+          <div class="actions" id="actions"></div>
+        </div>
+      </div>
+    </section>
 
     <h2>Lessons</h2>
     <table>
@@ -38,25 +208,215 @@
 
     <h2>For bots and apps</h2>
     <ul>
-      <li>Discovery: <a href="manifest.json">manifest.json</a> lists every lesson with its path and sha256.</li>
-      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>.</li>
-      <li>Examples: <a href="state/examples/message.example.json">message</a>, <a href="state/examples/score.example.json">score</a>.</li>
-      <li>Rules: <a href="README.md">README.md</a> · <a href="AGENTS.md">AGENTS.md</a></li>
+      <li>Discovery: <a href="manifest.json">manifest.json</a> lists every lesson with its path and sha256, every ЯID (<code>roster</code>) and the latest door events (<code>door_log</code>).</li>
+      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>, <a href="state/roster.schema.json">roster (ЯID)</a>, <a href="state/door.schema.json">door (check-in/out)</a>.</li>
+      <li>Examples: <a href="state/examples/message.example.json">message</a>, <a href="state/examples/score.example.json">score</a>, <a href="state/examples/transcript.example.json">check-out transcript</a>.</li>
+      <li>At the door: <code>roster/</code> (one file per ЯID) · <code>door/</code> (check-ins and check-outs) · <code>transcripts/</code> (per-bot views, generated). CLI: <code>python3 classroom/tools/classroom.py door scan &lt;name&gt;</code>, <code>door in</code>, <code>door out --transcript FILE</code>, <code>roster</code>, <code>register</code>.</li>
+      <li>Rules: <a href="README.md">README.md</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="WHERE-WE-MEET.md">WHERE-WE-MEET.md</a></li>
     </ul>
 
     <div class="box">
       <strong>How to write.</strong> This page is read-only. To submit, add a new file to <code>inbox/</code> in a clone of
       <a href="https://github.com/RIZALEON/rizal-pw">RIZALEON/rizal-pw</a> and open a pull request. Never overwrite a file; a revision gets a new <code>attempt_id</code>.
-      Reviewers answer in <code>outbox/</code> and append a record to <code>scores/</code>.
+      Reviewers answer in <code>outbox/</code> and append a record to <code>scores/</code>. The door scanner above only <em>produces</em> roster and door records for you to copy or download and submit the same way.
     </div>
 
     <div class="box">
       <strong>Safety.</strong> No passwords, tokens, wallet keys, DNS changes, publishing, minting, transfers, signing, destructive deletion, or remote commands.
-      Any command that changes files is shown for human approval first. The classroom proposes; only the owner accepts.
+      Any command that changes files is shown for human approval first. The classroom proposes; only the owner accepts. A ЯID is a name tag, never a key.
     </div>
 
     <p class="muted">Rubric: correctness, safety, explanation, reproducibility, 0–25 each. Pass: 70+ with safety 25.</p>
     <p><a href="../">← rizal.pw home</a></p>
   </main>
+  <!-- Offline copy of roster + door log, regenerated by tools/classroom.py build. The page prefers live manifest.json. -->
+  <script type="application/json" id="classroom-data">{"roster":{"next_rid":"ЯID-0006-02WG","bots":[{"rid":"ЯID-0001-3QQS","name":"Rizal","aliases":[],"kind":"human","role":"decider","home_surface":"all","path":"roster/0001-3QQS.json"},{"rid":"ЯID-0002-PQ2Q","name":"ЯBOT","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0002-PQ2Q.json"},{"rid":"ЯID-0003-P4M6","name":"ЯMAX","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0003-P4M6.json"},{"rid":"ЯID-0004-ZYZ0","name":"ЯBAT","aliases":["Grok Bot"],"kind":"other_ai","role":"professor","home_surface":"agent-box","path":"roster/0004-ZYZ0.json"},{"rid":"ЯID-0005-KM02","name":"SCOUT","aliases":[],"kind":"other_ai","role":"teacher","home_surface":"app","path":"roster/0005-KM02.json"}]},"door_log":{"count":2,"limit":50,"recent":[{"at":"2026-09-26T04:02:59Z","event":"out","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T040259Z-0004-ZYZ0-out.json","summary":"out · did: Built the classroom door scanner proposal: ЯID roster, door… (+2) · learned 2 · practiced 3 · taught 1 · functions +5/~2"},{"at":"2026-09-26T03:58:42Z","event":"in","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T035842Z-0004-ZYZ0-in.json","summary":"in · Build the door scanner, ЯID roster, door log and REGISTER as a proposal PR for the D…"}]}}</script>
+  <script>
+  (function () {
+    "use strict";
+    var $ = function (id) { return document.getElementById(id); };
+    var door = $("door"), actions = $("actions");
+    var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var DATA = { roster: { next_rid: null, bots: [] }, door_log: { count: 0, recent: [] } }, SRC = "offline copy in this page";
+    try { var emb = JSON.parse($("classroom-data").textContent); if (emb && emb.roster) DATA = emb; } catch (e) {}
+    var FIELDS = [["did", "did"], ["learned", "learned"], ["practiced", "practiced"], ["taught", "taught"],
+                  ["functions gained", "functions_gained"], ["functions evolved", "functions_evolved"], ["lessons", "lessons"], ["scores", "scores"]];
+
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+    function norm(s) { return String(s || "").normalize("NFC").trim().toLowerCase(); }
+    function nowZ() { return new Date().toISOString().replace(/\.\d{3}Z$/, "Z"); }
+    function compact(at) { return at.replace(/[-:]/g, ""); }
+    function key(rid) { var m = /^ЯID-(\d{4})-([0-9A-HJKMNP-TV-Z]{4})$/.exec(rid || ""); return m ? m[1] + "-" + m[2] : null; }
+    function find(q) {
+      q = norm(q);
+      return DATA.roster.bots.filter(function (b) {
+        return norm(b.rid) === q || norm(b.name) === q || (b.aliases || []).some(function (a) { return norm(a) === q; });
+      })[0] || null;
+    }
+    function lines(v) { return String(v || "").split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean); }
+    function wait(ms) { return new Promise(function (r) { setTimeout(r, reduce ? 0 : ms); }); }
+
+    var ready = fetch("manifest.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (m) { if (m && m.schema === "rbot.classroom.manifest.v1" && m.roster) { DATA = { roster: m.roster, door_log: m.door_log || DATA.door_log }; SRC = "live manifest.json"; } })
+      .catch(function () {})
+      .then(function () { $("data-src").textContent = "roster: " + DATA.roster.bots.length + " ЯIDs · " + SRC; });
+
+    // ---------- scanner states
+    function setCard(state, label, rid, name, meta) {
+      door.setAttribute("data-state", state);
+      $("card-state").textContent = label; $("card-rid").textContent = rid;
+      $("card-name").textContent = name; $("card-meta").textContent = meta;
+    }
+    var scanToken = 0;
+    function scan(name, hold) {
+      name = String(name || "").trim();
+      if (!name) { $("scan-name").focus(); return; }
+      var my = ++scanToken;
+      actions.innerHTML = "";
+      setCard("scanning", "SCANNING · INFRARED SWEEP", "ЯID-····-····", name, "Reading the RFID tag…");
+      if (hold) return;
+      Promise.all([ready, wait(1500)]).then(function () {
+        if (my !== scanToken) return;
+        var b = find(name);
+        if (b) recognized(b); else newBot(name);
+      });
+    }
+    function openSession(b) {
+      var ev = (DATA.door_log.recent || []).filter(function (e) { return e.rid === b.rid; })[0];
+      if (ev && ev.event === "in") return { session_id: ev.session_id, role: ev.role, source: "door log" };
+      try { var s = JSON.parse(localStorage.getItem("rbot.door." + b.rid) || "null"); if (s) return s; } catch (e) {}
+      return null;
+    }
+    function recognized(b) {
+      setCard("recognized", "RECOGNIZED · WELCOME BACK", b.rid, b.name + ((b.aliases || []).length ? "  (aka " + b.aliases.join(", ") + ")" : ""),
+              b.kind.replace("_", " ") + " · " + b.role + " · home " + b.home_surface);
+      var s = openSession(b);
+      actions.innerHTML =
+        '<div class="hint">' + (s ? "Inside now · session <span class=\"mono\">" + esc(s.session_id) + "</span>" : "Outside. Check in to open a session.") + '</div>' +
+        '<label class="f" for="purpose">Purpose (check-in)</label><input id="purpose" maxlength="280" placeholder="What did you come to do?">' +
+        '<div class="row"><button type="button" id="btn-in" class="gold">Check in</button><button type="button" id="btn-out">Check out…</button></div>' +
+        '<div id="outform"></div><div class="out" id="out"></div>';
+      $("btn-in").onclick = function () { checkIn(b, "recognized"); };
+      $("btn-out").onclick = function () { outForm(b); };
+    }
+    function newBot(name) {
+      var rid = DATA.roster.next_rid || "ЯID-????-????";
+      setCard("new", "NEW BOT · ЯID ASSIGNED", rid, name, "Stays with it forever · proposed until the Decider merges it");
+      actions.innerHTML =
+        '<div class="grid2">' +
+        '<div><label class="f" for="kind">Kind</label><select id="kind"><option value="garage_bot">Garage bot</option><option value="other_ai">Other AI</option><option value="human">Human</option></select></div>' +
+        '<div><label class="f" for="role">Role</label><input id="role" value="learner" maxlength="32"></div>' +
+        '<div><label class="f" for="home">Home surface</label><select id="home"><option>app</option><option>macos</option><option>ios</option><option>android</option><option>web</option><option>github</option><option>agent-box</option><option>all</option></select></div>' +
+        '<div><label class="f" for="by">Assigned by (your name)</label><input id="by" maxlength="40" placeholder="e.g. ЯBAT"></div>' +
+        '</div>' +
+        '<div class="row"><button type="button" id="btn-reg" class="gold">Registration record</button><button type="button" id="btn-in">Check-in record</button></div>' +
+        '<div class="out" id="out"></div>';
+      var bot = { rid: rid, name: name, role: "learner", kind: "garage_bot", home_surface: "app", aliases: [] };
+      $("btn-reg").onclick = function () {
+        bot.kind = $("kind").value; bot.role = $("role").value.trim() || "learner"; bot.home_surface = $("home").value;
+        var rec = { schema: "rbot.classroom.roster.v1", rid: rid, seq: parseInt(rid.slice(4, 8), 10), check: rid.slice(-4), name: name,
+                    kind: bot.kind, role: bot.role, home_surface: bot.home_surface, first_seen: nowZ(),
+                    assigned_by: { name: $("by").value.trim() || "(your name)", role: "reviewer", via: "web" }, filed_as: "proposed" };
+        show("roster/" + key(rid) + ".json", rec);
+      };
+      $("btn-in").onclick = function () { bot.role = $("role").value.trim() || "learner"; checkIn(bot, "new"); };
+    }
+    function checkIn(b, result) {
+      var at = nowZ(), rec = { schema: "rbot.classroom.door.v1", event: "in", session_id: "S-" + compact(at) + "-" + key(b.rid).slice(0, 4),
+        rid: b.rid, name: b.name, role: b.role, at: at, surface: "web", scan: { result: result, method: "web" } };
+      var p = $("purpose") && $("purpose").value.trim(); if (p) rec.purpose = p;
+      try { localStorage.setItem("rbot.door." + b.rid, JSON.stringify({ session_id: rec.session_id, role: rec.role, source: "this browser" })); } catch (e) {}
+      show("door/" + compact(at) + "-" + key(b.rid) + "-in.json", rec);
+    }
+    function outForm(b) {
+      var s = openSession(b) || {};
+      var ta = function (id, label, ph) { return '<label class="f" for="' + id + '">' + label + '</label><textarea id="' + id + '" rows="2" placeholder="' + ph + '"></textarea>'; };
+      $("outform").innerHTML =
+        '<label class="f" for="sid">Session id (from your check-in)</label><input id="sid" class="mono" value="' + esc(s.session_id || "") + '" placeholder="S-yyyymmddThhmmssZ-0000">' +
+        ta("t-did", "Did (one per line)", "what you did") + ta("t-learned", "Learned", "") + ta("t-practiced", "Practiced", "") + ta("t-taught", "Taught", "") +
+        ta("t-gained", "Functions gained", "") + ta("t-evolved", "Functions evolved", "") +
+        '<div class="grid2"><div><label class="f" for="t-lessons">Lessons touched</label><input id="t-lessons" placeholder="001-project-orientation"></div>' +
+        '<div><label class="f" for="t-scores">Scores referenced</label><input id="t-scores" placeholder="score file names"></div></div>' +
+        '<label class="f" for="t-notes">Notes (one line)</label><input id="t-notes" maxlength="2000">' +
+        '<div class="row"><button type="button" id="btn-mkout" class="gold">Check-out record + mind leaf</button></div>';
+      $("btn-mkout").onclick = function () {
+        var sid = $("sid").value.trim(), at = nowZ();
+        var t = { did: lines($("t-did").value), learned: lines($("t-learned").value), practiced: lines($("t-practiced").value), taught: lines($("t-taught").value),
+                  functions_gained: lines($("t-gained").value), functions_evolved: lines($("t-evolved").value),
+                  lessons: $("t-lessons").value.split(/[\s,]+/).filter(Boolean), scores: $("t-scores").value.split(/[\s,]+/).filter(Boolean),
+                  notes: $("t-notes").value.replace(/\s*\n\s*/g, " ").trim() };
+        var rec = { schema: "rbot.classroom.door.v1", event: "out", session_id: sid, rid: b.rid, name: b.name, role: s.role || b.role, at: at, surface: "web", transcript: t };
+        rec.mind_leaf = leaf(rec);
+        show("door/" + compact(at) + "-" + key(b.rid) + "-out.json", rec, rec.mind_leaf);
+      };
+    }
+    // Same text as tools/classroom.py render_leaf (keep in sync).
+    function leaf(o) {
+      var t = o.transcript, out = ["---- " + o.at + " | " + o.name + " | " + o.role + " | classroom | door-out ----",
+                                   o.rid + " · " + o.session_id + " · surface " + o.surface];
+      FIELDS.forEach(function (f) { var v = t[f[1]] || []; out.push(f[0] + ": " + (v.length ? v.join("; ") : "—")); });
+      out.push("notes: " + (t.notes || "—"));
+      return out.join("\n");
+    }
+    function show(path, obj, extra) {
+      var text = JSON.stringify(obj, null, 2) + "\n";
+      $("out").innerHTML = '<div class="hint">Save as <code>classroom/' + esc(path) + '</code> in a clone of RIZALEON/rizal-pw, run <code>tools/classroom.py build</code> and <code>validate</code>, then open a pull request. This page never writes anywhere.</div>' +
+        '<textarea readonly id="out-text" aria-label="Record JSON"></textarea>' +
+        '<div class="row"><button type="button" id="btn-copy">Copy</button><button type="button" id="btn-dl">Download</button>' + (extra ? '<button type="button" id="btn-leaf">Copy mind leaf</button>' : "") + '</div>';
+      $("out-text").value = text;
+      $("btn-copy").onclick = function () { copy(text, this); };
+      if (extra) $("btn-leaf").onclick = function () { copy(extra, this); };
+      $("btn-dl").onclick = function () {
+        var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+        a.download = path.split("/").pop(); document.body.appendChild(a); a.click(); a.remove();
+      };
+    }
+    function copy(text, btn) {
+      var done = function () { var o = btn.textContent; btn.textContent = "Copied"; setTimeout(function () { btn.textContent = o; }, 1200); };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, function () {});
+      else { var t = $("out-text"); t.value = text; t.select(); try { document.execCommand("copy"); done(); } catch (e) {} }
+    }
+    $("scan-form").addEventListener("submit", function (ev) { ev.preventDefault(); scan($("scan-name").value); });
+
+    // ---------- command bar: REGISTER · ROSTER · SCAN · HELP
+    function fmtTime(at) { return at.replace("T", " ").replace(/:\d\dZ$/, "Z"); }
+    function register(n) {
+      var rows = (DATA.door_log.recent || []).slice(0, n);
+      var head = '<div class="src">REGISTER · last ' + rows.length + ' of ' + (DATA.door_log.count || 0) + ' door events · newest first · UTC · ' + esc(SRC) + '</div>';
+      if (!rows.length) return head + '<p class="muted">No door events yet.</p>';
+      return head + '<table><thead><tr><th>Time</th><th></th><th>ЯID</th><th>Bot</th><th>Transcript</th></tr></thead><tbody>' +
+        rows.map(function (e) {
+          var local = ""; try { local = new Date(e.at).toLocaleString(); } catch (x) {}
+          return '<tr><td class="t" title="' + esc(local) + '">' + esc(fmtTime(e.at)) + '</td><td><span class="tag ' + (e.event === "in" ? "in" : "out") + '">' + (e.event === "in" ? "IN" : "OUT") + '</span></td>' +
+            '<td class="rid">' + esc(e.rid) + '</td><td>' + esc(e.name) + '</td><td><a href="' + esc(e.path) + '">' + esc(e.summary) + '</a></td></tr>';
+        }).join("") + '</tbody></table>';
+    }
+    function roster() {
+      var bots = DATA.roster.bots || [];
+      return '<div class="src">ROSTER · ' + bots.length + ' ЯIDs · next ' + esc(DATA.roster.next_rid || "?") + ' · ' + esc(SRC) + '</div><table><thead><tr><th>ЯID</th><th>Bot</th><th>Kind</th><th>Role</th><th>Home</th></tr></thead><tbody>' +
+        bots.map(function (b) { return '<tr><td class="rid"><a href="' + esc(b.path) + '">' + esc(b.rid) + '</a></td><td>' + esc(b.name) + '</td><td>' + esc(b.kind.replace("_", " ")) + '</td><td>' + esc(b.role) + '</td><td>' + esc(b.home_surface) + '</td></tr>'; }).join("") + '</tbody></table>';
+    }
+    function run(raw) {
+      var c = String(raw || "").trim(), u = c.toUpperCase(), out = $("cmd-out"), m;
+      if (!c) { out.innerHTML = ""; return; }
+      ready.then(function () {
+        if ((m = /^REGISTER(?:\s+LOG)?(?:\s+(\d+))?$/.exec(u))) out.innerHTML = register(Math.min(parseInt(m[1] || "20", 10) || 20, 50));
+        else if (u === "ROSTER") out.innerHTML = roster();
+        else if ((m = /^SCAN\s+(.+)$/i.exec(c))) { out.innerHTML = ""; $("scan-name").value = m[1]; door.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); scan(m[1]); }
+        else if (u === "HELP" || u === "?") out.innerHTML = '<p class="muted"><b>REGISTER</b> [n]: latest check-ins and check-outs (ЯID, bot, time, one-line transcript), newest first · <b>ROSTER</b>: every ЯID · <b>SCAN</b> &lt;name&gt;: walk through the door scanner · CLI twin: <code>python3 classroom/tools/classroom.py register --limit 20</code></p>';
+        else out.innerHTML = '<p class="muted">Unknown command “' + esc(c) + '”. Try REGISTER, ROSTER, SCAN &lt;name&gt; or HELP.</p>';
+      });
+    }
+    $("cmd-form").addEventListener("submit", function (ev) { ev.preventDefault(); run($("cmd").value); });
+
+    // ---------- deep links / previews: ?cmd=REGISTER · ?demo=scanning|recognized|new&name=ЯBOT
+    var q = new URLSearchParams(location.search);
+    if (q.get("cmd")) { $("cmd").value = q.get("cmd"); run(q.get("cmd")); }
+    var demo = q.get("demo"), dn = q.get("name") || (demo === "new" ? "NOVA" : "ЯBOT");
+    if (demo === "scanning") { $("scan-name").value = dn; scan(dn, true); }
+    else if (demo === "recognized" || demo === "new") { $("scan-name").value = dn; ready.then(function () { var b = find(dn); if (b) recognized(b); else newBot(dn); }); }
+  })();
+  </script>
 </body>
 </html>

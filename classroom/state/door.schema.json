@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/door.schema.json",
+  "title": "ЯBOT Classroom door record: check-in / check-out (v1)",
+  "description": "One file per door event in door/, named <UTC yyyymmddThhmmssZ>-<seq>-<check>-in.json or -out.json. Append-only. A check-in opens a session; the matching check-out closes it and carries the session transcript plus one MIND-TRANSCRIPT leaf rendered from it. No secrets, keys, tokens, or wallet addresses.",
+  "type": "object",
+  "required": ["schema", "event", "session_id", "rid", "name", "role", "at", "surface"],
+  "properties": {
+    "schema": { "const": "rbot.classroom.door.v1" },
+    "event": { "enum": ["in", "out"] },
+    "session_id": {
+      "type": "string", "pattern": "^S-[0-9]{8}T[0-9]{6}Z-[0-9]{4}$",
+      "description": "S-<check-in UTC yyyymmddThhmmssZ>-<seq>. The check-out repeats the check-in's session_id."
+    },
+    "rid": { "type": "string", "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "role": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,31}$" },
+    "at": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "surface": { "enum": ["macos", "ios", "android", "app", "web", "github", "agent-box", "all"] },
+    "purpose": { "type": "string", "maxLength": 280, "pattern": "^[^\\n]*$", "description": "Check-in: what the bot came to do." },
+    "scan": {
+      "type": "object",
+      "required": ["result", "method"],
+      "properties": {
+        "result": { "enum": ["recognized", "new"] },
+        "method": { "enum": ["cli", "web", "app"] }
+      },
+      "additionalProperties": false
+    },
+    "transcript": { "$ref": "#/$defs/transcript" },
+    "mind_leaf": {
+      "type": "string", "maxLength": 12000,
+      "description": "Check-out only. Exactly the text `classroom.py` renders from this record, starting '---- <at> | <name> | <role> | classroom | door-out ----'. Paste into MIND-TRANSCRIPT files."
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "event": { "const": "in" } } },
+      "then": { "required": ["scan"], "not": { "anyOf": [ { "required": ["transcript"] }, { "required": ["mind_leaf"] } ] } } },
+    { "if": { "properties": { "event": { "const": "out" } } },
+      "then": { "required": ["transcript", "mind_leaf"] } }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "items": {
+      "type": "array", "maxItems": 40,
+      "items": { "type": "string", "minLength": 1, "maxLength": 400, "pattern": "^[^\\n]*$" }
+    },
+    "transcript": {
+      "type": "object",
+      "description": "What happened in the session. Every list may be empty. One line per item.",
+      "required": ["did", "learned", "practiced", "taught", "functions_gained", "functions_evolved", "lessons", "scores", "notes"],
+      "properties": {
+        "did": { "$ref": "#/$defs/items" },
+        "learned": { "$ref": "#/$defs/items" },
+        "practiced": { "$ref": "#/$defs/items" },
+        "taught": { "$ref": "#/$defs/items" },
+        "functions_gained": { "$ref": "#/$defs/items" },
+        "functions_evolved": { "$ref": "#/$defs/items" },
+        "lessons": { "type": "array", "maxItems": 40, "items": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" }, "description": "lesson_id values touched" },
+        "scores": { "type": "array", "maxItems": 40, "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,160}$" }, "description": "score files (name without .json) in scores/" },
+        "notes": { "type": "string", "maxLength": 2000, "pattern": "^[^\\n]*$" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

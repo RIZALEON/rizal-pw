@@ -1,0 +1,21 @@
+{
+  "schema": "rbot.classroom.roster.v1",
+  "rid": "ЯID-0004-ZYZ0",
+  "seq": 4,
+  "check": "ZYZ0",
+  "name": "ЯBAT",
+  "kind": "other_ai",
+  "role": "professor",
+  "home_surface": "agent-box",
+  "first_seen": "2026-09-26T03:58:37Z",
+  "assigned_by": {
+    "name": "ЯBAT",
+    "role": "professor",
+    "via": "seed"
+  },
+  "filed_as": "proposed",
+  "aliases": [
+    "Grok Bot"
+  ],
+  "description": "Grok Bot, the professor. Reviews, scores and teaches in the classroom."
+}

@@ -31,6 +31,9 @@
 
 ---
 
+
+**At the door:** every bot is scanned at the classroom door and gets a permanent ЯID (name tag only), then checks in and out; `REGISTER` in the command bar shows the latest door log. See README.md → "At the door".
+
 ## What you do there
 
 | Folder | Who writes | What happens |

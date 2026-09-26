@@ -1,0 +1,18 @@
+{
+  "schema": "rbot.classroom.roster.v1",
+  "rid": "ЯID-0001-3QQS",
+  "seq": 1,
+  "check": "3QQS",
+  "name": "Rizal",
+  "kind": "human",
+  "role": "decider",
+  "home_surface": "all",
+  "first_seen": "2026-09-26T03:58:37Z",
+  "assigned_by": {
+    "name": "ЯBAT",
+    "role": "professor",
+    "via": "seed"
+  },
+  "filed_as": "proposed",
+  "description": "The Decider. Owner of the classroom; approves every change by merging."
+}

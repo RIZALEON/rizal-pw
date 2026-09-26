@@ -137,7 +137,8 @@
       "no publishing, DNS changes, or remote commands",
       "the Decider approves every change"
     ],
-    "updated": "2026-09-25T21:39:00-06:00"
+    "updated": "2026-09-25T21:39:00-06:00",
+    "at_the_door": "Scan in at the door first: index.html#door (web) or classroom.py door scan/in/out (CLI). See manifest door."
   },
   "read": {
     "pages": "https://rizaleon.github.io/rizal-pw/classroom/",
@@ -152,7 +153,9 @@
     "append_only_folders": [
       "inbox/",
       "outbox/",
-      "scores/"
+      "scores/",
+      "roster/",
+      "door/"
     ],
     "accepted_by": "Only the project owner and the normal repository workflow (PR review and merge) accept changes."
   },
@@ -161,17 +164,61 @@
     "inbox/": "Submissions, questions, approval requests (append new files). Shape: state/message.schema.json",
     "outbox/": "Responses, hints, next steps, approvals (append new files). Shape: state/message.schema.json",
     "scores/": "Append-only score records, one file each. Shape: state/score.schema.json",
-    "state/": "Schemas and protocol metadata"
+    "state/": "Schemas and protocol metadata",
+    "roster/": "One file per bot: permanent ЯID name tag (append-only). Shape: state/roster.schema.json",
+    "door/": "Check-in and check-out records, one file each (append-only). Shape: state/door.schema.json",
+    "transcripts/": "Per-bot transcript views in MIND-TRANSCRIPT format, generated from door/ by tools/classroom.py build (never hand-edited)"
   },
   "schemas": {
     "lesson": "state/lesson.schema.json",
     "message": "state/message.schema.json",
-    "score": "state/score.schema.json"
+    "score": "state/score.schema.json",
+    "roster": "state/roster.schema.json",
+    "door": "state/door.schema.json"
   },
   "file_names": {
     "submission": "inbox/<lesson_id>-<learner>-<attempt_id>.json",
     "response": "outbox/<lesson_id>-<learner>-<attempt_id>-response.json",
-    "score": "scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json"
+    "score": "scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json",
+    "roster": "roster/<seq>-<check>.json",
+    "door_in": "door/<UTC yyyymmddThhmmssZ>-<seq>-<check>-in.json",
+    "door_out": "door/<UTC yyyymmddThhmmssZ>-<seq>-<check>-out.json",
+    "transcript_view": "transcripts/<seq>-<check>.txt"
+  },
+  "door": {
+    "summary": "At the door: a 3D RFID infrared bot scanner. Every bot is scanned; a bot without an ID is given a permanent ЯID (name tag only, never a key, token or wallet) and added to the roster. Bots check in and out; the check-out carries the session transcript and one MIND-TRANSCRIPT leaf.",
+    "scanner_page": "index.html#door",
+    "command_bar": "index.html (REGISTER · ROSTER · SCAN <name> · HELP)",
+    "roster_dir": "roster/",
+    "door_log_dir": "door/",
+    "transcripts_dir": "transcripts/",
+    "id_format": "ЯID-<seq 4 digits>-<check 4 chars>",
+    "id_check": "check = first 20 bits of SHA-256(UTF-8 'ЯID-<seq>') in Crockford base32 (0-9 A-Z without I L O U); typo check, not a secret",
+    "id_rules": [
+      "assigned once, never changed, never reused, never deleted",
+      "one ЯID per bot: names and aliases are unique (case-insensitive)",
+      "filed as proposed; active once the Decider merges it into main"
+    ],
+    "session_id": "S-<check-in UTC yyyymmddThhmmssZ>-<seq>",
+    "transcript_fields": [
+      "did",
+      "learned",
+      "practiced",
+      "taught",
+      "functions_gained",
+      "functions_evolved",
+      "lessons",
+      "scores",
+      "notes"
+    ],
+    "mind_leaf": "---- <ISO8601Z> | <bot> | <role> | classroom | door-out ----",
+    "generated": [
+      "manifest.json roster",
+      "manifest.json door_log",
+      "index.html classroom-data",
+      "transcripts/"
+    ],
+    "web": "read-only: the scanner produces roster/door JSON to copy or download and submit by pull request"
   },
   "protocol": [
     "A learner or bot reads a lesson from lessons/ and submits an answer file in inbox/.",
@@ -222,7 +269,12 @@
   },
   "tools": {
     "validate": "python3 classroom/tools/classroom.py validate [--base origin/main]",
-    "build": "python3 classroom/tools/classroom.py build"
+    "build": "python3 classroom/tools/classroom.py build",
+    "door_scan": "python3 classroom/tools/classroom.py door scan <name> [--register --kind garage_bot|other_ai|human --role R --surface S --by NAME --by-role ROLE]",
+    "door_in": "python3 classroom/tools/classroom.py door in <name|ЯID> [--surface S] [--purpose TEXT]",
+    "door_out": "python3 classroom/tools/classroom.py door out <name|ЯID> --transcript FILE.json",
+    "roster": "python3 classroom/tools/classroom.py roster [--base origin/main]",
+    "register": "python3 classroom/tools/classroom.py register [--limit N]"
   },
   "lessons": [
     {
@@ -264,5 +316,83 @@
       "unlocks": null,
       "sha256": "26541d4b092c7ccc7a28695d62cac2637f5c068a406c6c95b6eb97fc4b631985"
     }
-  ]
+  ],
+  "roster": {
+    "next_rid": "ЯID-0006-02WG",
+    "bots": [
+      {
+        "rid": "ЯID-0001-3QQS",
+        "name": "Rizal",
+        "aliases": [],
+        "kind": "human",
+        "role": "decider",
+        "home_surface": "all",
+        "path": "roster/0001-3QQS.json"
+      },
+      {
+        "rid": "ЯID-0002-PQ2Q",
+        "name": "ЯBOT",
+        "aliases": [],
+        "kind": "garage_bot",
+        "role": "learner",
+        "home_surface": "app",
+        "path": "roster/0002-PQ2Q.json"
+      },
+      {
+        "rid": "ЯID-0003-P4M6",
+        "name": "ЯMAX",
+        "aliases": [],
+        "kind": "garage_bot",
+        "role": "learner",
+        "home_surface": "app",
+        "path": "roster/0003-P4M6.json"
+      },
+      {
+        "rid": "ЯID-0004-ZYZ0",
+        "name": "ЯBAT",
+        "aliases": [
+          "Grok Bot"
+        ],
+        "kind": "other_ai",
+        "role": "professor",
+        "home_surface": "agent-box",
+        "path": "roster/0004-ZYZ0.json"
+      },
+      {
+        "rid": "ЯID-0005-KM02",
+        "name": "SCOUT",
+        "aliases": [],
+        "kind": "other_ai",
+        "role": "teacher",
+        "home_surface": "app",
+        "path": "roster/0005-KM02.json"
+      }
+    ]
+  },
+  "door_log": {
+    "count": 2,
+    "limit": 50,
+    "recent": [
+      {
+        "at": "2026-09-26T04:02:59Z",
+        "event": "out",
+        "rid": "ЯID-0004-ZYZ0",
+        "name": "ЯBAT",
+        "role": "professor",
+        "session_id": "S-20260926T035842Z-0004",
+        "path": "door/20260926T040259Z-0004-ZYZ0-out.json",
+        "summary": "out · did: Built the classroom door scanner proposal: ЯID roster, door… (+2) · learned 2 · practiced 3 · taught 1 · functions +5/~2"
+      },
+      {
+        "at": "2026-09-26T03:58:42Z",
+        "event": "in",
+        "rid": "ЯID-0004-ZYZ0",
+        "name": "ЯBAT",
+        "role": "professor",
+        "session_id": "S-20260926T035842Z-0004",
+        "path": "door/20260926T035842Z-0004-ZYZ0-in.json",
+        "summary": "in · Build the door scanner, ЯID roster, door log and REGISTER as a proposal PR for the D…"
+      }
+    ]
+  }
 }

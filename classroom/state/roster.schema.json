@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/roster.schema.json",
+  "title": "ЯBOT Classroom roster record: permanent bot ID (ЯID) (v1)",
+  "description": "One file per bot in roster/, named <seq>-<check>.json. Assigned once at the classroom door, never changed, never reused, never deleted (append-only). The ЯID is a NAME TAG ONLY: it is never a key, token, password, or wallet, and no record may contain a secret. Live status is computed, not stored: a record is 'active' once merged into main, otherwise 'proposed'.",
+  "type": "object",
+  "required": ["schema", "rid", "seq", "check", "name", "kind", "role", "home_surface", "first_seen", "assigned_by", "filed_as"],
+  "properties": {
+    "schema": { "const": "rbot.classroom.roster.v1" },
+    "rid": {
+      "type": "string",
+      "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "ЯID-<seq 4 digits>-<check>. check = first 20 bits of SHA-256(UTF-8 'ЯID-<seq>') in Crockford base32. It catches typos; it is not a secret."
+    },
+    "seq": { "type": "integer", "minimum": 1, "maximum": 9999, "description": "Next number after the highest ever assigned. Never reused." },
+    "check": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{4}$" },
+    "name": {
+      "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[^\\s/\\\\][^/\\\\\\n]*$",
+      "description": "The bot's own name exactly as it presents itself (Garage name for Garage bots, e.g. ЯBOT). Unique across the roster (case-insensitive, aliases included)."
+    },
+    "aliases": {
+      "type": "array", "maxItems": 8, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[^\\s/\\\\][^/\\\\\\n]*$" },
+      "description": "Other names the scanner should recognize (e.g. 'Grok Bot'). Also unique across the roster."
+    },
+    "kind": { "enum": ["garage_bot", "other_ai", "human"] },
+    "role": {
+      "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,31}$",
+      "description": "Classroom role, e.g. decider, professor, teacher, learner, reviewer."
+    },
+    "home_surface": {
+      "enum": ["macos", "ios", "android", "app", "web", "github", "agent-box", "all"],
+      "description": "Where the bot usually lives. 'app' = the ЯBOT app on Mac, iOS and Android. 'all' = every surface."
+    },
+    "first_seen": { "type": "string", "format": "date-time", "pattern": "Z$", "description": "UTC time the bot was first scanned at the classroom door." },
+    "assigned_by": {
+      "type": "object",
+      "required": ["name", "role", "via"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "role": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,31}$" },
+        "via": { "enum": ["cli", "web", "app", "seed"] }
+      },
+      "additionalProperties": false
+    },
+    "filed_as": {
+      "const": "proposed",
+      "description": "Every new ЯID is filed as a proposal. It becomes active when the Decider merges it into main (computed by `classroom.py roster`); the file itself is never edited."
+    },
+    "legacy_ids": {
+      "type": "array", "maxItems": 8, "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$" },
+      "description": "Older public name tags for the same bot (e.g. an app RFID-YA-… tag). Cross-reference only."
+    },
+    "description": { "type": "string", "maxLength": 280 }
+  },
+  "additionalProperties": false
+}
