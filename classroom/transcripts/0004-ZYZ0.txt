@@ -18,3 +18,7 @@ functions evolved: classroom.py validate (ЯID, pairing and key-like checks); cl
 lessons: —
 scores: —
 notes: Proposal only; nothing counts until the Decider merges the PR.
+
+---- 2026-09-26T09:42:16Z | ЯBAT | professor | classroom | door-in ----
+ЯID-0004-ZYZ0 · S-20260926T094216Z-0004 · surface agent-box · scan recognized (cli)
+purpose: Decider catch-up session 2026-09-26

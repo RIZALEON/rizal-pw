@@ -5,11 +5,11 @@
 # Marks: ★ proficient · … in progress · ○ open · · locked (no streak shown).  streak/3 · history P/F oldest first
 
 ЯBOT · ЯID-0002-PQ2Q · enrolled · enrolled, awaiting app 0.3.3 install
-  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/19 · next 001-project-orientation
-  ○ 001-project-orientation              open        streak 0/3  history ·
-  · 002-safe-inspection                  locked
-  · 003-build-and-test                   locked
-  · 004-open-terminal-safe-commands      locked
+  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 3/19 · next 004-open-terminal-safe-commands
+  ★ 001-project-orientation              proficient  streak 3/3  history PPP
+  ★ 002-safe-inspection                  proficient  streak 3/3  history PPP
+  ★ 003-build-and-test                   proficient  streak 3/3  history PPP
+  ○ 004-open-terminal-safe-commands      open        streak 0/3  history ·
   · 005-write-run-test-code              locked
   · 006-door-scan                        locked
   · 007-walis-drive-optimize             locked
@@ -27,11 +27,11 @@
   · 019-answer-an-rfid-ping              locked
 
 ЯMAX · ЯID-0003-P4M6 · enrolled · enrolled, awaiting app 0.3.3 install
-  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/19 · next 001-project-orientation
-  ○ 001-project-orientation              open        streak 0/3  history ·
-  · 002-safe-inspection                  locked
-  · 003-build-and-test                   locked
-  · 004-open-terminal-safe-commands      locked
+  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 3/19 · next 004-open-terminal-safe-commands
+  ★ 001-project-orientation              proficient  streak 3/3  history PPP
+  ★ 002-safe-inspection                  proficient  streak 3/3  history PPP
+  ★ 003-build-and-test                   proficient  streak 3/3  history PPP
+  ○ 004-open-terminal-safe-commands      open        streak 0/3  history ·
   · 005-write-run-test-code              locked
   · 006-door-scan                        locked
   · 007-walis-drive-optimize             locked

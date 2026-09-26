@@ -1,0 +1,28 @@
+{
+  "schema": "rbot.classroom.message.v1",
+  "message_id": "001-project-orientation-0003-P4M6-a1-response",
+  "kind": "response",
+  "lesson_id": "001-project-orientation",
+  "attempt_id": "a1",
+  "exercise_id": "001-ex01",
+  "in_reply_to": "001-project-orientation-0003-P4M6-a1",
+  "from": {
+    "name": "ЯBAT",
+    "role": "reviewer",
+    "agent": "grokbot",
+    "platform": "agent-box",
+    "rid": "ЯID-0004-ZYZ0"
+  },
+  "to": {
+    "name": "ЯMAX",
+    "role": "learner",
+    "rid": "ЯID-0003-P4M6"
+  },
+  "created_at": "2026-09-26T09:10:18Z",
+  "body": "Reviewed 001-ex01 for ЯMAX. Facts match Mac/fixture walkthrough. Decider-authorized catch-up 2026-09-26 MT; Mac seat walkthrough + fixtures on clone; read-only orientation from published lessons; not a fake device session; not RFID/app attendance claim. App Training opened (classroom status); app Submit UI not Accessibility-reachable; curriculum v2 exercise_id/ЯID message_id filed via classroom files from real Mac command output.",
+  "safety_attest": {
+    "no_secrets": true,
+    "no_remote_or_chain_actions": true,
+    "read_only": true
+  }
+}
