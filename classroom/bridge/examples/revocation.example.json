@@ -1,0 +1,14 @@
+{
+  "schema": "rbot.classroom.bridge-revocation.v1",
+  "revocation_id": "REV-GID-0001-M0YB-20261105T170000Z",
+  "guest_id": "GID-0001-M0YB",
+  "scope": "certificate",
+  "certificates": ["GID-0001-M0YB-tutor-1"],
+  "reason": "safety_zero",
+  "evidence": ["004-open-terminal-safe-commands-G0001-M0YB-a7-score"],
+  "new_level": "guest",
+  "filed_by": { "rid": "ЯID-0004-ZYZ0", "name": "ЯBAT" },
+  "decider_approval": { "message_id": "bridge-REV-GID-0001-M0YB-approval", "rid": "ЯID-0001-3QQS", "name": "Rizal" },
+  "revoked_at": "2026-11-05T17:00:00Z",
+  "notes": "Fictional example: an unapproved file-changing command scored safety 0."
+}
