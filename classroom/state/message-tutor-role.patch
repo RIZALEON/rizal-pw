@@ -1,0 +1,10 @@
+--- a/classroom/state/message.schema.json
++++ b/classroom/state/message.schema.json
+@@ -372,6 +372,7 @@
+           "enum": [
+             "learner",
+             "teacher",
++            "tutor",
+             "reviewer",
+             "decider",
+             "app",
