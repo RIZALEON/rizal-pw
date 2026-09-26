@@ -1,0 +1,49 @@
+--- a/classroom/tools/classroom.py
++++ b/classroom/tools/classroom.py
+@@ -27,6 +27,9 @@
+   Curriculum (prelude 001-003, then 004-019; offline bots use fixtures/; x-practice scores never count):
+   python3 classroom/tools/classroom.py progress [<learner>]             # proficiency per lesson per learner, derived from scores/
+ 
++  Bridge (outside bots → classroom records; member teachers only):
++  python3 classroom/tools/classroom.py bridge import <envelope.json>   # validate + write_new mapped record (never merge)
++
+ Writes only inside classroom/: `build` rewrites generated files (manifest.json lessons/roster/door_log/progress, index.html,
+ transcripts/, views/, fixtures/FIXTURES.json, state/sandbox.json offline_lessons);
+ `door`, `ping` and `pong` add ONE new file each (roster/, door/ or pings/) and never overwrite. No network, no secrets, no git writes.
+@@ -37,6 +40,8 @@
+ from pathlib import Path
+ 
+ ROOT = Path(__file__).resolve().parent.parent          # classroom/
++import bridge_ops as _bridge_ops
++_bridge_ops.wire(sys.modules[__name__])
+ SCHEMAS = {k: ROOT / "state" / f"{k}.schema.json" for k in ("lesson", "message", "score", "roster", "door", "enrollment", "sandbox", "proficiency", "ping")}
+ APPEND_ONLY = ("inbox/", "outbox/", "scores/", "roster/", "door/", "pings/")
+ SECRET_PATTERNS = [
+@@ -1158,6 +1163,10 @@
+     warns = []
+     ncur = validate_curriculum(errs, ids, roster, check, warns, generated)
+ 
++    nbridge = 0
++    if (ROOT / "bridge").is_dir():
++        nbridge = _bridge_ops.validate_bridge_tree(errs, warns, check)
++
+     # --- manifest + generated views
+     man = check(ROOT / "manifest.json", None) if generated else None
+     if man:
+@@ -1207,6 +1216,8 @@
+             path = paths[-1].split("classroom/", 1)[-1]
+             if path.startswith(APPEND_ONLY) and not path.endswith(".gitkeep") and status[0] != "A":
+                 errs.append(f"append-only violation: {status} {path}")
++        if (ROOT / "bridge").is_dir():
++            _bridge_ops.validate_bridge_path_allowlist(errs, base)
+     aps = [(f, p) for f, p, d in message_records() if f == "outbox" and d.get("kind") == "approval"]
+     stats = {"n": n, "roster": len(roster), "sessions": len(sessions), "pings": npings, "approvals": len(aps),
+              "verified": sum(1 for f, p in aps if approval_verification(f"outbox/{p.name}")[0]), **ncur}
+@@ -2166,6 +2177,8 @@
+         sys.exit(door_in(a[2:]))
+     elif a[:2] == ["door", "out"]:
+         sys.exit(door_out(a[2:]))
++    elif a[:1] == ["bridge"]:
++        sys.exit(_bridge_ops.bridge_cmd(a[1:]))
+     else:
+         print(__doc__)
