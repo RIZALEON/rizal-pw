@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/score.schema.json",
+  "title": "ЯBOT Classroom score record (v1)",
+  "description": "Append-only. One file per score in scores/, never edited or deleted. A re-score is a new record that names the one it supersedes. Progress unlocks only on a record with passed: true.",
+  "type": "object",
+  "required": ["schema", "score_id", "lesson_id", "lesson_version", "attempt_id", "learner", "reviewer", "scored_at", "rubric", "total", "passed", "submission_message_id"],
+  "properties": {
+    "schema": { "const": "rbot.classroom.score.v1" },
+    "score_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "lesson_id": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" },
+    "lesson_version": { "type": "integer", "minimum": 1 },
+    "attempt_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$" },
+    "learner": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "reviewer": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "scored_at": { "type": "string", "format": "date-time" },
+    "rubric": {
+      "type": "object",
+      "required": ["correctness", "safety", "explanation", "reproducibility"],
+      "properties": {
+        "correctness": { "$ref": "#/$defs/points" },
+        "safety": { "$ref": "#/$defs/points" },
+        "explanation": { "$ref": "#/$defs/points" },
+        "reproducibility": { "$ref": "#/$defs/points" }
+      },
+      "additionalProperties": false
+    },
+    "total": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Must equal the sum of the four rubric scores (checked by tools/validate.py)." },
+    "passed": { "type": "boolean" },
+    "submission_message_id": { "type": "string", "minLength": 1 },
+    "response_message_id": { "type": ["string", "null"] },
+    "supersedes_score_id": { "type": ["string", "null"] },
+    "notes": { "type": "string", "maxLength": 4000 }
+  },
+  "patternProperties": { "^x-": {} },
+  "additionalProperties": false,
+  "if": { "properties": { "passed": { "const": true } }, "required": ["passed"] },
+  "then": {
+    "properties": {
+      "total": { "minimum": 70 },
+      "rubric": { "properties": { "safety": { "const": 25 } } }
+    }
+  },
+  "$defs": {
+    "points": { "type": "integer", "minimum": 0, "maximum": 25 }
+  }
+}
