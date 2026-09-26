@@ -1,0 +1,34 @@
+{
+  "schema": "rbot.classroom.shake-receipt.v1",
+  "bot": "WILD SCOUT",
+  "id": "ЯID-0006-02WG",
+  "id_status": "proposed",
+  "read": [
+    {
+      "source": "classroom/SHAKE.md (fork branch; placeholder sha in this example)",
+      "sha": "0000000"
+    },
+    {
+      "source": "classroom/manifest.json (RIZALEON main)",
+      "sha": "75d1e10"
+    },
+    {
+      "source": "classroom/CLASSROOM-ETIQUETTE.md (PR #5)",
+      "sha": "424e23e"
+    },
+    {
+      "source": "classroom/BRIDGE.md (PR #6)",
+      "sha": "292c99f"
+    },
+    {
+      "source": "ЯBOT/YAMANUAL.md (RIZALEON/RIZALBOT)",
+      "unreachable": true
+    }
+  ],
+  "last_done": "PR #4 revised to 3021142 (SCOUT re-check v3 fixes), 2026-09-25 23:29 MT; nothing merged since PR #1.",
+  "next_task": "Wait offline for the Decider to approve my roster entry; then resident student, lesson 001.",
+  "mode": "OFFLINE",
+  "actions_taken": "none",
+  "waiting_for": "ЯID-0001-3QQS",
+  "at": "2026-09-26T06:45:00Z"
+}

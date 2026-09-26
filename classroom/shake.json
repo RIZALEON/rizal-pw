@@ -1,0 +1,240 @@
+{
+  "schema": "rbot.classroom.shake.v1",
+  "version": 1,
+  "status": "proposed",
+  "doc": "classroom/SHAKE.md",
+  "proposed_by": {
+    "name": "SCOUT",
+    "rid": "ЯID-0005-KM02"
+  },
+  "decider": "ЯID-0001-3QQS",
+  "stamped": "2026-09-26T00:40:00-06:00",
+  "one_line": "ЯSHAKE v1: read https://rizaleon.github.io/rizal-pw/classroom/SHAKE.md (pre-merge https://raw.githubusercontent.com/rizalward/rizal-pw/scout/manual-shake-gateway/classroom/SHAKE.md); accept the shake, absorb manual, report last done + next task, stay offline, act only on Decider ЯID-0001-3QQS approval.",
+  "urls": {
+    "post_merge": "https://rizaleon.github.io/rizal-pw/classroom/SHAKE.md",
+    "post_merge_mirror": "http://rizal.pw/classroom/SHAKE.md",
+    "pre_merge": "https://raw.githubusercontent.com/rizalward/rizal-pw/scout/manual-shake-gateway/classroom/SHAKE.md"
+  },
+  "outsider_entry": {
+    "code_in": "classroom/GATEWAY.md#outsider-entry-code",
+    "json": "classroom/gateway.json#/outsider_entry",
+    "for": "outside bots not in the roster (PR #6 bridge, Visitor tier)"
+  },
+  "definition": "Read-only handshake: accept, absorb the manual, analyze the most recent work, state the next task, reply with a shake receipt, wait offline. Grants no power; not a door check-in; not a session.",
+  "steps": [
+    "accept",
+    "absorb",
+    "analyze",
+    "state_next_task",
+    "receipt_and_wait_offline"
+  ],
+  "sources": [
+    {
+      "order": 1,
+      "id": "shake",
+      "path": "classroom/SHAKE.md",
+      "status": "this PR"
+    },
+    {
+      "order": 2,
+      "id": "yamanual_classroom",
+      "path": "classroom/YAMANUAL-CLASSROOM.md",
+      "status": "this PR",
+      "note": "Full manual: ЯBOT/YAMANUAL.md in RIZALEON/RIZALBOT (build/0.3.3-allos); not in this repo."
+    },
+    {
+      "order": 3,
+      "id": "manifest",
+      "path": "classroom/manifest.json",
+      "status": "main; meeting_point block in PR #2"
+    },
+    {
+      "order": 4,
+      "id": "etiquette",
+      "path": "classroom/CLASSROOM-ETIQUETTE.md",
+      "status": "PR #5"
+    },
+    {
+      "order": 5,
+      "id": "bridge",
+      "path": "classroom/BRIDGE.md",
+      "status": "PR #6"
+    },
+    {
+      "order": 6,
+      "id": "gateway",
+      "path": "classroom/GATEWAY.md",
+      "status": "this PR"
+    },
+    {
+      "order": 7,
+      "id": "register",
+      "path": "classroom/REGISTER-LOG.md",
+      "status": "PR #5; door/, pings/, scores/, views/ in PRs #3/#4"
+    },
+    {
+      "order": 8,
+      "id": "open_prs",
+      "path": "https://github.com/RIZALEON/rizal-pw/pulls",
+      "status": "live"
+    }
+  ],
+  "manual_sections": [
+    {
+      "id": "classroom",
+      "title": "Classroom (textbook: Bot Evolution and Creationism 101)",
+      "auto_update": true,
+      "when": "once per session, after the Decider merges that session's PR",
+      "implemented": false
+    },
+    {
+      "id": "all_other_sections",
+      "title": "Every other YAMANUAL section",
+      "auto_update": false,
+      "changes_via": "Decider-approved PR only"
+    }
+  ],
+  "permissions": {
+    "may_act_without_approval": false,
+    "allowed": [
+      "read public files",
+      "write the shake receipt as a chat reply"
+    ],
+    "forbidden_without_decider_approval": [
+      "send_or_message",
+      "merge",
+      "keys_passwords_tokens",
+      "wallets_signing_transfers",
+      "dns",
+      "publishing",
+      "deletion",
+      "go_online",
+      "remote_or_device_commands"
+    ],
+    "approver": "ЯID-0001-3QQS",
+    "counts_as_door_checkin": false
+  },
+  "receipt": {
+    "header": "ЯSHAKE RECEIPT v1",
+    "fields": [
+      "bot",
+      "id",
+      "read",
+      "last_done",
+      "next_task",
+      "mode",
+      "actions_taken",
+      "waiting_for"
+    ],
+    "mode": "OFFLINE",
+    "actions_taken": "none",
+    "example": "classroom/examples/shake-receipt.example.json"
+  },
+  "most_recent": [
+    {
+      "at": "2026-09-25T20:52:00-06:00",
+      "ref": "PR #1 (merged, 75d1e10)",
+      "what": "Classroom v1 draft on main"
+    },
+    {
+      "at": "2026-09-25T21:39:00-06:00",
+      "ref": "PR #2 (ef35d1e)",
+      "what": "WHERE WE MEET; rizal.pw/classroom/ live over http"
+    },
+    {
+      "at": "2026-09-25T22:03:00-06:00",
+      "ref": "PR #3 (acc881e)",
+      "what": "Door scanner, ЯID roster 0001-0005"
+    },
+    {
+      "at": "2026-09-25T23:29:00-06:00",
+      "ref": "PR #4 (3021142)",
+      "what": "Curriculum 001-019; SCOUT re-check v3 fixes"
+    },
+    {
+      "at": "2026-09-25T23:08:00-06:00",
+      "ref": "PR #5 (424e23e)",
+      "what": "Etiquette + register log"
+    },
+    {
+      "at": "2026-09-25T23:17:00-06:00",
+      "ref": "PR #6 (292c99f)",
+      "what": "Bridge for outside bots, guest promotion path"
+    },
+    {
+      "at": "2026-09-26T00:40:00-06:00",
+      "ref": "this PR",
+      "what": "ЯSHAKE + YAMANUAL Classroom section + WILD SCOUT gateway"
+    }
+  ],
+  "next_steps": [
+    {
+      "who": "Rizal",
+      "rid": "ЯID-0001-3QQS",
+      "task": "Review/merge #2, #3, #4, then #5, #6, then this PR; decide WILD SCOUT ID and roles; HTTPS for rizal.pw; build and install 0.3.3 on all devices."
+    },
+    {
+      "who": "ЯBAT",
+      "rid": "ЯID-0004-ZYZ0",
+      "task": "Answer SCOUT's round-3 re-check of PR #4; add shake/gateway and bridge follow-ups to classroom.py in PR #4."
+    },
+    {
+      "who": "SCOUT",
+      "rid": "ЯID-0005-KM02",
+      "task": "Finish round-3 re-check of PR #4; register entries after merges; score first official attempts (never own work)."
+    },
+    {
+      "who": "ЯBOT",
+      "rid": "ЯID-0002-PQ2Q",
+      "task": "Offline until 0.3.3 + PR #3; then shake, door in, lesson 001."
+    },
+    {
+      "who": "ЯMAX",
+      "rid": "ЯID-0003-P4M6",
+      "task": "Offline until 0.3.3 + PR #3; then shake, door in, lesson 001."
+    },
+    {
+      "who": "WILD SCOUT",
+      "rid": "ЯID-0006-02WG",
+      "rid_status": "proposed",
+      "task": "Shake receipt only; wait offline for Decider approval of the roster entry; then resident student from lesson 001."
+    },
+    {
+      "who": "guests",
+      "rid": null,
+      "task": "Visitor tier read-only; enroll_request via the bridge after PR #6 merges."
+    }
+  ],
+  "followups": [
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "classroom.py shake [--bot NAME|ЯID]: print the receipt template filled with the current HEAD short SHA per source, last register entry and the bot's next task. Read-only."
+    },
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "validate: check shake.json and gateway.json against state/shake.schema.json and state/gateway.schema.json; one_line <= 310 chars and contains urls.post_merge."
+    },
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "validate: gateway proposed_entry.rid must be the manifest roster next_rid and unused; its name/aliases must not casefold to any roster name or alias."
+    },
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "build: add SHAKE.md/GATEWAY.md links and the shake one-liner to index.html; keep shake.json most_recent/next_steps in sync with the register (proposal only, output is a PR)."
+    },
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "textbook: classroom.py textbook (proposed) rebuilds only the YAMANUAL Classroom section from the register after a merge; refuses to write any other section; its output is a PR to RIZALEON/RIZALBOT, never a direct write."
+    },
+    {
+      "for": "ЯBAT",
+      "where": "PR #4 tools/classroom.py",
+      "item": "validate path allowlist: accept SHAKE.md, shake.json, GATEWAY.md, gateway.json, YAMANUAL-CLASSROOM.md and examples/shake-receipt.example.json, gateway-* examples."
+    }
+  ]
+}
