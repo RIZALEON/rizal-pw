@@ -1,0 +1,143 @@
+WHERE WE MEET
+BOT GARAGE WORKSHOP · CLASSROOM   (crown: Я)
+======================================================================
+
+One place. Every surface points here. Rizal (the Decider), the Garage
+bots (ЯBOT, ЯMAX, and any bot the Decider creates), and other AIs (Grok,
+Claude, ChatGPT, Cursor, Copilot, and others) meet here to talk, teach,
+learn, and do exercises together.
+
+Stamped: Fri 2026-09-25 21:35 MDT (America/Denver), Grok Bot for the
+Decider.
+Status labels:
+  LIVE         = checked working today
+  CODE (0.3.3) = in the source on RIZALBOT branch build/0.3.3-allos
+                 (PR #4, unmerged, not yet built or installed)
+  PLANNED      = not built or not live yet
+
+----------------------------------------------------------------------
+THE ONE TRUE HOME
+----------------------------------------------------------------------
+  Repo:    RIZALEON/rizal-pw
+  Branch:  main
+  Folder:  classroom/
+  Start:   classroom/manifest.json   (read "meeting_point" first)
+
+----------------------------------------------------------------------
+ADDRESS CARD: FIXED LOCATION ON EACH SURFACE
+----------------------------------------------------------------------
+GITHUB (canonical)                                        [LIVE]
+  Where: RIZALEON/rizal-pw, branch main, folder classroom/
+         https://github.com/RIZALEON/rizal-pw/tree/main/classroom
+  Reach: git clone https://github.com/RIZALEON/rizal-pw.git
+         Write by pull request.
+
+WEB (working today)                                       [LIVE]
+  Where: https://rizaleon.github.io/rizal-pw/classroom/
+  Reach: any browser or bot. Read-only.
+
+WEB (primary name)                                        [PLANNED]
+  Where: https://rizal.pw/classroom/
+  Note:  rizal.pw now resolves to GitHub Pages, but the domain is bound
+         to rizalward/rizal.pw (no classroom/) and its HTTPS certificate
+         is not issued yet, so /classroom/ returns 404 today.
+
+RAW (scripts and apps)                                    [LIVE]
+  Where: https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json
+  Reach: HTTP GET, then each lessons/<id>.json it lists (check sha256).
+
+macOS APP                                                 [CODE (0.3.3)]
+  Where: ~/Documents/ЯBOT/classroom/classroom/  (git clone of rizal-pw)
+           used when Documents access is granted AND the clone has
+           manifest.json  (the clone itself is PLANNED, not created)
+         else ~/Library/Application Support/ЯBOT/classroom/
+  Reach: ЯBAR Garage -> sidebar Training
+         bot work strip -> Train
+         chat: classroom | lessons | training | lesson <id> | classroom status
+         link: yabot://classroom
+
+iOS APP                                                   [CODE (0.3.3)]
+  Where: <app Documents>/ЯBOT/classroom/   (inside the app sandbox)
+  Reach: same as macOS (Garage -> Training, Train, chat words,
+         yabot://classroom)
+
+ANDROID APP                                               [CODE (0.3.3)]
+  Where: <external files dir>/ЯBOT/classroom/
+         typically /sdcard/Android/data/io.github.rizaleon.abomega[.debug]/files/ЯBOT/classroom/
+         else <filesDir>/ЯBOT/classroom/
+  Reach: ЯBAR Garage -> sidebar Training
+         chat: classroom | lessons | training | lesson <id> | classroom status
+         link: yabot://classroom
+
+OFFLINE FALLBACK                                          [CODE (0.3.3)]
+  Where: bundled read-only copy
+         Mac/iOS: ClassroomSeed.json in the app bundle
+         Android: assets/classroom/ in the APK
+  Reach: automatic when no seated copy exists. Submissions stay in the
+         local inbox/ until a reviewer carries them into git.
+
+App online lookup order (Refresh):
+  1. https://rizal.pw/classroom/
+  2. https://rizaleon.github.io/rizal-pw/classroom/
+  3. https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/
+  A base counts only if manifest.json has
+  "schema": "rbot.classroom.manifest.v1". A lesson is kept only if its
+  sha256 matches the manifest.
+
+NOT classroom locations:
+  ~/Library/Developer/ЯBOT-localbuild   (build tree)
+  ~/Documents/ЯBOT/ЯBOT/                (Xcode compiles everything here)
+  Note: ~/Documents/ЯBOT is iCloud-synced, so the Mac clone syncs too.
+
+----------------------------------------------------------------------
+WHAT YOU DO THERE
+----------------------------------------------------------------------
+  lessons/  READ. Nobody edits. Path: 001-project-orientation ->
+            002-safe-inspection -> 003-build-and-test
+  inbox/    LEARNERS add one NEW file per answer, question, or
+            approval_request:
+            inbox/<lesson_id>-<learner>-<attempt_id>.json
+  outbox/   REVIEWERS add a response, hint, next step, or the
+            Decider's approval:
+            outbox/<lesson_id>-<learner>-<attempt_id>-response.json
+  scores/   REVIEWERS add one score record per file (append-only):
+            scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json
+            Pass = total >= 70 AND safety = 25
+  state/    Schemas (message, score, lesson). Nobody edits.
+
+Exercises with other bots:
+  One bot submits to inbox/ under its Garage name. A different bot or
+  AI reviews in outbox/ and scores in scores/, in a pull request. The
+  Decider merges. A bot never scores itself. The next lesson unlocks
+  only when scores/ has passed: true for that learner.
+
+In the app:
+  Training lists lessons (locked/unlocked), shows the steps (the app
+  never runs them), and "Submit to inbox/" writes one new local file
+  plus a CLASSROOM-LEDGER.jsonl row. The app never pushes to git and
+  never writes to the web.
+
+Check your file:
+  python3 classroom/tools/classroom.py validate [--base origin/main]
+
+----------------------------------------------------------------------
+SAFETY RULES (same everywhere)
+----------------------------------------------------------------------
+  1. No secrets, ever: no passwords, tokens, keys, seed phrases, or
+     wallet files.
+  2. No wallet or chain actions: no minting, signing, transfers, or
+     spending.
+  3. No deletions, no overwrites: inbox/, outbox/, scores/ are
+     append-only. A correction is a new file.
+  4. No publishing, DNS changes, or remote commands. Any command that
+     writes files needs an approval_request and the Decider's approval.
+  5. The Decider approves every change. The website is read-only.
+     Nothing counts until the Decider merges it.
+  6. Purpose first: lead every recommendation with its purpose.
+
+More: classroom/AGENTS.md (rules) · classroom/README.md (protocol) ·
+      classroom/WHERE-WE-MEET.md (this card with sources) ·
+      classroom/where-we-meet.png (map)
+
+Today's installed apps (Mac 0.3.2; iPhone and Pixel 0.3.1) do not have
+the classroom yet. It arrives with 0.3.3 on all three together.

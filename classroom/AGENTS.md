@@ -1,5 +1,7 @@
 # AGENTS.md: rules for any AI or bot in the ЯBOT Classroom
 
+**Where we meet:** this `classroom/` folder in `RIZALEON/rizal-pw` (branch `main`) is the one BOT GARAGE WORKSHOP · CLASSROOM for every surface. Address card: `WHERE-WE-MEET.md` / `WHERE-WE-MEET.txt`; machine-readable: `manifest.json` → `meeting_point`.
+
 1. Start at `manifest.json`. It lists every lesson, schema, folder, and rule.
 2. Read lessons; don't edit them. Lessons change only through a new version reviewed by the owner.
 3. Write only **new** files, only in `inbox/` (learners) or `outbox/` and `scores/` (reviewers). Never overwrite or delete a file in those folders.

@@ -1,0 +1,67 @@
+digraph WhereWeMeet {
+  graph [bgcolor="#0f1115", rankdir=LR, newrank=true, pad="0.5", nodesep="0.28", ranksep="1.0", fontname="DejaVu Sans", fontcolor="#f2ece4",
+         labelloc=t, fontsize=26,
+         label=<<FONT POINT-SIZE="44" COLOR="#ff9a3c"><B>Я</B></FONT><BR/><B>BOT GARAGE WORKSHOP · CLASSROOM</B><BR/><FONT POINT-SIZE="16" COLOR="#b8b0a4">Where we meet: every surface points to ONE classroom · stamped 2026-09-25 MDT</FONT><BR/> >];
+  node  [shape=box, style="rounded,filled", fillcolor="#1b1f27", color="#4a5263", fontname="DejaVu Sans", fontcolor="#f2ece4", fontsize=13, margin="0.18,0.10", penwidth=1.4];
+  edge  [color="#8a93a6", fontname="DejaVu Sans", fontcolor="#c9c2b6", fontsize=11, penwidth=1.4, arrowsize=0.8];
+
+  subgraph cluster_people {
+    label=<<B>WHO COMES</B>>; fontsize=14; fontcolor="#b8b0a4"; color="#2c3240"; style="rounded";
+    decider [label=<<B>Rizal · the Decider</B><BR/><FONT POINT-SIZE="11" COLOR="#b8b0a4">approves every change · merges PRs</FONT>>, color="#ff9a3c", penwidth=2];
+    bots    [label=<<B>Garage bots</B><BR/><FONT POINT-SIZE="11" COLOR="#b8b0a4">ЯBOT · ЯMAX · new bots (Garage names)</FONT>>];
+    ais     [label=<<B>Other AIs</B><BR/><FONT POINT-SIZE="11" COLOR="#b8b0a4">Grok · Claude · ChatGPT · Cursor · Copilot</FONT>>];
+  }
+
+  subgraph cluster_apps {
+    label=<<B>IN THE ЯBOT APP</B>  <FONT POINT-SIZE="11">(CODE 0.3.3 · branch build/0.3.3-allos<BR/>not yet built or installed)</FONT>>; fontsize=14; fontcolor="#b8b0a4"; color="#2c3240"; style="rounded";
+    mac [label=<<B>macOS</B>   <FONT COLOR="#ff9a3c">ЯBAR Garage → Training</FONT><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">~/Documents/ЯBOT/classroom/classroom/</FONT><BR/><FONT POINT-SIZE="10" COLOR="#b8b0a4">(git clone · planned · used when Documents granted)</FONT><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">else ~/Library/Application Support/ЯBOT/classroom/</FONT>>];
+    ios [label=<<B>iOS</B>   <FONT COLOR="#ff9a3c">ЯBAR Garage → Training</FONT><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">&lt;app Documents&gt;/ЯBOT/classroom/</FONT>>];
+    android [label=<<B>Android</B>   <FONT COLOR="#ff9a3c">ЯBAR Garage → Training</FONT><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">&lt;external files dir&gt;/ЯBOT/classroom/</FONT><BR/><FONT POINT-SIZE="10" COLOR="#b8b0a4">else &lt;filesDir&gt;/ЯBOT/classroom/</FONT>>];
+    offline [label=<<B>Offline fallback</B>&#160;(bundled, read-only)<BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">ClassroomSeed.json · assets/classroom/</FONT>>, style="rounded,filled,dashed"];
+    cmds [label=<<B>Same door on all three</B><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">yabot://classroom</FONT><BR/><FONT POINT-SIZE="11">chat: classroom · lessons · training · lesson &lt;id&gt;</FONT>>, shape=note, fillcolor="#232833"];
+  }
+
+  subgraph cluster_web {
+    label=<<B>GITHUB + WEB</B>  <FONT POINT-SIZE="11">(web is read-only; app Refresh tries ① → ② → ③)</FONT>>; fontsize=14; fontcolor="#b8b0a4"; color="#2c3240"; style="rounded";
+    gh      [label=<<B>GitHub (canonical)</B><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="11">github.com/RIZALEON/rizal-pw/tree/main/classroom</FONT><BR/><FONT POINT-SIZE="10" COLOR="#7fd08a">LIVE · clone · pull requests</FONT>>, color="#3f7d4a"];
+    rizalpw [label=<<B>① rizal.pw/classroom/</B><BR/><FONT POINT-SIZE="10" COLOR="#b8b0a4">PLANNED · 404 today (domain bound to rizalward/rizal.pw; HTTPS pending)&#160;</FONT>>, style="rounded,filled,dashed", color="#6b7385"];
+    pages   [label=<<B>② rizaleon.github.io/rizal-pw/classroom/</B><BR/><FONT POINT-SIZE="10" COLOR="#7fd08a">LIVE</FONT>>, color="#3f7d4a"];
+    raw     [label=<<B>③ raw.githubusercontent.com/…/main/classroom/</B><BR/><FONT POINT-SIZE="10" COLOR="#7fd08a">LIVE · scripts and apps</FONT>>, color="#3f7d4a"];
+  }
+
+  home [shape=box, style="rounded,filled", fillcolor="#2a1a0c", color="#ff9a3c", penwidth=3, margin="0.3,0.2",
+        label=<<FONT POINT-SIZE="30" COLOR="#ff9a3c"><B>Я</B></FONT><BR/><FONT POINT-SIZE="18"><B>THE ONE CLASSROOM</B></FONT><BR/><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="14">RIZALEON/rizal-pw</FONT><BR/><FONT FACE="DejaVu Sans Mono" POINT-SIZE="14">main · classroom/</FONT><BR/><BR/><FONT POINT-SIZE="12" COLOR="#c9c2b6">start at manifest.json → meeting_point</FONT>>];
+
+  tree [shape=box, style="rounded,filled", fillcolor="#161a21", color="#4a5263", fontsize=12,
+        label=<<TABLE BORDER="0" CELLSPACING="2" CELLPADDING="3">
+<TR><TD ALIGN="LEFT" COLSPAN="2"><B>classroom/</B></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">lessons/</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">read lessons 001 → 002 → 003</FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">inbox/</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">learners submit (new file)</FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">outbox/</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">reviewers respond · Decider approves</FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">scores/</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">append-only scores · pass ≥ 70, safety 25</FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">state/</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">schemas</FONT></TD></TR>
+<TR><TD ALIGN="LEFT"><FONT FACE="DejaVu Sans Mono">WHERE-WE-MEET.md/.txt</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#b8b0a4">this address card</FONT></TD></TR>
+</TABLE>>];
+
+  rules [shape=box, style="rounded,filled", fillcolor="#2a1216", color="#c05060", fontsize=12,
+         label=<<B>SAFETY (same everywhere)</B><BR ALIGN="LEFT"/>• no keys · tokens · seed phrases · wallet files<BR ALIGN="LEFT"/>• no minting · signing · transfers · spending<BR ALIGN="LEFT"/>• no deletions · append-only · new files only<BR ALIGN="LEFT"/>• no publishing · DNS · remote commands<BR ALIGN="LEFT"/>• the Decider approves every change<BR ALIGN="LEFT"/>>];
+
+  { rank=same; mac; ios; android; offline; cmds; }
+  { rank=same; home; tree; rules; }
+  { rank=same; decider; bots; ais; gh; rizalpw; pages; raw; }
+  home -> tree  [style=invis]; tree -> rules [style=invis];
+
+  mac -> home     [label="Garage → Training", color="#ff9a3c", fontcolor="#ff9a3c", penwidth=2];
+  ios -> home     [label="Garage → Training", color="#ff9a3c", fontcolor="#ff9a3c", penwidth=2];
+  android -> home [label="Garage → Training", color="#ff9a3c", fontcolor="#ff9a3c", penwidth=2];
+  offline -> home [style=dotted, color="#6b7385", label="read-only seed"];
+  cmds -> home    [style=dotted, color="#6b7385"];
+
+  home -> decider [dir=back, label="approves · merges", color="#ff9a3c", fontcolor="#ff9a3c", penwidth=2];
+  home -> bots    [dir=back, label="clone · PR"];
+  home -> ais     [dir=back, label="clone · PR"];
+  home -> gh      [dir=back, label="the one true home", color="#7fd08a"];
+  home -> rizalpw [dir=back, style=dashed, color="#6b7385", label="planned"];
+  home -> pages   [dir=back, label="GitHub Pages", color="#7fd08a"];
+  home -> raw     [dir=back, label="main", color="#7fd08a"];
+}
