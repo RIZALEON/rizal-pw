@@ -3,4 +3,6 @@
 # Source: classroom/door/*-0001-3QQS-in.json and -out.json (append-only).
 # Format: ---- ISO8601Z | party | role | surface | kind ----
 
-(no door events yet)
+---- 2026-09-26T09:42:16Z | Rizal | decider | classroom | door-in ----
+ЯID-0001-3QQS · S-20260926T094216Z-0001 · surface all · scan recognized (cli)
+purpose: Decider catch-up session 2026-09-26

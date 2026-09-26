@@ -770,9 +770,59 @@
     ]
   },
   "door_log": {
-    "count": 2,
+    "count": 7,
     "limit": 50,
     "recent": [
+      {
+        "at": "2026-09-26T09:42:16Z",
+        "event": "in",
+        "rid": "ЯID-0005-KM02",
+        "name": "SCOUT",
+        "role": "teacher",
+        "session_id": "S-20260926T094216Z-0005",
+        "path": "door/20260926T094216Z-0005-KM02-in.json",
+        "summary": "in · Decider catch-up session 2026-09-26 · scan recognized"
+      },
+      {
+        "at": "2026-09-26T09:42:16Z",
+        "event": "in",
+        "rid": "ЯID-0004-ZYZ0",
+        "name": "ЯBAT",
+        "role": "professor",
+        "session_id": "S-20260926T094216Z-0004",
+        "path": "door/20260926T094216Z-0004-ZYZ0-in.json",
+        "summary": "in · Decider catch-up session 2026-09-26 · scan recognized"
+      },
+      {
+        "at": "2026-09-26T09:42:16Z",
+        "event": "in",
+        "rid": "ЯID-0003-P4M6",
+        "name": "ЯMAX",
+        "role": "learner",
+        "session_id": "S-20260926T094216Z-0003",
+        "path": "door/20260926T094216Z-0003-P4M6-in.json",
+        "summary": "in · Decider catch-up session 2026-09-26 · scan recognized"
+      },
+      {
+        "at": "2026-09-26T09:42:16Z",
+        "event": "in",
+        "rid": "ЯID-0001-3QQS",
+        "name": "Rizal",
+        "role": "decider",
+        "session_id": "S-20260926T094216Z-0001",
+        "path": "door/20260926T094216Z-0001-3QQS-in.json",
+        "summary": "in · Decider catch-up session 2026-09-26 · scan recognized"
+      },
+      {
+        "at": "2026-09-26T09:42:15Z",
+        "event": "in",
+        "rid": "ЯID-0002-PQ2Q",
+        "name": "ЯBOT",
+        "role": "learner",
+        "session_id": "S-20260926T094215Z-0002",
+        "path": "door/20260926T094215Z-0002-PQ2Q-in.json",
+        "summary": "in · Decider catch-up session 2026-09-26 · scan recognized"
+      },
       {
         "at": "2026-09-26T04:02:59Z",
         "event": "out",
@@ -803,18 +853,18 @@
         "rid": "ЯID-0002-PQ2Q",
         "enrolled": true,
         "status": "enrolled, awaiting app 0.3.3 install",
-        "proficient": 0,
+        "proficient": 3,
         "of": 19,
-        "next_lesson": "001-project-orientation"
+        "next_lesson": "004-open-terminal-safe-commands"
       },
       {
         "name": "ЯMAX",
         "rid": "ЯID-0003-P4M6",
         "enrolled": true,
         "status": "enrolled, awaiting app 0.3.3 install",
-        "proficient": 0,
+        "proficient": 3,
         "of": 19,
-        "next_lesson": "001-project-orientation"
+        "next_lesson": "004-open-terminal-safe-commands"
       }
     ]
   },

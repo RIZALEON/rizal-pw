@@ -3,4 +3,6 @@
 # Source: classroom/door/*-0005-KM02-in.json and -out.json (append-only).
 # Format: ---- ISO8601Z | party | role | surface | kind ----
 
-(no door events yet)
+---- 2026-09-26T09:42:16Z | SCOUT | teacher | classroom | door-in ----
+ЯID-0005-KM02 · S-20260926T094216Z-0005 · surface app · scan recognized (cli)
+purpose: Decider catch-up session 2026-09-26

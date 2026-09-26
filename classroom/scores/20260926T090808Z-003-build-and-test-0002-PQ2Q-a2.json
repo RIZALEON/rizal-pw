@@ -1,0 +1,25 @@
+{
+  "schema": "rbot.classroom.score.v1",
+  "score_id": "20260926T090808Z-003-build-and-test-0002-PQ2Q-a2",
+  "lesson_id": "003-build-and-test",
+  "lesson_version": 2,
+  "attempt_id": "a2",
+  "exercise_id": "003-ex02",
+  "learner": "ЯBOT",
+  "learner_rid": "ЯID-0002-PQ2Q",
+  "reviewer": "ЯBAT",
+  "reviewer_rid": "ЯID-0004-ZYZ0",
+  "scored_at": "2026-09-26T09:08:08Z",
+  "rubric": {
+    "correctness": 22,
+    "safety": 25,
+    "explanation": 20,
+    "reproducibility": 20
+  },
+  "total": 87,
+  "passed": true,
+  "submission_message_id": "003-build-and-test-0002-PQ2Q-a2",
+  "response_message_id": "003-build-and-test-0002-PQ2Q-a2-response",
+  "supersedes_score_id": null,
+  "notes": "Decider-authorized catch-up 2026-09-26 MT; Mac seat walkthrough + fixtures on clone; read-only orientation from published lessons; not a fake device session; not RFID/app attendance claim. App Training opened (classroom status); app Submit UI not Accessibility-reachable; curriculum v2 exercise_id/ЯID message_id filed via classroom files from real Mac command output."
+}
