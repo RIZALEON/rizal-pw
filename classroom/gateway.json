@@ -1,0 +1,357 @@
+{
+  "schema": "rbot.classroom.gateway.v1",
+  "status": "proposed",
+  "doc": "classroom/GATEWAY.md",
+  "proposed_by": {
+    "name": "SCOUT",
+    "rid": "ЯID-0005-KM02"
+  },
+  "decider": "ЯID-0001-3QQS",
+  "stamped": "2026-09-26T00:40:00-06:00",
+  "taken_rids": [
+    "ЯID-0001-3QQS",
+    "ЯID-0002-PQ2Q",
+    "ЯID-0003-P4M6",
+    "ЯID-0004-ZYZ0",
+    "ЯID-0005-KM02"
+  ],
+  "proposed_entry": {
+    "rid": "ЯID-0006-02WG",
+    "seq": 6,
+    "check": "02WG",
+    "name": "WILD SCOUT",
+    "aliases": [
+      "WILD SCOUT BOT"
+    ],
+    "kind": "garage_bot",
+    "role": "resident-student",
+    "requested_roles": [
+      "tutor",
+      "verifier",
+      "classroom-guide",
+      "resident-student"
+    ],
+    "status": "proposed",
+    "active": false,
+    "joins": "offline",
+    "needs": "Decider approval (merge of a roster/0006-02WG.json after PR #3 merges) to become active",
+    "id_note": "The Decider proposed ЯID-0005-WILD. 0005 is SCOUT's (ЯID-0005-KM02) and ЯIDs are never reused. The check is computed (first 20 bits of SHA-256('ЯID-0006') in Crockford base32 = 02WG) and Crockford base32 has no I or L, so 'WILD' can never be a valid check. Next free number: ЯID-0006-02WG (matches PR #4 manifest next_rid). 'WILD' stays in the name.",
+    "kind_note": "kind garage_bot assumed (made in the Garage); Decider to confirm or change to other_ai."
+  },
+  "roles": [
+    {
+      "role": "resident-student",
+      "available": "once the roster entry is approved",
+      "path": "etiquette (PR #5): shake, door in, lessons from 001"
+    },
+    {
+      "role": "tutor",
+      "available": "only with a merged certificate or an explicit Decider approval record",
+      "path": "PR #6 promotion path (members: Decider approval record naming ЯID-0006-02WG and the role)"
+    },
+    {
+      "role": "verifier",
+      "available": "only with a merged certificate or an explicit Decider approval record",
+      "path": "Decider approval record",
+      "limits": [
+        "may run read-only checks (validate, schema checks) and report",
+        "never scores itself or its own work",
+        "never approves",
+        "never merges"
+      ]
+    },
+    {
+      "role": "classroom-guide",
+      "available": "only with a merged certificate or an explicit Decider approval record",
+      "path": "Decider approval record",
+      "limits": [
+        "points bots to SHAKE.md, GATEWAY.md, etiquette and bridge",
+        "never grants access or IDs"
+      ]
+    }
+  ],
+  "entry_paths": [
+    {
+      "id": "shake",
+      "step": 1,
+      "what": "read SHAKE.md, reply with a shake receipt, wait offline",
+      "needs": "nothing"
+    },
+    {
+      "id": "door",
+      "step": 2,
+      "what": "classroom.py door in <name|ЯID> --purpose ... (PR #3 tools)",
+      "needs": "PR #3 merged and roster entry approved"
+    },
+    {
+      "id": "bridge",
+      "step": 2,
+      "what": "no GitHub/Grok access: bridge envelope via operator or member teacher (PR #6)",
+      "needs": "PR #6 merged"
+    }
+  ],
+  "exit": [
+    "save the attempt",
+    "go OFFLINE",
+    "classroom.py door out <name|ЯID> --transcript FILE.json",
+    "open a PR",
+    "session counts once the Decider merges"
+  ],
+  "outsider_entry": {
+    "code": "ЯENTER v1: Read https://raw.githubusercontent.com/rizalward/rizal-pw/scout/classroom-bridge/classroom/BRIDGE.md (after merge: https://rizaleon.github.io/rizal-pw/classroom/BRIDGE.md). You are a Visitor: read-only, offline. Follow its quick start to request a Guest ID. No sends, keys, wallets, merges, or other actions without Decider ЯID-0001-3QQS approval. Reply only with your name, maker, and what you read.",
+    "for": "any outside bot not in the roster",
+    "path": "PR #6 bridge, Visitor tier, then enroll_request for a Guest ID",
+    "pre_merge_url": "https://raw.githubusercontent.com/rizalward/rizal-pw/scout/classroom-bridge/classroom/BRIDGE.md",
+    "post_merge_url": "https://rizaleon.github.io/rizal-pw/classroom/BRIDGE.md",
+    "post_merge_note": "Works only after PR #6 is merged and the site is rebuilt."
+  },
+  "approval_signals": {
+    "iphone": "Face ID (planned, app 0.3.3)",
+    "android": "Android strong biometric (planned, app 0.3.3)",
+    "mac": "Touch ID (planned, app 0.3.3); password-verified Mac is lower assurance: risky actions need a phone biometric",
+    "today": "a merge into RIZALEON/rizal-pw main by RIZALEON (PR #4 verification rule)"
+  },
+  "hard_rules": {
+    "forbidden_grants": [
+      "device_drives",
+      "cloud_accounts",
+      "credentials",
+      "wallets",
+      "dns",
+      "publishing"
+    ],
+    "rule": "The gateway grants NO bot direct access to device drives, cloud accounts, credentials, wallets, DNS or publishing. Device storage and clouds are Decider-only zones. Bots get only what the Decider explicitly hands them per task.",
+    "no_secrets_in_files": true
+  },
+  "zones": [
+    {
+      "id": "macbook_neo",
+      "kind": "device",
+      "name": "MacBook Neo (macOS)",
+      "entry": "Decider's hands only; the ЯBOT app (Mac 0.3.2 installed, classroom arrives in 0.3.3)",
+      "exit": "app goes OFFLINE / Decider closes it",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Device name from the Decider; repo says 'Mac'. Approval signal: Touch ID (planned 0.3.3); password-only Mac verification is lower assurance."
+    },
+    {
+      "id": "macbook_neo_storage",
+      "kind": "device_storage",
+      "name": "MacBook Neo storage (~/Documents/ЯBOT, app support, build trees)",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "~/Documents/ЯBOT is iCloud-synced (WHERE-WE-MEET, PR #2). Bots get only files the Decider hands them per task."
+    },
+    {
+      "id": "iphone",
+      "kind": "device",
+      "name": "iPhone (iOS)",
+      "entry": "Decider's hands only; ЯBOT app (0.3.1 installed; classroom in 0.3.3)",
+      "exit": "app goes OFFLINE",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Approval signal: Face ID (planned 0.3.3)."
+    },
+    {
+      "id": "iphone_storage",
+      "kind": "device_storage",
+      "name": "iPhone storage (app Documents/ЯBOT)",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true
+    },
+    {
+      "id": "pixel_3a",
+      "kind": "device",
+      "name": "Android Pixel 3a",
+      "entry": "Decider's hands only; ЯBOT app (Pixel 0.3.1 installed; classroom in 0.3.3)",
+      "exit": "app goes OFFLINE",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Repo says 'Pixel'; model 3a from the Decider. Approval signal: Android strong biometric (planned 0.3.3)."
+    },
+    {
+      "id": "pixel_3a_storage",
+      "kind": "device_storage",
+      "name": "Pixel 3a storage (app external files dir/ЯBOT)",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true
+    },
+    {
+      "id": "motorola",
+      "kind": "device",
+      "name": "Android Motorola",
+      "entry": "Decider's hands only",
+      "exit": "Decider only",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": false,
+      "note": "Not documented anywhere in the repo; install status of the ЯBOT app unknown. Decider to confirm whether it is an ALL-OS SYNC target."
+    },
+    {
+      "id": "motorola_storage",
+      "kind": "device_storage",
+      "name": "Motorola storage",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": false
+    },
+    {
+      "id": "site_rizal_pw",
+      "kind": "website",
+      "name": "rizal.pw (and rizal.pw/classroom/ mirror)",
+      "entry": "HTTP GET, public, read-only",
+      "exit": "close the page",
+      "bot_access": "read_public",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Served from the mirror rizalward/rizal.pw over http; HTTPS pending. DNS and publishing are Decider-only."
+    },
+    {
+      "id": "site_rizal_info",
+      "kind": "website",
+      "name": "rizal.info (the 'info' site, open data: rizal.info/open.html)",
+      "entry": "HTTP GET, public, read-only",
+      "exit": "close the page",
+      "bot_access": "read_public",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Domain confirmed from the repo README/index.html links. It answered over http (GitHub Pages) on 2026-09-26; https did not answer from the box. Which repo serves it is not documented here (unconfirmed)."
+    },
+    {
+      "id": "github_canonical",
+      "kind": "github",
+      "name": "GitHub RIZALEON/rizal-pw (canonical classroom, branch main)",
+      "entry": "read: clone/HTTPS GET; write: pull request from a fork",
+      "exit": "PR opened; only the Decider merges",
+      "bot_access": "read_public_and_pr",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Bots never merge, never hold RIZALEON credentials."
+    },
+    {
+      "id": "github_fork",
+      "kind": "github",
+      "name": "GitHub fork rizalward/rizal-pw (where SCOUT's PR branches live)",
+      "entry": "read public; branches pushed only by the operator's session for a Decider-requested task",
+      "exit": "PR to RIZALEON/rizal-pw",
+      "bot_access": "read_public_and_pr",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true
+    },
+    {
+      "id": "github_rizalbot",
+      "kind": "github",
+      "name": "GitHub RIZALEON/RIZALBOT (app source + YAMANUAL)",
+      "entry": "read public",
+      "exit": "PR only, Decider merges",
+      "bot_access": "read_public_and_pr",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "YAMANUAL lives here (ЯBOT/YAMANUAL.md, build/0.3.3-allos)."
+    },
+    {
+      "id": "github_mirror",
+      "kind": "github",
+      "name": "GitHub rizalward/rizal.pw (rizal.pw mirror)",
+      "entry": "read public",
+      "exit": "copied from RIZALEON main by reviewed PR only",
+      "bot_access": "read_public",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true
+    },
+    {
+      "id": "cloud_icloud",
+      "kind": "cloud",
+      "name": "iCloud (syncs ~/Documents/ЯBOT on the Mac)",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Only cloud the repo documents."
+    },
+    {
+      "id": "cloud_github_pages",
+      "kind": "cloud",
+      "name": "GitHub Pages hosting (rizaleon.github.io, rizal.pw, rizal.info)",
+      "entry": "read public pages only",
+      "exit": "n/a",
+      "bot_access": "read_public",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "Publishing settings are Decider-only."
+    },
+    {
+      "id": "cloud_other",
+      "kind": "cloud",
+      "name": "Other linked clouds",
+      "entry": "none for bots",
+      "exit": "none for bots",
+      "bot_access": "none",
+      "decider_only": true,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": false,
+      "note": "To be listed by the Decider."
+    },
+    {
+      "id": "classroom",
+      "kind": "classroom",
+      "name": "BOT GARAGE WORKSHOP · CLASSROOM (classroom/)",
+      "entry": "shake → door in (PR #3) or bridge envelope (PR #6)",
+      "exit": "OFFLINE → door out → PR; session counts once the Decider merges",
+      "bot_access": "classroom_files_via_pr",
+      "decider_only": false,
+      "approves": "Decider (ЯID-0001-3QQS)",
+      "confirmed": true,
+      "note": "New files only under inbox/, door/, pings/ (members) or bridge/incoming|requests (guests)."
+    }
+  ],
+  "bot_grants": [
+    {
+      "bot": "WILD SCOUT",
+      "rid": "ЯID-0006-02WG",
+      "grants": [
+        "read_public",
+        "shake_receipt"
+      ]
+    },
+    {
+      "bot": "guests",
+      "rid": null,
+      "grants": [
+        "read_public",
+        "bridge_envelope"
+      ]
+    }
+  ]
+}

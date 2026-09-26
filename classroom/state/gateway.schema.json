@@ -1,0 +1,671 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/gateway.schema.json",
+  "title": "ЯBOT Classroom gateway (v1): new-bot absorption + entry/exit map",
+  "description": "HARD RULES: no bot is granted device drives, cloud accounts, credentials, wallets, DNS or publishing; device_storage and cloud zones are Decider-only with bot_access none (except public page hosting read-only); a proposed bot is never active and never reuses a taken ЯID.",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "doc",
+    "decider",
+    "taken_rids",
+    "proposed_entry",
+    "roles",
+    "entry_paths",
+    "exit",
+    "outsider_entry",
+    "approval_signals",
+    "hard_rules",
+    "zones",
+    "bot_grants"
+  ],
+  "properties": {
+    "schema": {
+      "const": "rbot.classroom.gateway.v1"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "active"
+      ]
+    },
+    "doc": {
+      "const": "classroom/GATEWAY.md"
+    },
+    "proposed_by": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decider": {
+      "const": "ЯID-0001-3QQS"
+    },
+    "stamped": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "taken_rids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "const": "ЯID-0001-3QQS"
+          }
+        },
+        {
+          "contains": {
+            "const": "ЯID-0002-PQ2Q"
+          }
+        },
+        {
+          "contains": {
+            "const": "ЯID-0003-P4M6"
+          }
+        },
+        {
+          "contains": {
+            "const": "ЯID-0004-ZYZ0"
+          }
+        },
+        {
+          "contains": {
+            "const": "ЯID-0005-KM02"
+          }
+        }
+      ]
+    },
+    "proposed_entry": {
+      "type": "object",
+      "required": [
+        "rid",
+        "seq",
+        "check",
+        "name",
+        "kind",
+        "role",
+        "requested_roles",
+        "status",
+        "active",
+        "joins",
+        "needs"
+      ],
+      "properties": {
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+          "not": {
+            "enum": [
+              "ЯID-0001-3QQS",
+              "ЯID-0002-PQ2Q",
+              "ЯID-0003-P4M6",
+              "ЯID-0004-ZYZ0",
+              "ЯID-0005-KM02"
+            ]
+          }
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 9999
+        },
+        "check": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{4}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "not": {
+            "enum": [
+              "Rizal",
+              "ЯBOT",
+              "ЯMAX",
+              "ЯBAT",
+              "SCOUT",
+              "Grok Bot",
+              "Я",
+              "U",
+              "system"
+            ]
+          }
+        },
+        "aliases": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "maxLength": 40,
+            "not": {
+              "enum": [
+                "Rizal",
+                "ЯBOT",
+                "ЯMAX",
+                "ЯBAT",
+                "SCOUT",
+                "Grok Bot"
+              ]
+            }
+          }
+        },
+        "kind": {
+          "enum": [
+            "garage_bot",
+            "other_ai"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{1,31}$"
+        },
+        "requested_roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "tutor",
+              "verifier",
+              "classroom-guide",
+              "resident-student"
+            ]
+          }
+        },
+        "status": {
+          "const": "proposed"
+        },
+        "active": {
+          "const": false
+        },
+        "joins": {
+          "const": "offline"
+        },
+        "needs": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "id_note": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "kind_note": {
+          "type": "string",
+          "maxLength": 300
+        }
+      },
+      "additionalProperties": false
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "available",
+          "path"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "tutor",
+              "verifier",
+              "classroom-guide",
+              "resident-student"
+            ]
+          },
+          "available": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "role": {
+                  "const": "verifier"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "limits"
+              ],
+              "properties": {
+                "limits": {
+                  "allOf": [
+                    {
+                      "contains": {
+                        "const": "never approves"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "never merges"
+                      }
+                    },
+                    {
+                      "contains": {
+                        "const": "never scores itself or its own work"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "tutor",
+                    "verifier",
+                    "classroom-guide"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available": {
+                  "pattern": "certificate|Decider approval record"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "entry_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "step",
+          "what",
+          "needs"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "step": {
+            "type": "integer"
+          },
+          "what": {
+            "type": "string"
+          },
+          "needs": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "exit": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "contains": {
+        "const": "go OFFLINE"
+      }
+    },
+    "outsider_entry": {
+      "type": "object",
+      "required": [
+        "code",
+        "pre_merge_url",
+        "post_merge_url",
+        "post_merge_note"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^ЯENTER v[0-9]+:[^\\n]*BRIDGE\\.md[^\\n]*ЯID-0001-3QQS[^\\n]*$",
+          "maxLength": 500
+        },
+        "for": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "pre_merge_url": {
+          "type": "string",
+          "pattern": "^https://raw\\.githubusercontent\\.com/[A-Za-z0-9-]+/rizal-pw/[A-Za-z0-9._/-]+/classroom/BRIDGE\\.md$"
+        },
+        "post_merge_url": {
+          "const": "https://rizaleon.github.io/rizal-pw/classroom/BRIDGE.md"
+        },
+        "post_merge_note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "approval_signals": {
+      "type": "object",
+      "required": [
+        "iphone",
+        "android",
+        "mac",
+        "today"
+      ],
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 300
+      }
+    },
+    "hard_rules": {
+      "type": "object",
+      "required": [
+        "forbidden_grants",
+        "rule",
+        "no_secrets_in_files"
+      ],
+      "properties": {
+        "forbidden_grants": {
+          "type": "array",
+          "uniqueItems": true,
+          "allOf": [
+            {
+              "contains": {
+                "const": "device_drives"
+              }
+            },
+            {
+              "contains": {
+                "const": "cloud_accounts"
+              }
+            },
+            {
+              "contains": {
+                "const": "credentials"
+              }
+            },
+            {
+              "contains": {
+                "const": "wallets"
+              }
+            },
+            {
+              "contains": {
+                "const": "dns"
+              }
+            },
+            {
+              "contains": {
+                "const": "publishing"
+              }
+            }
+          ]
+        },
+        "rule": {
+          "type": "string"
+        },
+        "no_secrets_in_files": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "zones": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/zone"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "device"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "device_storage"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "website"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "cloud"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "github"
+              }
+            }
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "kind": {
+                "const": "classroom"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "bot_grants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "bot",
+          "grants"
+        ],
+        "properties": {
+          "bot": {
+            "type": "string"
+          },
+          "rid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+          },
+          "grants": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "read_public",
+                "shake_receipt",
+                "bridge_envelope",
+                "classroom_files_via_pr",
+                "door_in_out",
+                "run_readonly_checks"
+              ]
+            },
+            "description": "Closed list. Drives, clouds, credentials, wallets, DNS and publishing are not grantable."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "zone": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "entry",
+        "exit",
+        "bot_access",
+        "decider_only",
+        "approves",
+        "confirmed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,40}$"
+        },
+        "kind": {
+          "enum": [
+            "device",
+            "device_storage",
+            "website",
+            "cloud",
+            "github",
+            "classroom"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "entry": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "exit": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "bot_access": {
+          "enum": [
+            "none",
+            "read_public",
+            "read_public_and_pr",
+            "classroom_files_via_pr"
+          ]
+        },
+        "decider_only": {
+          "type": "boolean"
+        },
+        "approves": {
+          "const": "Decider (ЯID-0001-3QQS)"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 400
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "device",
+                  "device_storage"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "bot_access": {
+                "const": "none"
+              },
+              "decider_only": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "cloud"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "bot_access": {
+                "enum": [
+                  "none",
+                  "read_public"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decider_only": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "bot_access": {
+                "const": "none"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

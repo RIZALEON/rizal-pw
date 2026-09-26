@@ -1,0 +1,517 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/shake.schema.json",
+  "title": "ЯBOT Classroom shake (ЯSHAKE) block (v1)",
+  "description": "The read-only handshake any bot reads first (classroom/SHAKE.md). Hard rules: only the classroom manual section may auto-update; the shake grants no power and takes no action without the Decider (ЯID-0001-3QQS). $defs.receipt is the shape of a shake receipt.",
+  "type": "object",
+  "required": [
+    "schema",
+    "version",
+    "status",
+    "doc",
+    "decider",
+    "one_line",
+    "urls",
+    "steps",
+    "sources",
+    "manual_sections",
+    "permissions",
+    "receipt",
+    "next_steps"
+  ],
+  "properties": {
+    "schema": {
+      "const": "rbot.classroom.shake.v1"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "active"
+      ]
+    },
+    "doc": {
+      "const": "classroom/SHAKE.md"
+    },
+    "proposed_by": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decider": {
+      "const": "ЯID-0001-3QQS"
+    },
+    "stamped": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "one_line": {
+      "type": "string",
+      "minLength": 40,
+      "maxLength": 310,
+      "pattern": "^ЯSHAKE v[0-9]+[^\\n]*SHAKE\\.md[^\\n]*ЯID-0001-3QQS[^\\n]*$",
+      "description": "The one-line code: single line, names SHAKE.md and the Decider's ЯID."
+    },
+    "urls": {
+      "type": "object",
+      "required": [
+        "post_merge",
+        "pre_merge"
+      ],
+      "properties": {
+        "post_merge": {
+          "const": "https://rizaleon.github.io/rizal-pw/classroom/SHAKE.md"
+        },
+        "post_merge_mirror": {
+          "type": "string",
+          "pattern": "^https?://rizal\\.pw/classroom/SHAKE\\.md$"
+        },
+        "pre_merge": {
+          "type": "string",
+          "pattern": "^https://raw\\.githubusercontent\\.com/[A-Za-z0-9-]+/rizal-pw/[A-Za-z0-9._/-]+/classroom/SHAKE\\.md$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "definition": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "outsider_entry": {
+      "type": "object",
+      "required": [
+        "code_in"
+      ],
+      "properties": {
+        "code_in": {
+          "const": "classroom/GATEWAY.md#outsider-entry-code"
+        },
+        "json": {
+          "type": "string"
+        },
+        "for": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "steps": {
+      "const": [
+        "accept",
+        "absorb",
+        "analyze",
+        "state_next_task",
+        "receipt_and_wait_offline"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "order",
+          "id",
+          "path"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,31}$"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "manual_sections": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "auto_update"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,40}$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "auto_update": {
+            "type": "boolean"
+          },
+          "when": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "implemented": {
+            "type": "boolean"
+          },
+          "changes_via": {
+            "const": "Decider-approved PR only"
+          }
+        },
+        "additionalProperties": false,
+        "if": {
+          "not": {
+            "properties": {
+              "id": {
+                "const": "classroom"
+              }
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "auto_update": {
+              "const": false
+            }
+          },
+          "required": [
+            "changes_via"
+          ]
+        }
+      },
+      "contains": {
+        "properties": {
+          "id": {
+            "const": "classroom"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "minContains": 1,
+      "maxContains": 1,
+      "description": "HARD RULE: auto_update may be true only for id 'classroom'. Every other section must say changes_via 'Decider-approved PR only'. Exactly one classroom entry."
+    },
+    "permissions": {
+      "type": "object",
+      "required": [
+        "may_act_without_approval",
+        "forbidden_without_decider_approval",
+        "approver",
+        "counts_as_door_checkin"
+      ],
+      "properties": {
+        "may_act_without_approval": {
+          "const": false
+        },
+        "allowed": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "read public files",
+              "write the shake receipt as a chat reply"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "forbidden_without_decider_approval": {
+          "type": "array",
+          "uniqueItems": true,
+          "allOf": [
+            {
+              "contains": {
+                "const": "send_or_message"
+              }
+            },
+            {
+              "contains": {
+                "const": "merge"
+              }
+            },
+            {
+              "contains": {
+                "const": "keys_passwords_tokens"
+              }
+            },
+            {
+              "contains": {
+                "const": "wallets_signing_transfers"
+              }
+            },
+            {
+              "contains": {
+                "const": "dns"
+              }
+            },
+            {
+              "contains": {
+                "const": "publishing"
+              }
+            },
+            {
+              "contains": {
+                "const": "deletion"
+              }
+            },
+            {
+              "contains": {
+                "const": "go_online"
+              }
+            },
+            {
+              "contains": {
+                "const": "remote_or_device_commands"
+              }
+            }
+          ]
+        },
+        "approver": {
+          "const": "ЯID-0001-3QQS"
+        },
+        "counts_as_door_checkin": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "receipt": {
+      "type": "object",
+      "required": [
+        "header",
+        "fields",
+        "mode",
+        "actions_taken"
+      ],
+      "properties": {
+        "header": {
+          "const": "ЯSHAKE RECEIPT v1"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mode": {
+          "const": "OFFLINE"
+        },
+        "actions_taken": {
+          "const": "none"
+        },
+        "example": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "most_recent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "ref",
+          "what"
+        ],
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "what": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "who",
+          "task"
+        ],
+        "properties": {
+          "who": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "rid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+          },
+          "rid_status": {
+            "enum": [
+              "proposed"
+            ]
+          },
+          "task": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "followups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "for",
+          "where",
+          "item"
+        ],
+        "properties": {
+          "for": {
+            "type": "string"
+          },
+          "where": {
+            "type": "string"
+          },
+          "item": {
+            "type": "string",
+            "maxLength": 400
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "receipt": {
+      "type": "object",
+      "required": [
+        "schema",
+        "bot",
+        "id",
+        "read",
+        "last_done",
+        "next_task",
+        "mode",
+        "actions_taken",
+        "waiting_for"
+      ],
+      "properties": {
+        "schema": {
+          "const": "rbot.classroom.shake-receipt.v1"
+        },
+        "bot": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^(ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}|GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}|none)$"
+        },
+        "id_status": {
+          "enum": [
+            "active",
+            "proposed",
+            "none"
+          ]
+        },
+        "read": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "source"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "sha": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{7,40}$"
+              },
+              "unreachable": {
+                "const": true
+              }
+            },
+            "additionalProperties": false,
+            "oneOf": [
+              {
+                "required": [
+                  "sha"
+                ]
+              },
+              {
+                "required": [
+                  "unreachable"
+                ]
+              }
+            ]
+          }
+        },
+        "last_done": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "next_task": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "mode": {
+          "const": "OFFLINE"
+        },
+        "actions_taken": {
+          "const": "none"
+        },
+        "waiting_for": {
+          "const": "ЯID-0001-3QQS"
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
