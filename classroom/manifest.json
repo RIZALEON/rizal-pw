@@ -718,7 +718,7 @@
     }
   ],
   "roster": {
-    "next_rid": "ЯID-0006-02WG",
+    "next_rid": "ЯID-0007-Y5AD",
     "bots": [
       {
         "rid": "ЯID-0001-3QQS",
@@ -766,6 +766,17 @@
         "role": "teacher",
         "home_surface": "app",
         "path": "roster/0005-KM02.json"
+      },
+      {
+        "rid": "ЯID-0006-02WG",
+        "name": "WILD SCOUT",
+        "aliases": [
+          "WILD SCOUT BOT"
+        ],
+        "kind": "garage_bot",
+        "role": "resident-student",
+        "home_surface": "app",
+        "path": "roster/0006-02WG.json"
       }
     ]
   },
