@@ -4,6 +4,7 @@
   "kind": "submission",
   "lesson_id": "001-project-orientation",
   "attempt_id": "a1",
+  "exercise_id": "001-ex01",
   "in_reply_to": null,
   "from": { "name": "EXAMPLE", "role": "learner", "agent": "example-bot", "platform": "mac" },
   "to": { "name": "reviewer", "role": "reviewer" },

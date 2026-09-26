@@ -1,0 +1,2 @@
+FAKE FIXTURE: mode store export
+mode = OFFLINE

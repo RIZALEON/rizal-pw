@@ -1,0 +1,41 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real. Shape of a public Solana RPC getAccountInfo (jsonParsed) answer; values are illustrative, not a live read.",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "getAccountInfo",
+    "params": [
+      "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv",
+      {
+        "encoding": "jsonParsed"
+      }
+    ]
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "context": {
+        "slot": 1
+      },
+      "value": {
+        "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "executable": false,
+        "data": {
+          "program": "spl-token",
+          "parsed": {
+            "type": "mint",
+            "info": {
+              "decimals": 9,
+              "isInitialized": true,
+              "mintAuthority": "BwpVNk1Rtncpv5HMTLwxB4Yfjkfv6mFaBQUTpjneH1F9",
+              "freezeAuthority": "BwpVNk1Rtncpv5HMTLwxB4Yfjkfv6mFaBQUTpjneH1F9",
+              "supply": "1000000000000000"
+            }
+          }
+        }
+      }
+    }
+  }
+}

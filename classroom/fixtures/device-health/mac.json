@@ -1,0 +1,46 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "platform": "mac",
+  "captured_at": "2026-09-25T20:05:00-06:00",
+  "stands_in_for": [
+    "sw_vers",
+    "df -h /",
+    "pmset -g batt",
+    "system_profiler SPPowerDataType (cycle count, condition)",
+    "memory_pressure -Q",
+    "uptime",
+    "pmset -g therm"
+  ],
+  "os": {
+    "name": "macOS",
+    "version": "26.0",
+    "build": "25A000-fixture"
+  },
+  "model": "MacBook (fixture)",
+  "disk": {
+    "mount": "/",
+    "total_gb": 460.4,
+    "free_gb": 39.0,
+    "used_pct": 91.5
+  },
+  "battery": {
+    "percent": 64,
+    "charging": false,
+    "cycle_count": 212,
+    "condition": "Normal"
+  },
+  "memory": {
+    "total_gb": 16,
+    "free_pct": 18,
+    "pressure": "warn"
+  },
+  "uptime_days": 23,
+  "thermal": "nominal",
+  "apps": {
+    "ЯBOT": {
+      "installed_version": "0.3.2",
+      "build": "2026092402"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "rbot.classroom.enrollment.v1",
+  "version": 1,
+  "learner": {
+    "rid": "ЯID-0002-PQ2Q",
+    "name": "ЯBOT"
+  },
+  "teacher": {
+    "rid": "ЯID-0005-KM02",
+    "name": "SCOUT"
+  },
+  "scorers": [
+    {
+      "rid": "ЯID-0005-KM02",
+      "name": "SCOUT"
+    },
+    {
+      "rid": "ЯID-0004-ZYZ0",
+      "name": "ЯBAT"
+    }
+  ],
+  "curriculum": "manifest.json#curriculum",
+  "lessons": [
+    "001-project-orientation",
+    "002-safe-inspection",
+    "003-build-and-test",
+    "004-open-terminal-safe-commands",
+    "005-write-run-test-code",
+    "006-door-scan",
+    "007-walis-drive-optimize",
+    "008-register-and-mind-transcript",
+    "009-manual-lookup",
+    "010-git-by-proposal",
+    "011-tokenblast-probe",
+    "012-device-health",
+    "013-all-os-sync-check",
+    "014-backup-checksum-verify",
+    "015-seat-finding",
+    "016-approval-requests",
+    "017-teach-back-and-peer-review"
+  ],
+  "proficiency": {
+    "streak_required": 3,
+    "reset_on_fail": true,
+    "retry_prompt": "different",
+    "distinct_prompts_in_streak": true,
+    "unlock": "next lesson opens when the current one is proficient; 004 opens when 001, 002 and 003 are all proficient"
+  },
+  "status": "enrolled, awaiting app 0.3.3 install",
+  "surfaces": [
+    "offline",
+    "macos",
+    "ios",
+    "android"
+  ],
+  "sandbox": "state/sandbox.json",
+  "enrolled_at": "2026-09-26T04:22:00Z",
+  "enrolled_by": {
+    "name": "ЯBAT",
+    "role": "professor",
+    "order": "Decider order 2026-09-25 22:15 MDT: enroll ЯBOT and ЯMAX as offline bots, teacher SCOUT, scorers SCOUT or ЯBAT only; SCOUT's review folded in."
+  },
+  "filed_as": "proposed",
+  "open_questions": [
+    "Display name / real name for ЯBOT: none found in any RIZALBOT branch or mirror; waiting on the Decider.",
+    "Permanent RFID for ЯBOT: none found for the Garage bot (the Mac BOT-RFID-REGISTRY lists no Garage bots); waiting on the Decider.",
+    "How the Garage bots fit the numbering law (YAMANUAL: waiting on the Decider)."
+  ],
+  "notes": "ЯBOT has not installed app 0.3.3 yet, so there is no door check-in and no score: nothing here claims ЯBOT attended. Until the install, ЯBOT works offline against fixtures/ (state/sandbox.json). Peer review in lesson 017 pairs ЯBOT with ЯMAX as advice only; SCOUT or ЯBAT score. Progress is generated into views/proficiency.json from scores/."
+}

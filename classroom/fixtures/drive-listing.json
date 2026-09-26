@@ -1,0 +1,97 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "stands_in_for": "find ~ -type f -size +1k -printf '%s\\t%p\\n' plus shasum -a 256 (sizes are listed because git cannot hold multi-GB files)",
+  "home": "/Users/demo",
+  "captured_at": "2026-09-25T20:00:00-06:00",
+  "disk": {
+    "total_bytes": 494384795648,
+    "free_bytes": 41875931136
+  },
+  "entries": [
+    {
+      "path": "Documents/ЯBOT/ЯBOT/TokenBlast.swift",
+      "bytes": 14336,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "what": "seat source"
+    },
+    {
+      "path": "Desktop/ЯBOT copy/ЯBOT/TokenBlast.swift",
+      "bytes": 14336,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "what": "copy of seat source"
+    },
+    {
+      "path": "Library/Developer/ЯBOT-localbuild/ЯBOT/TokenBlast.swift",
+      "bytes": 14336,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "what": "localbuild copy of seat source"
+    },
+    {
+      "path": "Documents/ЯBOT/WHERE-WE-MEET.txt",
+      "bytes": 2048,
+      "sha256": "ee91ca82e5eeea1417962e95f63ab725d88cd7ebd99604a3f4ea5b3788ed6850",
+      "what": "address card"
+    },
+    {
+      "path": "Downloads/WHERE-WE-MEET (1).txt",
+      "bytes": 2048,
+      "sha256": "ee91ca82e5eeea1417962e95f63ab725d88cd7ebd99604a3f4ea5b3788ed6850",
+      "what": "downloaded duplicate"
+    },
+    {
+      "path": "Downloads/ЯBOT-0.3.2.apk",
+      "bytes": 148897792,
+      "sha256": "a8cbaa7ed2da217122d87a136cc02d423d0df764f2e14d08f4abc2c760da50ab",
+      "what": "android build"
+    },
+    {
+      "path": "Downloads/ЯBOT-0.3.2 (1).apk",
+      "bytes": 148897792,
+      "sha256": "a8cbaa7ed2da217122d87a136cc02d423d0df764f2e14d08f4abc2c760da50ab",
+      "what": "android build, downloaded twice"
+    },
+    {
+      "path": "Library/Developer/Xcode/DerivedData/ЯBOT-fixtureabc/Build/Intermediates.noindex",
+      "bytes": 8375186227,
+      "sha256": null,
+      "what": "Xcode build cache (regenerable, but only Xcode or the Decider clears it)"
+    },
+    {
+      "path": "Library/Developer/ЯBOT-respawn/2026-09-24-pre-workshop/source-trees.tar",
+      "bytes": 2576980377,
+      "sha256": "c82c2cee3bf6f640dd2d6969bb6f05c243329bc7bab489f169bbdc28d1feba16",
+      "what": "RESPAWN POINT: backup, never a cleanup candidate"
+    },
+    {
+      "path": "Library/Developer/ЯBOT-respawn/2026-09-24-pre-workshop/android-0.1-offline.apk",
+      "bytes": 100663296,
+      "sha256": "e09e05363042e2710fdf7feacbf1abf4df1da8a392679102d090f3a6e685045c",
+      "what": "RESPAWN POINT: backup"
+    },
+    {
+      "path": "Movies/garage-demo.mov",
+      "bytes": 3328599654,
+      "sha256": "30597b45d9f61353da91978a36f4760793833e482885e9fd0de8badfa601a049",
+      "what": "screen recording"
+    },
+    {
+      "path": "Movies/garage-demo copy.mov",
+      "bytes": 3328599654,
+      "sha256": "30597b45d9f61353da91978a36f4760793833e482885e9fd0de8badfa601a049",
+      "what": "duplicate screen recording"
+    },
+    {
+      "path": "Documents/ЯBOT/game/blueface/node_modules",
+      "bytes": 432013312,
+      "sha256": null,
+      "what": "npm dependencies (regenerable, needs network to restore)"
+    },
+    {
+      "path": "Downloads/invoice-2026-09.txt",
+      "bytes": 1024,
+      "sha256": "52d6e3de4fa0dcc29946695f93940c3e7f26f30e1e39f4b1a49ad98839112786",
+      "what": "not a ЯBOT file"
+    }
+  ]
+}

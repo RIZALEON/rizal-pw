@@ -1,0 +1,7 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "stands_in_for": "android/app/src/main/assets/classroom/manifest.json (offline copy in the APK)",
+  "lesson_count": 3,
+  "seeded_at": "2026-09-25T18:00:00-06:00"
+}

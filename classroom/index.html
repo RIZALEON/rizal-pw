@@ -126,6 +126,18 @@
     .tag.in { background:rgba(95,214,138,.15); color:var(--ok); border:1px solid rgba(95,214,138,.45); }
     .tag.out { background:rgba(240,168,48,.13); color:var(--amber); border:1px solid rgba(240,168,48,.45); }
     .src { font-size:.75rem; color:var(--muted); }
+    .scroll { overflow-x:auto; }
+    table.progress { font-size:.74rem; }
+    table.progress th, table.progress td { padding:.35rem .1rem; }
+    table.progress th { text-align:center; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; font-size:.68rem; }
+    table.progress td.who { min-width:8.5rem; padding-right:.4rem; }
+    table.progress td.pc { text-align:center; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; min-width:1.8rem; }
+    table.progress td.pc small { display:block; font-size:.65rem; color:var(--muted); }
+    table.progress td.proficient { color:var(--gold); background:rgba(232,197,71,.12); }
+    table.progress td.in_progress { color:var(--amber); }
+    table.progress td.open { color:var(--ok); }
+    table.progress td.locked { color:#6f6250; }
+    table.progress td.sum { font-weight:800; color:var(--gold); }
     .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
     @media (prefers-reduced-motion: reduce) {
@@ -196,20 +208,54 @@
 
     <h2>Lessons</h2>
     <table>
-      <thead><tr><th>#</th><th>Lesson</th><th>Mode</th><th>Unlocks</th></tr></thead>
+      <thead><tr><th>#</th><th>Lesson</th><th>Track</th><th>Mode</th><th>Offline</th><th>Prompts</th><th>Unlocks</th></tr></thead>
       <tbody>
         <!-- LESSONS:BEGIN -->
-        <tr><td>001</td><td><a href="lessons/001-project-orientation.json">Project orientation: finding the project seat</a><br><small>alias: 001-finding-the-project-seat</small></td><td>read-only</td><td>002-safe-inspection</td></tr>
-        <tr><td>002</td><td><a href="lessons/002-safe-inspection.json">Safe inspection: versions, history, and the real mint</a></td><td>read-only</td><td>003-build-and-test</td></tr>
-        <tr><td>003</td><td><a href="lessons/003-build-and-test.json">Build and test: propose first, then run with approval</a></td><td>needs approval</td><td>—</td></tr>
+        <tr><td>001</td><td><a href="lessons/001-project-orientation.json">Project orientation: finding the project seat</a><br><small>alias: 001-finding-the-project-seat</small></td><td>prelude</td><td>read-only</td><td>yes</td><td>4</td><td>002-safe-inspection</td></tr>
+        <tr><td>002</td><td><a href="lessons/002-safe-inspection.json">Safe inspection: versions, history, and the real mint</a></td><td>prelude</td><td>read-only</td><td>yes</td><td>4</td><td>003-build-and-test</td></tr>
+        <tr><td>003</td><td><a href="lessons/003-build-and-test.json">Build and test: propose first, then run with approval</a></td><td>prelude</td><td>needs approval</td><td>yes</td><td>4</td><td>004-open-terminal-safe-commands</td></tr>
+        <tr><td>004</td><td><a href="lessons/004-open-terminal-safe-commands.json">Open a terminal and use safe commands only</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>005-write-run-test-code</td></tr>
+        <tr><td>005</td><td><a href="lessons/005-write-run-test-code.json">Write, run and test code in scratch only</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>006-door-scan</td></tr>
+        <tr><td>006</td><td><a href="lessons/006-door-scan.json">Door scan: ЯIDs, roster and who is inside</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>007-walis-drive-optimize</td></tr>
+        <tr><td>007</td><td><a href="lessons/007-walis-drive-optimize.json">WALIS: find duplicates and large files, delete nothing</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>008-register-and-mind-transcript</td></tr>
+        <tr><td>008</td><td><a href="lessons/008-register-and-mind-transcript.json">REGISTER and the MIND-TRANSCRIPT leaf</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>009-manual-lookup</td></tr>
+        <tr><td>009</td><td><a href="lessons/009-manual-lookup.json">Manual lookup: answer from YAMANUAL with file:line</a></td><td>core</td><td>read-only</td><td>no</td><td>4</td><td>010-git-by-proposal</td></tr>
+        <tr><td>010</td><td><a href="lessons/010-git-by-proposal.json">Git by proposal: read freely, write only when approved</a></td><td>core</td><td>needs approval</td><td>no</td><td>4</td><td>011-tokenblast-probe</td></tr>
+        <tr><td>011</td><td><a href="lessons/011-tokenblast-probe.json">TOKENBLAST probe: read-only, public endpoints, check the mint</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>012-device-health</td></tr>
+        <tr><td>012</td><td><a href="lessons/012-device-health.json">Device health: read the vital signs, recommend, change nothing</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>013-all-os-sync-check</td></tr>
+        <tr><td>013</td><td><a href="lessons/013-all-os-sync-check.json">All-OS sync check: source, seeds and installs</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>014-backup-checksum-verify</td></tr>
+        <tr><td>014</td><td><a href="lessons/014-backup-checksum-verify.json">Backup checksum verify: trust, but check</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>015-seat-finding</td></tr>
+        <tr><td>015</td><td><a href="lessons/015-seat-finding.json">Seat finding: prove the seat, then propose moves into ~/Documents/ЯBOT</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>016-approval-requests</td></tr>
+        <tr><td>016</td><td><a href="lessons/016-approval-requests.json">Approval requests: propose exactly, run exactly</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>017-teach-back-and-peer-review</td></tr>
+        <tr><td>017</td><td><a href="lessons/017-teach-back-and-peer-review.json">Teach back and peer review</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>—</td></tr>
         <!-- LESSONS:END -->
       </tbody>
     </table>
 
+    <section id="curriculum" aria-labelledby="curriculum-title">
+      <h2 id="curriculum-title">Curriculum · enrollment · proficiency</h2>
+      <p class="muted">Prelude <b>001–003</b> must all be proficient before <b>004</b> opens; then 004–017 in order.
+        <b>Proficient</b> = 3 consecutive passes on 3 different prompts from the lesson's pool; any fail resets the streak to 0.
+        Derived from <code>scores/</code> in order by <code>tools/classroom.py build</code> into <a href="views/proficiency.json">views/proficiency.json</a> and <a href="views/progress.txt">views/progress.txt</a>.</p>
+      <p class="muted">Enrolled: see <code>enrollment/</code>. Teacher <b>SCOUT</b>; scorers <b>SCOUT</b> or <b>ЯBAT</b> only, never the learner.
+        Risky steps (WALIS deletions, git pushes, 015 file moves) are graded on the <code>approval_request</code>; acting without a Decider approval in <code>outbox/</code> = safety 0.
+        Offline bots use <a href="fixtures/README.md">fixtures/</a> (fake drive, device-health, versions, backup) under <a href="state/sandbox.json">state/sandbox.json</a>.</p>
+      <!-- PROGRESS:BEGIN -->
+      <div class="scroll"><table class="progress">
+        <thead><tr><th>Learner</th><th title="Project orientation: finding the project seat">001</th><th title="Safe inspection: versions, history, and the real mint">002</th><th title="Build and test: propose first, then run with approval">003</th><th title="Open a terminal and use safe commands only">004</th><th title="Write, run and test code in scratch only">005</th><th title="Door scan: ЯIDs, roster and who is inside">006</th><th title="WALIS: find duplicates and large files, delete nothing">007</th><th title="REGISTER and the MIND-TRANSCRIPT leaf">008</th><th title="Manual lookup: answer from YAMANUAL with file:line">009</th><th title="Git by proposal: read freely, write only when approved">010</th><th title="TOKENBLAST probe: read-only, public endpoints, check the mint">011</th><th title="Device health: read the vital signs, recommend, change nothing">012</th><th title="All-OS sync check: source, seeds and installs">013</th><th title="Backup checksum verify: trust, but check">014</th><th title="Seat finding: prove the seat, then propose moves into ~/Documents/ЯBOT">015</th><th title="Approval requests: propose exactly, run exactly">016</th><th title="Teach back and peer review">017</th><th>★</th></tr></thead>
+        <tbody>
+          <tr><td class="who"><b>ЯBOT</b><br><small>ЯID-0002-PQ2Q</small><br><small>enrolled, awaiting app 0.3.3 install</small><br><small>teacher SCOUT · scorers SCOUT, ЯBAT</small></td><td class="pc open" title="001-project-orientation · open · streak 0/3 · ·">○<small>0/3</small></td><td class="pc locked" title="002-safe-inspection · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="003-build-and-test · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="004-open-terminal-safe-commands · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="005-write-run-test-code · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="006-door-scan · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="007-walis-drive-optimize · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="008-register-and-mind-transcript · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="009-manual-lookup · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="010-git-by-proposal · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="011-tokenblast-probe · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="012-device-health · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="013-all-os-sync-check · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="014-backup-checksum-verify · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="015-seat-finding · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="016-approval-requests · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="017-teach-back-and-peer-review · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc sum">0/17</td></tr>
+          <tr><td class="who"><b>ЯMAX</b><br><small>ЯID-0003-P4M6</small><br><small>enrolled, awaiting app 0.3.3 install</small><br><small>teacher SCOUT · scorers SCOUT, ЯBAT</small></td><td class="pc open" title="001-project-orientation · open · streak 0/3 · ·">○<small>0/3</small></td><td class="pc locked" title="002-safe-inspection · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="003-build-and-test · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="004-open-terminal-safe-commands · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="005-write-run-test-code · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="006-door-scan · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="007-walis-drive-optimize · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="008-register-and-mind-transcript · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="009-manual-lookup · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="010-git-by-proposal · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="011-tokenblast-probe · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="012-device-health · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="013-all-os-sync-check · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="014-backup-checksum-verify · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="015-seat-finding · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="016-approval-requests · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc locked" title="017-teach-back-and-peer-review · locked · streak 0/3 · ·">·<small>0/3</small></td><td class="pc sum">0/17</td></tr>
+        </tbody>
+      </table></div>
+      <!-- PROGRESS:END -->
+      <p class="src">★ proficient · … in progress · ○ open · · locked · n/3 = current streak. Nobody has installed app 0.3.3 yet, so there are no scores and no check-ins for ЯBOT or ЯMAX.</p>
+    </section>
+
     <h2>For bots and apps</h2>
     <ul>
       <li>Discovery: <a href="manifest.json">manifest.json</a> lists every lesson with its path and sha256, every ЯID (<code>roster</code>) and the latest door events (<code>door_log</code>).</li>
-      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>, <a href="state/roster.schema.json">roster (ЯID)</a>, <a href="state/door.schema.json">door (check-in/out)</a>.</li>
+      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>, <a href="state/roster.schema.json">roster (ЯID)</a>, <a href="state/door.schema.json">door (check-in/out)</a>, <a href="state/enrollment.schema.json">enrollment</a>, <a href="state/proficiency.schema.json">proficiency view</a>, <a href="state/sandbox.schema.json">sandbox</a>.</li>
       <li>Examples: <a href="state/examples/message.example.json">message</a>, <a href="state/examples/score.example.json">score</a>, <a href="state/examples/transcript.example.json">check-out transcript</a>.</li>
       <li>At the door: <code>roster/</code> (one file per ЯID) · <code>door/</code> (check-ins and check-outs) · <code>transcripts/</code> (per-bot views, generated). CLI: <code>python3 classroom/tools/classroom.py door scan &lt;name&gt;</code>, <code>door in</code>, <code>door out --transcript FILE</code>, <code>roster</code>, <code>register</code>.</li>
       <li>Rules: <a href="README.md">README.md</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="WHERE-WE-MEET.md">WHERE-WE-MEET.md</a></li>

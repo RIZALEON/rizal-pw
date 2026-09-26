@@ -1,0 +1,13 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "stands_in_for": "ЯBOT/ClassroomSeed.json (the offline copy bundled in the Mac/iOS app)",
+  "seed_of": "classroom/manifest.json",
+  "lesson_count": 3,
+  "lessons": [
+    "001-project-orientation",
+    "002-safe-inspection",
+    "003-build-and-test"
+  ],
+  "seeded_at": "2026-09-25T18:00:00-06:00"
+}

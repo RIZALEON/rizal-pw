@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/sandbox.schema.json",
+  "title": "ЯBOT Classroom sandbox definition (v1)",
+  "description": "Where a learner may read on each platform, where scratch writes go (only after approval), and what is never read. Offline bots use fixtures/ instead of a device.",
+  "type": "object",
+  "required": ["schema", "summary", "default", "platforms", "fixtures_root", "offline_lessons"],
+  "properties": {
+    "schema": { "const": "rbot.classroom.sandbox.v1" },
+    "summary": { "type": "string", "minLength": 1 },
+    "default": { "type": "string", "minLength": 1 },
+    "platforms": {
+      "type": "object",
+      "required": ["mac", "ios", "android", "offline"],
+      "properties": {
+        "mac": { "$ref": "#/$defs/platform" },
+        "ios": { "$ref": "#/$defs/platform" },
+        "android": { "$ref": "#/$defs/platform" },
+        "offline": { "$ref": "#/$defs/platform" }
+      },
+      "additionalProperties": false
+    },
+    "fixtures_root": { "const": "fixtures/" },
+    "fixtures_index": { "const": "fixtures/FIXTURES.json" },
+    "offline_lessons": { "type": "array", "items": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" }, "uniqueItems": true },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "platform": {
+      "type": "object",
+      "required": ["terminal", "read", "scratch", "never_read"],
+      "properties": {
+        "terminal": { "type": "boolean" },
+        "terminal_note": { "type": "string" },
+        "home_equivalent": { "type": "string" },
+        "read": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "sizes_only": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "scratch": { "type": "string", "minLength": 1 },
+        "never_read": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "never_touch": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

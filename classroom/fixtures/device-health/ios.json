@@ -1,0 +1,32 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "platform": "ios",
+  "captured_at": "2026-09-25T20:06:00-06:00",
+  "stands_in_for": [
+    "Settings > General > About",
+    "Settings > General > iPhone Storage",
+    "Settings > Battery > Battery Health",
+    "(iOS has no terminal: a human reads these screens)"
+  ],
+  "os": {
+    "name": "iOS",
+    "version": "26.0"
+  },
+  "model": "iPhone (fixture)",
+  "storage": {
+    "total_gb": 128,
+    "free_gb": 6.2
+  },
+  "battery": {
+    "percent": 38,
+    "maximum_capacity_pct": 84,
+    "low_power_mode": true
+  },
+  "apps": {
+    "ЯBOT": {
+      "installed_version": "0.3.0",
+      "build": "2026092401"
+    }
+  }
+}

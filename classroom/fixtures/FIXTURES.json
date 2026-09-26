@@ -1,0 +1,393 @@
+{
+  "schema": "rbot.classroom.fixtures_index.v1",
+  "generated_by": "classroom/tools/classroom.py build",
+  "note": "FAKE FIXTURES for offline bots. Not real device data. Verify a fixture with: shasum -a 256 <path>.",
+  "count": 37,
+  "files": [
+    {
+      "path": "fixtures/README.md",
+      "bytes": 1726,
+      "sha256": "aa4dd8234d49dacbbc5668f255a743bb5a2ce04f81b004d09de7a5c6da6ce52a",
+      "used_by": []
+    },
+    {
+      "path": "fixtures/backup/pre-workshop/RESPAWN.md",
+      "bytes": 54,
+      "sha256": "10676f836fedf42569a2df743063acfc7d52533b4bae35d42815d21b451d8e21",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/pre-workshop/SHA256SUMS",
+      "bytes": 434,
+      "sha256": "ab348316518503ece71b57b30acbd905a32b709e672b65ce0e16e5900024779f",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/pre-workshop/mind/MIND-TRANSCRIPT.txt",
+      "bytes": 79,
+      "sha256": "2c52f9790f49b2de85106c1ed7cf22c1a248b8c74dac6408443759cf0a7b2fd6",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/pre-workshop/seat/BOT-LABELS.json",
+      "bytes": 46,
+      "sha256": "a48f88f15494d4d154c49a7e119c9697ea3cc4bc8b301567fb6b0c4c7f656145",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/pre-workshop/seat/ModeStore.txt",
+      "bytes": 47,
+      "sha256": "f570507258f45596a2a66b461c882c03a9183087ee6873f6ab4c8f6dfa1bb27d",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/code/README.md",
+      "bytes": 271,
+      "sha256": "b2f7c32c384dba3d40e23ef7cb64f77391adde6f4c79f7f2ade657a892026dc4",
+      "used_by": [
+        "003",
+        "005"
+      ]
+    },
+    {
+      "path": "fixtures/code/rlabel.py",
+      "bytes": 352,
+      "sha256": "176f02a57fff3bc61f02f8e9fb3b563b9d197288a50f0b6f444e66951ca628c5",
+      "used_by": [
+        "003",
+        "005"
+      ]
+    },
+    {
+      "path": "fixtures/code/test_rlabel.py",
+      "bytes": 555,
+      "sha256": "269a7e37255d7e3260009d60d8f7f7ba06259b58ae59e23100dd9defac6bc8cd",
+      "used_by": [
+        "003",
+        "005"
+      ]
+    },
+    {
+      "path": "fixtures/device-health/android.json",
+      "bytes": 844,
+      "sha256": "06cb4c3af7444045f95e42570faf41684773175cf32ac887ecbeab3c62ffbc97",
+      "used_by": [
+        "012"
+      ]
+    },
+    {
+      "path": "fixtures/device-health/ios.json",
+      "bytes": 769,
+      "sha256": "e70c365a713b190185cc032d27c0d6a412fb26b695eeee9703a8df327cdfb654",
+      "used_by": [
+        "004",
+        "012"
+      ]
+    },
+    {
+      "path": "fixtures/device-health/mac.json",
+      "bytes": 983,
+      "sha256": "d96d3328ea3a1f646d4a5383b60163627951065a288a64992ee585a88eeaf9de",
+      "used_by": [
+        "012"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Desktop/ЯBOT copy/NOTE.txt",
+      "bytes": 90,
+      "sha256": "4d5e1145616862115293f0035f244bd2f45c04350ca5fc4430874ca957013ca9",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Desktop/ЯBOT copy/README.md",
+      "bytes": 105,
+      "sha256": "297e2b5d477107810c3fab87b5b351a4cc82fcf0bd500dca08ba1dca05f36f16",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Desktop/ЯBOT copy/ЯBOT/TokenBlast.swift",
+      "bytes": 174,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/README.md",
+      "bytes": 105,
+      "sha256": "297e2b5d477107810c3fab87b5b351a4cc82fcf0bd500dca08ba1dca05f36f16",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/WHERE-WE-MEET.txt",
+      "bytes": 203,
+      "sha256": "ee91ca82e5eeea1417962e95f63ab725d88cd7ebd99604a3f4ea5b3788ed6850",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/android/app/build.gradle.kts",
+      "bytes": 117,
+      "sha256": "9a87760b44e480eb65939548f9955b880fa3259286d6bb129cc43f2d65b7a824",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/git-remote.txt",
+      "bytes": 157,
+      "sha256": "c159f305b87eac7ba83529dc1202f2dfbe0051b690d35f3cfcd92434f276c986",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/git-status.txt",
+      "bytes": 145,
+      "sha256": "26c803122daf20139ff34ab7b2cfbd5e40fde29c11543b8a7592aa6e4f614324",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/ЯBOT/TokenBlast.swift",
+      "bytes": 174,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/ЯBOT.xcodeproj/project.pbxproj",
+      "bytes": 94,
+      "sha256": "d5e0f50146c1b0951a3c7278fd01360fa1c8cf6cd09c8df2f3bc35132320b261",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Downloads/WHERE-WE-MEET (1).txt",
+      "bytes": 203,
+      "sha256": "ee91ca82e5eeea1417962e95f63ab725d88cd7ebd99604a3f4ea5b3788ed6850",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Downloads/invoice-2026-09.txt",
+      "bytes": 55,
+      "sha256": "2eb16818a90f86f669b1a6427d61a0cec4b123d008e5e8764269e291a0f2fede",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Downloads/lesson-draft-015.json",
+      "bytes": 118,
+      "sha256": "dcd5252ac906c286f18936dc84e2afd516d9eb1f1ec5db3f79a813d57d009e8a",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Downloads/ЯBOT-notes-2026-09-20.md",
+      "bytes": 116,
+      "sha256": "4ad74379fbf95ec94ce04dec92528ad248ce87c4bef02d80d46f2f5a72d05adb",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Library/Developer/ЯBOT-localbuild/ЯBOT/TokenBlast.swift",
+      "bytes": 174,
+      "sha256": "444f453d5eb38b6408639149a5f904260ee41c235b545e58a240cac8629dda2d",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Library/Developer/ЯBOT-respawn/2026-09-24-pre-workshop/RESPAWN.md",
+      "bytes": 119,
+      "sha256": "1bdb335d73ec90ece50ae5261aab136419926a70a4e8ca90f07d5e891812e457",
+      "used_by": [
+        "001",
+        "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive-listing.json",
+      "bytes": 3528,
+      "sha256": "d532e93a2935694e99a4d52960c37fc3599fbc60eafce7033d0547d424fe2600",
+      "used_by": [
+        "007",
+        "016"
+      ]
+    },
+    {
+      "path": "fixtures/tokenblast/code-sample.swift.txt",
+      "bytes": 319,
+      "sha256": "f01d8661d35ff998d3d56e207b4c2b731a38f552ca7525668ad9818e003c8b1d",
+      "used_by": [
+        "002",
+        "011"
+      ]
+    },
+    {
+      "path": "fixtures/tokenblast/getAccountInfo.sample.json",
+      "bytes": 1142,
+      "sha256": "b08c36880f35d431f7d77f085182ef077e628b7e75e98746ec0f650ef287ede9",
+      "used_by": [
+        "011"
+      ]
+    },
+    {
+      "path": "fixtures/tokenblast/getTokenSupply.sample.json",
+      "bytes": 633,
+      "sha256": "ee8bba4cff0d6ed1d548a63a2b402e2a99e628d5de433f2ac352b75c0628dd65",
+      "used_by": [
+        "011"
+      ]
+    },
+    {
+      "path": "fixtures/versions/ClassroomSeed.json",
+      "bytes": 453,
+      "sha256": "52a738dfac3c2d6e37146f87a4c597bb24527e14e63bbd90ae4c5f5d2867c50d",
+      "used_by": [
+        "002",
+        "013"
+      ]
+    },
+    {
+      "path": "fixtures/versions/android-seed-manifest.json",
+      "bytes": 317,
+      "sha256": "9a66c5ff86a15a47bedfaa6081022a24dffb59b66a078a00ca8f6ccb35eb1e85",
+      "used_by": [
+        "002",
+        "013"
+      ]
+    },
+    {
+      "path": "fixtures/versions/build.gradle.kts.txt",
+      "bytes": 172,
+      "sha256": "8a740dccd183278e7a01259ef8a83c3abb08efd9fec1242d45eda006c0fb085f",
+      "used_by": [
+        "002",
+        "013"
+      ]
+    },
+    {
+      "path": "fixtures/versions/installed.json",
+      "bytes": 456,
+      "sha256": "ed49a5d9171aae7e377e54003a7b2370150b0cccdb5c5627d8c54644e2860d6b",
+      "used_by": [
+        "002",
+        "013"
+      ]
+    },
+    {
+      "path": "fixtures/versions/project.pbxproj.txt",
+      "bytes": 236,
+      "sha256": "d771781f7d8ba645e8337475805ebd2b12b4ca870fe07ed37e3bd4a7c25970aa",
+      "used_by": [
+        "002",
+        "013"
+      ]
+    }
+  ]
+}
