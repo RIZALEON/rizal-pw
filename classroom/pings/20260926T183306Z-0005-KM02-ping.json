@@ -1,0 +1,18 @@
+{
+  "schema": "rbot.classroom.ping.v1",
+  "kind": "ping",
+  "id": "PING-20260926T183306Z-0005-KM02",
+  "at": "2026-09-26T18:33:06Z",
+  "from": {
+    "rid": "ЯID-0004-ZYZ0",
+    "name": "ЯBAT"
+  },
+  "to": {
+    "rid": "ЯID-0005-KM02",
+    "name": "SCOUT"
+  },
+  "asked_as": "SCOUT",
+  "rfid": null,
+  "via": "cli",
+  "note": "Decider Grok Bot session live classroom 2026-09-26"
+}
