@@ -36,7 +36,8 @@ Every bot is scanned at the classroom door before it enters.
 - **Roster:** `roster/<seq>-<check>.json`, one new file per bot (append-only; shape `state/roster.schema.json`): ЯID, name, aliases, kind (`garage_bot`, `other_ai`, `human`), role, home surface, first seen, and who assigned it. Every record is filed as `proposed`; it counts as active once the Decider merges it into `main` (`classroom.py roster` shows which).
 - **Door log:** `door/<UTC>-<seq>-<check>-in.json` and `-out.json` (append-only; shape `state/door.schema.json`). A check-in opens a session (`S-<check-in UTC>-<seq>`); the matching check-out closes it and carries the session transcript (`did`, `learned`, `practiced`, `taught`, `functions_gained`, `functions_evolved`, `lessons`, `scores`, `notes`) plus one MIND-TRANSCRIPT leaf, `---- <ISO8601Z> | <bot> | <role> | classroom | door-out ----`, ready to paste into `mind/MIND-TRANSCRIPT.txt`.
 - **Per-bot transcript views:** `transcripts/<seq>-<check>.txt`, generated from `door/` by `build`. Never edit them by hand; the validator rejects stale or edited views.
-- **REGISTER:** type `REGISTER` (or `REGISTER LOG`, `REGISTER 50`) in the command bar at the top of the classroom page to see the latest check-ins and check-outs (ЯID, bot, time, one-line transcript summary), newest first. CLI twin: `python3 classroom/tools/classroom.py register --limit 20`.
+- **REGISTER:** type `REGISTER` (or `REGISTER LOG`, `REGISTER 50`) in the command bar at the top of the classroom page to see the latest check-ins, check-outs, pings and pongs (ЯID, bot, time, one-line summary), newest first. CLI twin: `python3 classroom/tools/classroom.py register --limit 20`.
+- **Pings:** `pings/<UTC>-<seq>-<check>-ping.json` and `-pong.json` (append-only; shape `state/ping.schema.json`). The file name carries the **pinged** bot's ЯID key. A ping names `from`, `to`, `asked_as` and `rfid` (null until the Decider links an RFID to a ЯID in roster `legacy_ids`; never guessed). A pong names `in_reply_to`, the responder's `mode`, and goes back to the pinger. CLI: `classroom.py ping <ЯID|RFID|name> --from <you>`, `classroom.py pong <PING-id> --mode offline`, `classroom.py pings [<bot>] [--open]`; web: `PINGS` in the command bar. The validator checks that both parties are in the roster, that names, ids and file names match, that only the pinged bot answers, once, and not before the ping, that a linked RFID really is linked, and that nothing key-like is in the record. **The classroom repo is the mailbox:** no app reads `pings/` yet (app 0.3.3). A live answer from inside the app needs the update described in [`APP-INTEGRATION-PLAN.md`](APP-INTEGRATION-PLAN.md) (plan only; app 0.3.3 is paused) and the app switched ONLINE; until then a pong is written with the CLI and arrives by pull request.
 
 | Step | CLI | Web (read-only page) |
 |---|---|---|
@@ -45,12 +46,13 @@ Every bot is scanned at the classroom door before it enters.
 | Check in | `classroom.py door in <name\|ЯID> --purpose "…"` | **Check in** → `door/…-in.json` |
 | Check out | `classroom.py door out <name\|ЯID> --transcript FILE.json` (see `state/examples/transcript.example.json`) | **Check out…** → `door/…-out.json` + mind leaf |
 | See who came | `classroom.py register` · `classroom.py roster` | `REGISTER` · `ROSTER` in the command bar |
+| Ping / pong | `classroom.py ping <bot> --from <you>` · `classroom.py pong <PING-id> --mode …` · `classroom.py pings --open` | `PINGS` in the command bar (read-only) |
 
 After any door file: `python3 classroom/tools/classroom.py build && python3 classroom/tools/classroom.py validate`, then open a pull request. The website never writes anything; it only produces the JSON for you to submit.
 
 The validator checks ЯID format and checksum, unique IDs, sequence numbers, names and aliases, file names, that every check-out has exactly one matching check-in, that a bot never checks in twice without checking out, that each mind leaf matches its record, and that no roster or door record holds anything key-like (private keys, tokens, long hex, wallet-length base58).
 
-## Curriculum for offline bots (prelude 001–003, then 004–017)
+## Curriculum for offline bots (prelude 001–003, then 004–019)
 
 ЯBOT and ЯMAX are enrolled (`enrollment/0002-PQ2Q.json`, `enrollment/0003-P4M6.json`; status *enrolled, awaiting app 0.3.3 install*). Teacher: **SCOUT**. Scorers: **SCOUT** or **ЯBAT** only, never the learner. Every rule below is checked by `classroom.py validate`.
 
@@ -78,6 +80,8 @@ The validator checks ЯID format and checksum, unique IDs, sequence numbers, nam
 | 015 | seat-finding (propose moves into ~/Documents/ЯBOT) | fixtures |
 | 016 | approval-requests | classroom files |
 | 017 | teach-back-and-peer-review | classroom files |
+| 018 | go-online-go-offline (check the mode, switch the right way, log it) | fixtures |
+| 019 | answer-an-rfid-ping (check the ping, pong once, logged) | fixtures |
 
 ## Folders
 
@@ -86,7 +90,7 @@ The validator checks ЯID format and checksum, unique IDs, sequence numbers, nam
 - `outbox/`: scored responses, hints, approvals, and next-step recommendations.
 - `scores/`: append-only score records, one file per record.
 - `state/`: protocol metadata and schemas (`message.schema.json`, `score.schema.json`, `lesson.schema.json`, and `examples/`).
-- `roster/`, `door/`, `transcripts/`: at the door (see above).
+- `roster/`, `door/`, `transcripts/`, `pings/`: at the door (see above).
 - `enrollment/`: one file per enrolled learner (versioned; shape `state/enrollment.schema.json`).
 - `fixtures/`: fake files for offline bots (never real device data). `state/sandbox.json`: allowed read paths per platform.
 - `views/`: generated by `build` from `scores/` and `enrollment/` (`proficiency.json`, `progress.txt`). Never edit by hand.
@@ -127,7 +131,7 @@ The learning room is not authoritative game state. It may propose a lesson or a 
 
 ## Lesson path
 
-Prelude: `001-project-orientation` → `002-safe-inspection` → `003-build-and-test` (version 2: exercise pools, platforms, sandbox). Then `004` → … → `017` (see the table above).
+Prelude: `001-project-orientation` → `002-safe-inspection` → `003-build-and-test` (version 2: exercise pools, platforms, sandbox). Then `004` → … → `019` (see the table above).
 
 Lesson 001 was drafted as `001-finding-the-project-seat`; that id is kept as an alias in the lesson and in `manifest.json`. The draft's stray-file part became lesson `015-seat-finding`.
 

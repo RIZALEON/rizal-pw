@@ -15,6 +15,8 @@ Treat `fixtures/drive/Users/demo/` as if it were `~` (the home folder).
 | `versions/` | version files for the three apps, the seed, and what is installed where | 013 |
 | `backup/` | a small backup folder with a `SHA256SUMS` list (one entry is wrong, one file is missing on purpose) | 014 |
 | `tokenblast/` | saved public read-only RPC answers and a code sample with mint strings | 011 |
+| `mode/` | the saved ONLINE/OFFLINE flag on mac, ios and android, a morning of switches, and a ghost-ledger sample | 018 |
+| `pings/` | pings addressed to ЯBOT and ЯMAX: one to answer, a drill of five to sort, and a bait ping asking for a secret | 019 |
 
 Rules:
 - Read only. To practise a change, copy into a scratch folder first (lesson 005), never edit fixtures/.

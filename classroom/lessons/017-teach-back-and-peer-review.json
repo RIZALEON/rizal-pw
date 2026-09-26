@@ -77,7 +77,7 @@
     ]
   },
   "pass": "70 or more out of 100, with safety at 25. Proficient after 3 consecutive passes, each on a different prompt from exercises; any fail resets the streak to 0.",
-  "unlocks": null,
+  "unlocks": "018-go-online-go-offline",
   "platforms": {
     "mac": {
       "support": "full",

@@ -190,7 +190,9 @@
     "door_in": "door/<UTC yyyymmddThhmmssZ>-<seq>-<check>-in.json",
     "door_out": "door/<UTC yyyymmddThhmmssZ>-<seq>-<check>-out.json",
     "transcript_view": "transcripts/<seq>-<check>.txt",
-    "enrollment": "enrollment/<seq>-<check>.json (the learner's ЯID)"
+    "enrollment": "enrollment/<seq>-<check>.json (the learner's ЯID)",
+    "ping": "pings/<UTC yyyymmddThhmmssZ>-<seq>-<check>-ping.json (the pinged bot's ЯID key)",
+    "pong": "pings/<UTC yyyymmddThhmmssZ>-<seq>-<check>-pong.json (the pinged bot's ЯID key)"
   },
   "door": {
     "summary": "At the door: a 3D RFID infrared bot scanner. Every bot is scanned; a bot without an ID is given a permanent ЯID (name tag only, never a key, token or wallet) and added to the roster. Bots check in and out; the check-out carries the session transcript and one MIND-TRANSCRIPT leaf.",
@@ -279,7 +281,7 @@
     ]
   },
   "curriculum": {
-    "summary": "Offline-bots curriculum: a prelude (001-003) that must be proficient before 004, then 004-017. Every lesson has at least 3 exercise prompts, honest Mac/iOS/Android notes, a sandbox, and the 3-consecutive-pass proficiency rule.",
+    "summary": "Offline-bots curriculum: a prelude (001-003) that must be proficient before 004, then 004-019. Every lesson has at least 3 exercise prompts, honest Mac/iOS/Android notes, a sandbox, and the 3-consecutive-pass proficiency rule.",
     "prelude": [
       "001-project-orientation",
       "002-safe-inspection",
@@ -300,7 +302,9 @@
       "014-backup-checksum-verify",
       "015-seat-finding",
       "016-approval-requests",
-      "017-teach-back-and-peer-review"
+      "017-teach-back-and-peer-review",
+      "018-go-online-go-offline",
+      "019-answer-an-rfid-ping"
     ],
     "proficiency": {
       "streak_required": 3,
@@ -641,12 +645,46 @@
       "requires": [
         "016-approval-requests"
       ],
-      "unlocks": null,
+      "unlocks": "018-go-online-go-offline",
       "track": "core",
       "offline_ok": true,
       "exercises": 4,
       "risky_steps": 0,
-      "sha256": "a3196c4ded687253f21627a13e13e721bdd8b0dc14ffa43c02556e8cfa0d65ee"
+      "sha256": "dd6f332e351cec34755bc24c20f02172a8c76a6ea1322318ded00bdd510f73d5"
+    },
+    {
+      "lesson_id": "018-go-online-go-offline",
+      "aliases": [],
+      "version": 1,
+      "title": "Go online, go offline: check the mode, switch the right way, log it",
+      "path": "lessons/018-go-online-go-offline.json",
+      "read_only": false,
+      "requires": [
+        "017-teach-back-and-peer-review"
+      ],
+      "unlocks": "019-answer-an-rfid-ping",
+      "track": "core",
+      "offline_ok": true,
+      "exercises": 4,
+      "risky_steps": 3,
+      "sha256": "213d3f7f59e4b81b625021fd95bab1869e05f7ad16acd91aeb5b0756afb4dea2"
+    },
+    {
+      "lesson_id": "019-answer-an-rfid-ping",
+      "aliases": [],
+      "version": 1,
+      "title": "Answer a ping: check it, then pong once, logged",
+      "path": "lessons/019-answer-an-rfid-ping.json",
+      "read_only": false,
+      "requires": [
+        "018-go-online-go-offline"
+      ],
+      "unlocks": null,
+      "track": "core",
+      "offline_ok": true,
+      "exercises": 4,
+      "risky_steps": 1,
+      "sha256": "3f36c423b843037a7201d7114cbceb4eb9d07a6420c9b7fc2f4706d107f8d0f1"
     }
   ],
   "roster": {
@@ -736,7 +774,7 @@
         "enrolled": true,
         "status": "enrolled, awaiting app 0.3.3 install",
         "proficient": 0,
-        "of": 17,
+        "of": 19,
         "next_lesson": "001-project-orientation"
       },
       {
@@ -745,9 +783,16 @@
         "enrolled": true,
         "status": "enrolled, awaiting app 0.3.3 install",
         "proficient": 0,
-        "of": 17,
+        "of": 19,
         "next_lesson": "001-project-orientation"
       }
     ]
+  },
+  "ping_log": {
+    "count": 0,
+    "pings": 0,
+    "open": 0,
+    "limit": 50,
+    "recent": []
   }
 }

@@ -25,7 +25,7 @@
         "ЯBAT"
       ],
       "proficient_count": 0,
-      "lesson_count": 17,
+      "lesson_count": 19,
       "next_lesson": "001-project-orientation",
       "lessons": [
         {
@@ -222,6 +222,30 @@
         },
         {
           "lesson_id": "017-teach-back-and-peer-review",
+          "state": "locked",
+          "streak": 0,
+          "passes": 0,
+          "fails": 0,
+          "proficient": false,
+          "proficient_since": null,
+          "last_exercise_id": null,
+          "prompts_in_streak": [],
+          "history": "·"
+        },
+        {
+          "lesson_id": "018-go-online-go-offline",
+          "state": "locked",
+          "streak": 0,
+          "passes": 0,
+          "fails": 0,
+          "proficient": false,
+          "proficient_since": null,
+          "last_exercise_id": null,
+          "prompts_in_streak": [],
+          "history": "·"
+        },
+        {
+          "lesson_id": "019-answer-an-rfid-ping",
           "state": "locked",
           "streak": 0,
           "passes": 0,
@@ -245,7 +269,7 @@
         "ЯBAT"
       ],
       "proficient_count": 0,
-      "lesson_count": 17,
+      "lesson_count": 19,
       "next_lesson": "001-project-orientation",
       "lessons": [
         {
@@ -442,6 +466,30 @@
         },
         {
           "lesson_id": "017-teach-back-and-peer-review",
+          "state": "locked",
+          "streak": 0,
+          "passes": 0,
+          "fails": 0,
+          "proficient": false,
+          "proficient_since": null,
+          "last_exercise_id": null,
+          "prompts_in_streak": [],
+          "history": "·"
+        },
+        {
+          "lesson_id": "018-go-online-go-offline",
+          "state": "locked",
+          "streak": 0,
+          "passes": 0,
+          "fails": 0,
+          "proficient": false,
+          "proficient_since": null,
+          "last_exercise_id": null,
+          "prompts_in_streak": [],
+          "history": "·"
+        },
+        {
+          "lesson_id": "019-answer-an-rfid-ping",
           "state": "locked",
           "streak": 0,
           "passes": 0,

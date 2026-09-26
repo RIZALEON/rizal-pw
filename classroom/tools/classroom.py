@@ -15,14 +15,21 @@
                                                                          # FILE = {did, learned, practiced, taught, functions_gained,
                                                                          #         functions_evolved, lessons, scores, notes}
   python3 classroom/tools/classroom.py roster [--base origin/main]      # everyone with a ЯID: active/proposed, inside/outside
-  python3 classroom/tools/classroom.py register [--limit N]             # REGISTER: latest door check-ins/outs, newest first (default 20)
+  python3 classroom/tools/classroom.py register [--limit N]             # REGISTER: latest door events + pings/pongs, newest first (default 20)
+
+  Pings (the classroom repo is the mailbox; a ЯID or RFID is a name tag, never a key):
+  python3 classroom/tools/classroom.py ping <ЯID|RFID|name> --from <your name|ЯID> [--note TEXT] [--via cli]
+                                                                         # write pings/<UTC>-<pinged key>-ping.json (new file only)
+  python3 classroom/tools/classroom.py pong <PING-id> [--mode online|offline|unknown] [--surface S] [--note TEXT]
+                                                                         # the pinged bot's answer: pings/<UTC>-<pinged key>-pong.json
+  python3 classroom/tools/classroom.py pings [<name|ЯID>] [--open]       # pings, newest first, answered or open
 
   Curriculum (prelude 001-003, then 004-017; offline bots use fixtures/):
   python3 classroom/tools/classroom.py progress [<learner>]             # proficiency per lesson per learner, derived from scores/
 
 Writes only inside classroom/: `build` rewrites generated files (manifest.json lessons/roster/door_log/progress, index.html,
 transcripts/, views/, fixtures/FIXTURES.json, state/sandbox.json offline_lessons);
-`door` commands add ONE new file each (roster/ or door/) and never overwrite. No network, no secrets, no git writes.
+`door`, `ping` and `pong` add ONE new file each (roster/, door/ or pings/) and never overwrite. No network, no secrets, no git writes.
 A ЯID is a name tag only: never a key, token, password, or wallet.
 """
 import hashlib, html, json, re, subprocess, sys, unicodedata
@@ -30,8 +37,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent          # classroom/
-SCHEMAS = {k: ROOT / "state" / f"{k}.schema.json" for k in ("lesson", "message", "score", "roster", "door", "enrollment", "sandbox", "proficiency")}
-APPEND_ONLY = ("inbox/", "outbox/", "scores/", "roster/", "door/")
+SCHEMAS = {k: ROOT / "state" / f"{k}.schema.json" for k in ("lesson", "message", "score", "roster", "door", "enrollment", "sandbox", "proficiency", "ping")}
+APPEND_ONLY = ("inbox/", "outbox/", "scores/", "roster/", "door/", "pings/")
 SECRET_PATTERNS = [
     (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"), "PEM private key"),
     (re.compile(r"\b[1-9A-HJ-NP-Za-km-z]{85,90}\b"), "base58 string the length of a Solana secret key"),
@@ -161,6 +168,56 @@ def door_log_index(limit=LOG_LIMIT):
     recent = [{"at": d["at"], "event": d["event"], "rid": d.get("rid"), "name": d.get("name"), "role": d.get("role"),
                "session_id": d.get("session_id"), "path": f"door/{p.name}", "summary": summary(d)} for p, d in ev[:limit]]
     return {"count": len(ev), "limit": limit, "recent": recent}
+
+PING_FILE_RX = re.compile(r"^([0-9]{8}T[0-9]{6}Z)-([0-9]{4}-[0-9A-HJKMNP-TV-Z]{4})-(ping|pong)\.json$")
+
+def ping_records():
+    out = []
+    for p in sorted((ROOT / "pings").glob("*.json")) if (ROOT / "pings").is_dir() else []:
+        try:
+            out.append((p, load(p)))
+        except Exception:
+            pass
+    return out
+
+def resolve_target(q):
+    """ЯID, name or alias -> roster record. An RFID resolves only if the Decider linked it (roster legacy_ids)."""
+    r = find_bot(q)
+    if r:
+        return r, None
+    if (q or "").upper().startswith("RFID-"):
+        for _, b in roster_records():
+            if q.upper() in {x.upper() for x in b.get("legacy_ids", [])}:
+                return b, q.upper()
+    return None, None
+
+def ping_summary(d, answered=None):
+    if d.get("kind") == "ping":
+        tail = f" · answered by {answered}" if answered else " · open (no pong yet)"
+        return (f"ping → {d['to']['name']} from {d['from']['name']}" + (f" · “{d['note']}”" if d.get("note") else "") + tail)[:140]
+    return (f"pong ← {d['from']['name']} to {d['to']['name']} · re {d.get('in_reply_to')} · mode {d.get('mode')}"
+            + (f" · “{d['note']}”" if d.get("note") else ""))[:140]
+
+def ping_log_index(limit=LOG_LIMIT):
+    """Most recent pings and pongs, newest first (manifest.json ping_log; REGISTER and PINGS read it)."""
+    recs = [(p, d) for p, d in ping_records() if d.get("kind") in ("ping", "pong")]
+    pongs = {d.get("in_reply_to"): d for _, d in recs if d.get("kind") == "pong"}
+    ev = sorted(recs, key=lambda x: (x[1].get("at", ""), x[1].get("kind") == "pong", x[0].name), reverse=True)
+    recent = []
+    for p, d in ev[:limit]:
+        e = {"at": d.get("at"), "event": d.get("kind"), "id": d.get("id"),
+             "from": d.get("from"), "to": d.get("to"), "path": f"pings/{p.name}"}
+        if d.get("kind") == "ping":
+            pg = pongs.get(d.get("id"))
+            e.update({"rid": d["to"]["rid"], "name": d["to"]["name"], "answered_by": pg.get("id") if pg else None,
+                      "summary": ping_summary(d, pg["from"]["name"] if pg else None)})
+        else:
+            e.update({"rid": d["from"]["rid"], "name": d["from"]["name"], "in_reply_to": d.get("in_reply_to"), "mode": d.get("mode"),
+                      "summary": ping_summary(d)})
+        recent.append(e)
+    n_ping = sum(1 for _, d in recs if d.get("kind") == "ping")
+    return {"count": len(recs), "pings": n_ping, "open": sum(1 for _, d in recs if d.get("kind") == "ping" and d.get("id") not in pongs),
+            "limit": limit, "recent": recent}
 
 def render_leaf(out):
     """One MIND-TRANSCRIPT leaf for a check-out record. index.html renders the same text (keep in sync)."""
@@ -464,6 +521,7 @@ def build(quiet=False):
     man["lessons"] = entries
     man["roster"] = roster_index()
     man["door_log"] = door_log_index()
+    man["ping_log"] = ping_log_index()
     # fixtures index + sandbox offline list first (lesson/fixture hashes feed the views)
     fx = ROOT / "fixtures" / "FIXTURES.json"
     if (ROOT / "fixtures").is_dir():
@@ -519,8 +577,8 @@ def lessons_html(entries):
     return "<!-- LESSONS:BEGIN -->\n" + rows + "\n        <!-- LESSONS:END -->"
 
 def data_script():
-    """Offline copy of the roster + door log embedded in index.html (the page prefers live manifest.json)."""
-    data = json.dumps({"roster": roster_index(), "door_log": door_log_index()}, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    """Offline copy of the roster + door log + ping log embedded in index.html (the page prefers live manifest.json)."""
+    data = json.dumps({"roster": roster_index(), "door_log": door_log_index(), "ping_log": ping_log_index()}, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return f'<script type="application/json" id="classroom-data">{data}</script>'
 
 # ---------------------------------------------------------------- validate
@@ -550,9 +608,9 @@ def validate(base=None):
             for e in vals[kind].iter_errors(doc):
                 errs.append(f"{rel}: {'/'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}")
         if not rel.startswith("state/") and not rel.startswith("lessons/"):
-            if rel.startswith(("roster/", "door/")):
+            if rel.startswith(("roster/", "door/", "pings/")):
                 for what in keylike(raw):
-                    errs.append(f"{rel}: looks like it contains a {what}; ID and door records must never hold keys, tokens or wallets")
+                    errs.append(f"{rel}: looks like it contains a {what}; ID, door and ping records must never hold keys, tokens or wallets")
             else:
                 for rx, what in SECRET_PATTERNS:
                     if rx.search(raw):
@@ -670,6 +728,9 @@ def validate(base=None):
             if a_out is None or b_in < a_out:
                 errs.append(f"{b_rel}: {rid} checked in again before checking out of {a_rel}")
 
+    # --- pings: roster-backed, paired, append-only, no key-like content
+    npings = validate_pings(errs, roster, check)
+
     # --- curriculum: lessons, prelude, sandbox, fixtures, enrollment, scorers, streaks, approvals
     ncur = validate_curriculum(errs, ids, roster, check)
 
@@ -690,6 +751,8 @@ def validate(base=None):
             errs.append("manifest.json: roster list is stale (run build)")
         if man.get("door_log") != door_log_index():
             errs.append("manifest.json: door_log is stale (run build)")
+        if man.get("ping_log") != ping_log_index():
+            errs.append("manifest.json: ping_log is stale (run build)")
         if man.get("progress") != progress_summary():
             errs.append("manifest.json: progress is stale (run build)")
         for p in lessons():
@@ -698,7 +761,7 @@ def validate(base=None):
                 errs.append(f"manifest.json: entry for lessons/{p.name} is stale (run build)")
     idx = (ROOT / "index.html").read_text(encoding="utf-8")
     if data_script() not in idx:
-        errs.append("index.html: embedded classroom-data (roster + door log) is stale or missing (run build)")
+        errs.append("index.html: embedded classroom-data (roster + door log + ping log) is stale or missing (run build)")
     if progress_html() not in idx:
         errs.append("index.html: curriculum progress grid is stale or missing (run build)")
     if lessons_html([lesson_entry(p, load(p)) for p in lessons()]) not in idx:
@@ -724,8 +787,62 @@ def validate(base=None):
         print("FAIL", e)
     print(f"{'OK' if not errs else 'FAILED'}: {n} JSON files checked ({len(roster)} ЯIDs, {len(sessions)} door sessions, "
           f"{ncur['lessons']} curriculum lessons, {ncur['exercises']} exercise prompts, {ncur['enrolled']} enrolled, "
-          f"{ncur['fixtures']} fixtures), {len(errs)} problems")
+          f"{ncur['fixtures']} fixtures, {npings} ping records), {len(errs)} problems")
     return 1 if errs else 0
+
+def validate_pings(errs, roster, check):
+    """pings/: file name = <UTC>-<pinged key>-<kind>.json, id matches, parties in roster, pong answers a real ping once."""
+    recs = {}
+    for p in sorted((ROOT / "pings").glob("*.json")) if (ROOT / "pings").is_dir() else []:
+        d = check(p, "ping")
+        if not d:
+            continue
+        rel = f"pings/{p.name}"
+        kind, at = d.get("kind"), d.get("at", "")
+        f, t = d.get("from") or {}, d.get("to") or {}
+        bad = False
+        for side, party in (("from", f), ("to", t)):
+            b = roster.get(party.get("rid"))
+            if not b:
+                errs.append(f"{rel}: {side} {party.get('rid')} is not in roster/ (scan at the door first)"); bad = True
+            elif b["name"] != party.get("name"):
+                errs.append(f"{rel}: {side} name '{party.get('name')}' does not match roster name '{b['name']}' for {party.get('rid')}")
+        if bad:
+            continue
+        if f.get("rid") == t.get("rid"):
+            errs.append(f"{rel}: a bot does not ping or pong itself")
+        pinged = t if kind == "ping" else f
+        key = rid_key(pinged["rid"])
+        want = f"{compact(at)}-{key}-{kind}.json"
+        if p.name != want:
+            errs.append(f"{rel}: file name must be {want} (UTC of 'at' + the pinged bot's ЯID key)")
+        if d.get("id") != f"{kind.upper()}-{compact(at)}-{key}":
+            errs.append(f"{rel}: id must be {kind.upper()}-{compact(at)}-{key}")
+        if d.get("rfid") is not None:
+            linked = {x.upper() for x in roster[pinged["rid"]].get("legacy_ids", [])}
+            if d["rfid"].upper() not in linked:
+                errs.append(f"{rel}: rfid {d['rfid']} is not linked to {pinged['rid']} in roster/ (the Decider links RFIDs; never guess)")
+        if d.get("id") in recs:
+            errs.append(f"{rel}: duplicate id {d.get('id')}")
+        recs[d.get("id")] = (rel, d)
+    answered = {}
+    for pid, (rel, d) in recs.items():
+        if d.get("kind") != "pong":
+            continue
+        ping = recs.get(d.get("in_reply_to"))
+        if not ping or ping[1].get("kind") != "ping":
+            errs.append(f"{rel}: in_reply_to {d.get('in_reply_to')} is not a ping in pings/"); continue
+        pd = ping[1]
+        if pd["to"]["rid"] != d["from"]["rid"]:
+            errs.append(f"{rel}: only the pinged bot ({pd['to']['name']}) may answer {pd['id']}")
+        if pd["from"]["rid"] != d["to"]["rid"]:
+            errs.append(f"{rel}: a pong goes back to the pinger ({pd['from']['name']})")
+        if ts(d.get("at")) < ts(pd.get("at")):
+            errs.append(f"{rel}: pong is earlier than its ping")
+        if pd["id"] in answered:
+            errs.append(f"{rel}: {pd['id']} was already answered by {answered[pd['id']]} (one pong per ping)")
+        answered.setdefault(pd["id"], rel)
+    return len(recs)
 
 def validate_curriculum(errs, ids, roster, check):
     """Curriculum rules on top of the JSON schemas. Appends to errs; returns counts."""
@@ -1080,18 +1197,96 @@ def door_out(a):
     return 0
 
 def register_cmd(a):
-    """REGISTER: most recent door events, newest first."""
+    """REGISTER: most recent door events and pings/pongs, newest first."""
     try:
         limit = int(opt(a, "--limit", "20"))
     except ValueError:
         limit = 20
-    log = door_log_index(limit=max(1, limit))
-    print(f"Я CLASSROOM · REGISTER · last {len(log['recent'])} of {log['count']} door events (newest first, UTC)")
-    for e in log["recent"]:
-        arrow = "→ IN " if e["event"] == "in" else "← OUT"
-        print(f"{e['at']}  {arrow}  {e['rid']}  {e['name']:<10}  {e['summary']}")
-    if not log["recent"]:
-        print("(no door events yet)")
+    limit = max(1, limit)
+    log, pl = door_log_index(limit=limit), ping_log_index(limit=limit)
+    rows = sorted(log["recent"] + pl["recent"], key=lambda e: e["at"], reverse=True)[:limit]
+    print(f"Я CLASSROOM · REGISTER · last {len(rows)} of {log['count']} door events + {pl['count']} ping records (newest first, UTC)")
+    arrows = {"in": "→ IN  ", "out": "← OUT ", "ping": "? PING", "pong": "! PONG"}
+    for e in rows:
+        print(f"{e['at']}  {arrows.get(e['event'], e['event'])}  {e['rid']}  {e['name']:<10}  {e['summary']}")
+    if not rows:
+        print("(no door events or pings yet)")
+    return 0
+
+def ping_cmd(a):
+    q = a[0] if a and not a[0].startswith("--") else None
+    if not q or not opt(a, "--from"):
+        print("usage: ping <ЯID|RFID|name> --from <your name|ЯID> [--note TEXT] [--via cli|agent-box|web|app|pr]"); return 2
+    t, rfid = resolve_target(q)
+    if not t:
+        if q.upper().startswith("RFID-"):
+            print(f"REFUSED · {q} is not linked to any ЯID yet. The Decider links an RFID to a ЯID (roster legacy_ids); never guess."); return 1
+        print(f"REFUSED · unknown bot '{q}'. Scan it at the door first."); return 1
+    f = find_bot(opt(a, "--from"))
+    if not f:
+        print(f"REFUSED · the pinger '{opt(a, '--from')}' has no ЯID. Scan at the door first."); return 1
+    if f["rid"] == t["rid"]:
+        print("REFUSED · a bot does not ping itself."); return 1
+    at = opt(a, "--at") or utc_now()
+    key = rid_key(t["rid"])
+    rec = {"schema": "rbot.classroom.ping.v1", "kind": "ping", "id": f"PING-{compact(at)}-{key}", "at": at,
+           "from": {"rid": f["rid"], "name": f["name"]}, "to": {"rid": t["rid"], "name": t["name"]},
+           "asked_as": q, "rfid": rfid, "via": opt(a, "--via", "cli")}
+    if opt(a, "--note"):
+        rec["note"] = opt(a, "--note")
+    path = ROOT / "pings" / f"{compact(at)}-{key}-ping.json"
+    if not write_new(path, rec, "ping"):
+        return 1
+    print(f"? PING {rec['id']} → {t['rid']} {t['name']} · wrote pings/{path.name}")
+    print("  The ping reaches the bot only through the classroom repo (pull request, then the app's classroom refresh while ONLINE).")
+    print(f"  The bot answers with: classroom.py pong {rec['id']} --mode online|offline")
+    return 0
+
+def pong_cmd(a):
+    pid = a[0] if a and not a[0].startswith("--") else None
+    if not pid:
+        print("usage: pong <PING-id> [--mode online|offline|unknown] [--surface S] [--note TEXT] [--via cli]"); return 2
+    ping = next((d for _, d in ping_records() if d.get("kind") == "ping" and d.get("id") == pid), None)
+    if not ping:
+        print(f"REFUSED · no ping {pid} in pings/"); return 1
+    done = next((d for _, d in ping_records() if d.get("kind") == "pong" and d.get("in_reply_to") == pid), None)
+    if done:
+        print(f"REFUSED · {pid} was already answered by {done['id']} (one pong per ping)"); return 1
+    me = find_bot(opt(a, "--from", ping["to"]["rid"]))
+    if not me or me["rid"] != ping["to"]["rid"]:
+        print(f"REFUSED · only {ping['to']['name']} ({ping['to']['rid']}) may answer this ping."); return 1
+    at = opt(a, "--at") or utc_now()
+    if ts(at) < ts(ping["at"]):
+        print("REFUSED · a pong cannot be earlier than its ping."); return 1
+    key = rid_key(me["rid"])
+    rec = {"schema": "rbot.classroom.ping.v1", "kind": "pong", "id": f"PONG-{compact(at)}-{key}", "at": at,
+           "from": {"rid": me["rid"], "name": me["name"]}, "to": dict(ping["from"]), "rfid": ping.get("rfid"),
+           "in_reply_to": pid, "mode": opt(a, "--mode", "unknown"), "via": opt(a, "--via", "cli")}
+    if opt(a, "--surface"):
+        rec["surface"] = opt(a, "--surface")
+    if opt(a, "--note"):
+        rec["note"] = opt(a, "--note")
+    path = ROOT / "pings" / f"{compact(at)}-{key}-pong.json"
+    if not write_new(path, rec, "ping"):
+        return 1
+    print(f"! PONG {rec['id']} ← {me['name']} re {pid} · mode {rec['mode']} · wrote pings/{path.name}")
+    return 0
+
+def pings_cmd(a):
+    who = a[0] if a and not a[0].startswith("--") else None
+    b = find_bot(who) if who else None
+    if who and not b:
+        print(f"unknown bot '{who}'"); return 1
+    pl = ping_log_index(limit=10 ** 6)
+    rows = [e for e in pl["recent"] if not b or b["rid"] in (e["from"]["rid"], e["to"]["rid"])]
+    if "--open" in a:
+        rows = [e for e in rows if e["event"] == "ping" and not e.get("answered_by")]
+    print(f"Я CLASSROOM · PINGS · {len(rows)} shown · {pl['pings']} pings, {pl['open']} open (newest first, UTC)")
+    for e in rows:
+        mark = "? PING" if e["event"] == "ping" else "! PONG"
+        print(f"{e['at']}  {mark}  {e['id']}  {e['summary']}")
+    if not rows:
+        print("(none)")
     return 0
 
 def roster_cmd(a):
@@ -1121,6 +1316,12 @@ if __name__ == "__main__":
         sys.exit(register_cmd(a[1:]))
     elif a[:1] in (["progress"], ["proficiency"]):
         sys.exit(progress_cmd(a[1:]))
+    elif a[:1] == ["ping"]:
+        sys.exit(ping_cmd(a[1:]))
+    elif a[:1] == ["pong"]:
+        sys.exit(pong_cmd(a[1:]))
+    elif a[:1] == ["pings"]:
+        sys.exit(pings_cmd(a[1:]))
     elif a[:1] == ["roster"]:
         sys.exit(roster_cmd(a[1:]))
     elif a[:2] == ["door", "scan"]:

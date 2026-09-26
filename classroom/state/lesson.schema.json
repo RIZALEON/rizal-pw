@@ -99,7 +99,7 @@
       "properties": {
         "offline_ok": { "type": "boolean", "description": "true = the whole lesson can be done with no real device access, against fixtures/ or classroom files." },
         "fixtures": { "type": "array", "items": { "type": "string", "pattern": "^fixtures/" }, "uniqueItems": true },
-        "classroom_reads": { "type": "array", "description": "Classroom files the lesson reads instead of a device (e.g. roster/, door/, lessons/).", "items": { "type": "string", "pattern": "^(roster/|door/|lessons/|state/|transcripts/|views/|enrollment/|inbox/|outbox/|scores/|manifest\\.json|index\\.html|WHERE-WE-MEET\\.txt)" }, "uniqueItems": true }
+        "classroom_reads": { "type": "array", "description": "Classroom files the lesson reads instead of a device (e.g. roster/, door/, lessons/).", "items": { "type": "string", "pattern": "^(roster/|door/|pings/|lessons/|state/|transcripts/|views/|enrollment/|inbox/|outbox/|scores/|manifest\\.json|index\\.html|WHERE-WE-MEET\\.txt)" }, "uniqueItems": true }
       },
       "additionalProperties": false,
       "if": { "properties": { "offline_ok": { "const": true } } },

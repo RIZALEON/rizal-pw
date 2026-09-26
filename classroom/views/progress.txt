@@ -4,7 +4,7 @@
 # Marks: ★ proficient · … in progress · ○ open · · locked.  streak/3 · history P/F oldest first
 
 ЯBOT · ЯID-0002-PQ2Q · enrolled · enrolled, awaiting app 0.3.3 install
-  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/17 · next 001-project-orientation
+  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/19 · next 001-project-orientation
   ○ 001-project-orientation              open        streak 0/3  history ·
   · 002-safe-inspection                  locked      streak 0/3  history ·
   · 003-build-and-test                   locked      streak 0/3  history ·
@@ -22,9 +22,11 @@
   · 015-seat-finding                     locked      streak 0/3  history ·
   · 016-approval-requests                locked      streak 0/3  history ·
   · 017-teach-back-and-peer-review       locked      streak 0/3  history ·
+  · 018-go-online-go-offline             locked      streak 0/3  history ·
+  · 019-answer-an-rfid-ping              locked      streak 0/3  history ·
 
 ЯMAX · ЯID-0003-P4M6 · enrolled · enrolled, awaiting app 0.3.3 install
-  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/17 · next 001-project-orientation
+  teacher SCOUT · scorers SCOUT, ЯBAT · proficient 0/19 · next 001-project-orientation
   ○ 001-project-orientation              open        streak 0/3  history ·
   · 002-safe-inspection                  locked      streak 0/3  history ·
   · 003-build-and-test                   locked      streak 0/3  history ·
@@ -42,3 +44,5 @@
   · 015-seat-finding                     locked      streak 0/3  history ·
   · 016-approval-requests                locked      streak 0/3  history ·
   · 017-teach-back-and-peer-review       locked      streak 0/3  history ·
+  · 018-go-online-go-offline             locked      streak 0/3  history ·
+  · 019-answer-an-rfid-ping              locked      streak 0/3  history ·

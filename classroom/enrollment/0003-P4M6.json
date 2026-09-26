@@ -37,7 +37,9 @@
     "014-backup-checksum-verify",
     "015-seat-finding",
     "016-approval-requests",
-    "017-teach-back-and-peer-review"
+    "017-teach-back-and-peer-review",
+    "018-go-online-go-offline",
+    "019-answer-an-rfid-ping"
   ],
   "proficiency": {
     "streak_required": 3,

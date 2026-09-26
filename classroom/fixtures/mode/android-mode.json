@@ -1,0 +1,14 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Stands in for the Android app's saved mode (SharedPreferences, ModeStore.kt:15-38). Left ONLINE on purpose: nobody logged who switched it.",
+  "platform": "android",
+  "app_version": "0.3.3",
+  "store": "SharedPreferences",
+  "keys": {
+    "YaBOT.ModeStore.isOnline": true,
+    "YaBOT.ModeStore.lastOnlineBy": "US-Decider",
+    "YaBOT.ModeStore.lastOnlineContext": "way_out"
+  },
+  "mode_reply": "Mode: ONLINE link allowed as bonus. Offline seat still premier.\nGate: US + Lab-resident bots only · flip ON only on the way out\nLast flip: US-Decider · way_out",
+  "switch_log_found": []
+}

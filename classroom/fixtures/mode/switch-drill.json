@@ -1,0 +1,60 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. A made-up morning of mode switches on three devices, for building a mode_log.",
+  "approvals_in_outbox": [
+    "018-go-online-go-offline-demo-a1-approval"
+  ],
+  "events": [
+    {
+      "at": "2026-09-26T14:02:00Z",
+      "device": "mac",
+      "action": "typed",
+      "text": "mode",
+      "reply_first_line": "Mode: OFFLINE premier. Green nerve off."
+    },
+    {
+      "at": "2026-09-26T14:03:00Z",
+      "device": "mac",
+      "action": "typed",
+      "text": "online",
+      "approval_message_id": "018-go-online-go-offline-demo-a1-approval",
+      "reply_first_line": "ONLINE · way-out flip by US-Decider."
+    },
+    {
+      "at": "2026-09-26T14:05:00Z",
+      "device": "mac",
+      "action": "typed",
+      "text": "read https://en.wikipedia.org/wiki/Jos%C3%A9_Rizal",
+      "reply_first_line": "(page summary)"
+    },
+    {
+      "at": "2026-09-26T14:07:00Z",
+      "device": "mac",
+      "action": "typed",
+      "text": "offline",
+      "reply_first_line": "OFFLINE premier (decider)."
+    },
+    {
+      "at": "2026-09-26T14:20:00Z",
+      "device": "ios",
+      "action": "ЯBAR switch",
+      "to": "online",
+      "approval_message_id": null
+    },
+    {
+      "at": "2026-09-26T14:50:00Z",
+      "device": "ios",
+      "action": "ЯBAR switch",
+      "to": "offline",
+      "approval_message_id": null
+    },
+    {
+      "at": "2026-09-26T15:10:00Z",
+      "device": "android",
+      "action": "typed",
+      "text": "go online",
+      "approval_message_id": null,
+      "reply_first_line": "ONLINE · way-out flip by US-Decider."
+    }
+  ]
+}
