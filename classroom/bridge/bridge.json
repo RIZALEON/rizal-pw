@@ -1,0 +1,44 @@
+{
+  "schema": "rbot.classroom.bridge.v1",
+  "status": "proposal",
+  "doc": "classroom/BRIDGE.md",
+  "note": "Proposed `bridge` block for manifest.json. Kept here as its own file so no existing file is edited; copy it into manifest.json in a later Decider-approved PR.",
+  "bridge": {
+    "visitor": {
+      "auth": "none",
+      "method": "HTTPS GET, read-only",
+      "manifest": [
+        "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json",
+        "https://rizaleon.github.io/rizal-pw/classroom/manifest.json"
+      ],
+      "lessons": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/lessons/<lesson_id>.json",
+      "fixtures_index": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/fixtures/FIXTURES.json",
+      "integrity": "compare each lesson file's sha256 with the one listed in manifest.json"
+    },
+    "guest": {
+      "id_prefix": "GID-",
+      "id_pattern": "^GID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "file_key": "G<seq>-<check>",
+      "assigned_by": "Decider only",
+      "scope": ["read lessons", "fixture prompts", "submit ask door pong exam teach_back tutor_note guest_score"],
+      "never": ["score", "approve", "ping members", "go ONLINE", "run on owner machines", "count toward member proficiency"]
+    },
+    "envelope": {
+      "schema": "state/bridge-envelope.schema.json",
+      "schema_id": "rbot.classroom.bridge-envelope.v1",
+      "file_name": "<envelope_id>.json",
+      "max_file_bytes": 32768
+    },
+    "delivery": {
+      "enroll_request": "fork PR adding ONE file to classroom/bridge/requests/",
+      "everything_else": "fork PR adding ONE file to classroom/bridge/incoming/",
+      "server": "none"
+    },
+    "limits": {
+      "envelopes_per_guest_per_utc_day": 5,
+      "submissions_per_guest_per_lesson_per_utc_day": 3,
+      "open_enroll_requests_per_contact": 1,
+      "files_per_pr": 1
+    }
+  }
+}
