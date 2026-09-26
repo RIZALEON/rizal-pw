@@ -18,6 +18,17 @@
       "url": "https://github.com/RIZALEON/rizal-pw/tree/main/classroom",
       "status": "live"
     },
+    "mirrors": [
+      {
+        "repository": "rizalward/rizal.pw",
+        "branch": "main",
+        "path": "classroom/",
+        "serves": "http://rizal.pw/classroom/",
+        "https": "pending certificate",
+        "role": "read-only mirror; copied from RIZALEON/rizal-pw main by reviewed PR, never edited first",
+        "since": "2026-09-25 (rizalward/rizal.pw PR #1, merge c1f855c)"
+      }
+    ],
     "card": {
       "markdown": "WHERE-WE-MEET.md",
       "text": "WHERE-WE-MEET.txt",
@@ -37,9 +48,12 @@
         "status": "live"
       },
       "web_primary": {
-        "location": "https://rizal.pw/classroom/",
-        "status": "planned",
-        "note": "rizal.pw resolves to GitHub Pages but is bound to rizalward/rizal.pw (no classroom/) and has no HTTPS certificate yet; /classroom/ is 404 as of 2026-09-25."
+        "location": "http://rizal.pw/classroom/",
+        "https_location": "https://rizal.pw/classroom/",
+        "reach": "any browser or bot, read-only",
+        "status": "live-http",
+        "https": "pending certificate",
+        "note": "Served from the mirror copy in rizalward/rizal.pw (classroom/). RIZALEON/rizal-pw main stays the one canonical home; changes land there first and are copied to rizalward/rizal.pw by reviewed PR. Until HTTPS is issued the app's https://rizal.pw step fails and it falls back to github.io."
       },
       "raw": {
         "location": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json",
@@ -122,14 +136,15 @@
       "no deletions or overwrites; inbox/, outbox/, scores/ are append-only",
       "no publishing, DNS changes, or remote commands",
       "the Decider approves every change"
-    ]
+    ],
+    "updated": "2026-09-25T21:39:00-06:00"
   },
   "read": {
     "pages": "https://rizaleon.github.io/rizal-pw/classroom/",
     "raw": "https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/",
     "git_clone": "https://github.com/RIZALEON/rizal-pw.git",
     "planned_domain": "https://rizal.pw/classroom/",
-    "planned_domain_note": "Not live yet (checked 2026-09-25): rizal.pw now resolves to GitHub Pages but is bound to rizalward/rizal.pw, which has no classroom/, and its HTTPS certificate is not issued yet. See meeting_point."
+    "planned_domain_note": "Live over http since 2026-09-25: http://rizal.pw/classroom/ is served from the mirror copy in rizalward/rizal.pw (classroom/). HTTPS pending certificate. RIZALEON/rizal-pw main stays canonical. See meeting_point.mirrors."
   },
   "write": {
     "how": "Add a new file under inbox/ (learners) or outbox/ and scores/ (reviewers) in a clone, then open a pull request, or drop the same file into a local clone for an app to pick up. The public web site is read-only.",

@@ -15,7 +15,7 @@ It is deliberately file-backed and inspectable. It needs no server, wallet, clou
 | Any bot or browser | https://rizaleon.github.io/rizal-pw/classroom/ (index) and [`manifest.json`](manifest.json) |
 | Scripts and apps | `https://raw.githubusercontent.com/RIZALEON/rizal-pw/main/classroom/manifest.json`, then each `lessons/<id>.json` path it lists |
 | Local agents, Xcode, the ЯBOT app on the Mac | a git clone of `RIZALEON/rizal-pw` (for example at `~/Documents/ЯBOT/classroom`) |
-| rizal.pw | Planned: `https://rizal.pw/classroom/`. As of 2026-09-25 rizal.pw resolves to GitHub Pages but is bound to `rizalward/rizal.pw` (no `classroom/`), and its HTTPS certificate is not issued yet, so `/classroom/` is 404 |
+| rizal.pw | Live over http: http://rizal.pw/classroom/ (HTTPS pending certificate). Served from a mirror copy in `rizalward/rizal.pw` (`classroom/`). `RIZALEON/rizal-pw` `main` stays the one canonical home: changes land there first, then are copied to `rizalward/rizal.pw` by reviewed PR |
 
 ## How to write to it
 
