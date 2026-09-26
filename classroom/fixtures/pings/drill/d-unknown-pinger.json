@@ -1,0 +1,20 @@
+{
+  "fixture": true,
+  "x-fixture-note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data.",
+  "schema": "rbot.classroom.ping.v1",
+  "kind": "ping",
+  "id": "PING-20260925T170300Z-0003-P4M6",
+  "at": "2026-09-25T17:03:00Z",
+  "from": {
+    "rid": "ЯID-0009-ABCD",
+    "name": "NOVA"
+  },
+  "to": {
+    "rid": "ЯID-0003-P4M6",
+    "name": "ЯMAX"
+  },
+  "asked_as": "ЯMAX",
+  "rfid": null,
+  "via": "cli",
+  "note": "hi, I am new"
+}

@@ -1,27 +1,50 @@
 {
   "schema": "rbot.classroom.message.v1",
-  "message_id": "001-project-orientation-EXAMPLE-a1",
+  "message_id": "001-project-orientation-0002-PQ2Q-a1",
   "kind": "submission",
   "lesson_id": "001-project-orientation",
   "attempt_id": "a1",
+  "exercise_id": "001-ex01",
   "in_reply_to": null,
-  "from": { "name": "EXAMPLE", "role": "learner", "agent": "example-bot", "platform": "mac" },
-  "to": { "name": "reviewer", "role": "reviewer" },
+  "from": {
+    "name": "ЯBOT",
+    "role": "learner",
+    "agent": "example-bot",
+    "platform": "mac"
+  },
+  "to": {
+    "name": "SCOUT",
+    "role": "teacher"
+  },
   "created_at": "2026-09-25T20:00:00-06:00",
-  "body": "EXAMPLE ONLY. Seat is ~/Documents/ЯBOT: it holds ЯBOT.xcodeproj, is a git repo with remote RIZALEON/RIZALBOT, and the localbuild hashes match it.",
+  "body": "EXAMPLE ONLY (not a real submission; ЯBOT has not taken lesson 001). Seat is ~/Documents/ЯBOT: it holds ЯBOT.xcodeproj, is a git repo with remote RIZALEON/RIZALBOT, and the localbuild hashes match it.",
   "answers": {
     "seat_path": "~/Documents/ЯBOT",
     "project_file": "ЯBOT.xcodeproj/project.pbxproj",
     "git_remote": "https://github.com/RIZALEON/RIZALBOT.git",
     "git_branch": "abomega-0.1",
     "working_tree_clean": false,
-    "copies_found": ["~/Library/Developer/ЯBOT-localbuild"],
+    "copies_found": [
+      "~/Library/Developer/ЯBOT-localbuild"
+    ],
     "hash_match": true,
     "explanation": "It is the only candidate under git with the real remote, and the localbuild's files hash identically, so the localbuild is a copy."
   },
   "commands_run": [
-    { "cmd": "pwd", "changed_files": false, "exit_code": 0 },
-    { "cmd": "shasum -a 256 ~/Documents/ЯBOT/ЯBOT/TokenBlast.swift ~/Library/Developer/ЯBOT-localbuild/ЯBOT/TokenBlast.swift", "changed_files": false, "exit_code": 0 }
+    {
+      "cmd": "pwd",
+      "changed_files": false,
+      "exit_code": 0
+    },
+    {
+      "cmd": "shasum -a 256 ~/Documents/ЯBOT/ЯBOT/TokenBlast.swift ~/Library/Developer/ЯBOT-localbuild/ЯBOT/TokenBlast.swift",
+      "changed_files": false,
+      "exit_code": 0
+    }
   ],
-  "safety_attest": { "no_secrets": true, "no_remote_or_chain_actions": true, "read_only": true }
+  "safety_attest": {
+    "no_secrets": true,
+    "no_remote_or_chain_actions": true,
+    "read_only": true
+  }
 }

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/enrollment.schema.json",
+  "title": "ЯBOT Classroom enrollment (v1)",
+  "description": "One file per enrolled learner in enrollment/, named <seq>-<check>.json after the learner's ЯID. Changed only by a new version number through repository review. Progress is never stored here: tools/classroom.py build derives it from scores/ into views/proficiency.json.",
+  "type": "object",
+  "required": ["schema", "version", "learner", "teacher", "scorers", "curriculum", "lessons", "proficiency", "status", "enrolled_at", "enrolled_by", "filed_as"],
+  "properties": {
+    "schema": { "const": "rbot.classroom.enrollment.v1" },
+    "version": { "type": "integer", "minimum": 1 },
+    "learner": { "$ref": "#/$defs/who" },
+    "teacher": { "$ref": "#/$defs/who" },
+    "scorers": {
+      "type": "array",
+      "description": "Who may score this learner. Only SCOUT or ЯBAT, and never the learner itself.",
+      "items": { "$ref": "#/$defs/who" },
+      "minItems": 1,
+      "maxItems": 2
+    },
+    "curriculum": { "const": "manifest.json#curriculum" },
+    "lessons": {
+      "type": "array",
+      "description": "Lesson ids in the order they are taken: the prelude (001-003) first, then 004 onward.",
+      "items": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "proficiency": {
+      "type": "object",
+      "required": ["streak_required", "reset_on_fail", "retry_prompt", "distinct_prompts_in_streak", "unlock"],
+      "properties": {
+        "streak_required": { "const": 3 },
+        "reset_on_fail": { "const": true },
+        "retry_prompt": { "const": "different" },
+        "distinct_prompts_in_streak": { "const": true },
+        "unlock": { "const": "next lesson opens when the current one is proficient; 004 opens when 001, 002 and 003 are all proficient" }
+      },
+      "additionalProperties": false
+    },
+    "status": { "enum": ["enrolled, awaiting app 0.3.3 install", "active", "paused", "graduated", "withdrawn"] },
+    "surfaces": { "type": "array", "items": { "enum": ["macos", "ios", "android", "offline"] }, "uniqueItems": true },
+    "sandbox": { "const": "state/sandbox.json" },
+    "enrolled_at": { "type": "string", "format": "date-time" },
+    "enrolled_by": {
+      "type": "object",
+      "required": ["name", "role"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "role": { "enum": ["decider", "professor", "teacher", "reviewer"] },
+        "order": { "type": "string", "maxLength": 400 }
+      },
+      "additionalProperties": false
+    },
+    "filed_as": { "enum": ["proposed", "active"] },
+    "open_questions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "notes": { "type": "string", "maxLength": 4000 }
+  },
+  "patternProperties": { "^x-": {} },
+  "additionalProperties": false,
+  "$defs": {
+    "who": {
+      "type": "object",
+      "required": ["rid", "name"],
+      "properties": {
+        "rid": { "type": "string", "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

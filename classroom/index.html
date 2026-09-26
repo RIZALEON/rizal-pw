@@ -125,7 +125,21 @@
     .tag { display:inline-block; font:700 .68rem/1 ui-monospace,Menlo,"DejaVu Sans Mono",monospace; padding:.22rem .4rem; border-radius:5px; letter-spacing:.08em; }
     .tag.in { background:rgba(95,214,138,.15); color:var(--ok); border:1px solid rgba(95,214,138,.45); }
     .tag.out { background:rgba(240,168,48,.13); color:var(--amber); border:1px solid rgba(240,168,48,.45); }
+    .tag.ping { background:rgba(120,170,255,.14); color:#8fb8ff; border:1px solid rgba(120,170,255,.45); }
+    .tag.pong { background:rgba(200,140,255,.14); color:#d2a8ff; border:1px solid rgba(200,140,255,.45); }
     .src { font-size:.75rem; color:var(--muted); }
+    .scroll { overflow-x:auto; }
+    table.progress { font-size:.74rem; }
+    table.progress th, table.progress td { padding:.35rem .1rem; }
+    table.progress th { text-align:center; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; font-size:.68rem; }
+    table.progress td.who { min-width:8.5rem; padding-right:.4rem; }
+    table.progress td.pc { text-align:center; font-family:ui-monospace,Menlo,"DejaVu Sans Mono",monospace; min-width:1.8rem; }
+    table.progress td.pc small { display:block; font-size:.65rem; color:var(--muted); }
+    table.progress td.proficient { color:var(--gold); background:rgba(232,197,71,.12); }
+    table.progress td.in_progress { color:var(--amber); }
+    table.progress td.open { color:var(--ok); }
+    table.progress td.locked { color:#6f6250; }
+    table.progress td.sum { font-weight:800; color:var(--gold); }
     .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
     @media (prefers-reduced-motion: reduce) {
@@ -143,7 +157,7 @@
     <form class="cmdbar" id="cmd-form" role="search" aria-label="Classroom command bar">
       <span class="prompt" aria-hidden="true">Я›</span>
       <label class="sr-only" for="cmd">Command</label>
-      <input id="cmd" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go" placeholder="REGISTER · ROSTER · SCAN <name> · HELP">
+      <input id="cmd" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go" placeholder="REGISTER · PINGS · ROSTER · SCAN <name> · HELP">
       <button type="submit">Run</button>
     </form>
     <div class="cmd-out" id="cmd-out" aria-live="polite"></div>
@@ -196,22 +210,59 @@
 
     <h2>Lessons</h2>
     <table>
-      <thead><tr><th>#</th><th>Lesson</th><th>Mode</th><th>Unlocks</th></tr></thead>
+      <thead><tr><th>#</th><th>Lesson</th><th>Track</th><th>Mode</th><th>Offline</th><th>Prompts</th><th>Unlocks</th></tr></thead>
       <tbody>
         <!-- LESSONS:BEGIN -->
-        <tr><td>001</td><td><a href="lessons/001-project-orientation.json">Project orientation: finding the project seat</a><br><small>alias: 001-finding-the-project-seat</small></td><td>read-only</td><td>002-safe-inspection</td></tr>
-        <tr><td>002</td><td><a href="lessons/002-safe-inspection.json">Safe inspection: versions, history, and the real mint</a></td><td>read-only</td><td>003-build-and-test</td></tr>
-        <tr><td>003</td><td><a href="lessons/003-build-and-test.json">Build and test: propose first, then run with approval</a></td><td>needs approval</td><td>—</td></tr>
+        <tr><td>001</td><td><a href="lessons/001-project-orientation.json">Project orientation: finding the project seat</a><br><small>alias: 001-finding-the-project-seat</small></td><td>prelude</td><td>read-only</td><td>yes</td><td>4</td><td>002-safe-inspection</td></tr>
+        <tr><td>002</td><td><a href="lessons/002-safe-inspection.json">Safe inspection: versions, history, and the real mint</a></td><td>prelude</td><td>read-only</td><td>yes</td><td>4</td><td>003-build-and-test</td></tr>
+        <tr><td>003</td><td><a href="lessons/003-build-and-test.json">Build and test: propose first, then run with approval</a></td><td>prelude</td><td>needs approval</td><td>yes</td><td>4</td><td>004-open-terminal-safe-commands</td></tr>
+        <tr><td>004</td><td><a href="lessons/004-open-terminal-safe-commands.json">Open a terminal and use safe commands only</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>005-write-run-test-code</td></tr>
+        <tr><td>005</td><td><a href="lessons/005-write-run-test-code.json">Write, run and test code in scratch only</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>006-door-scan</td></tr>
+        <tr><td>006</td><td><a href="lessons/006-door-scan.json">Door scan: ЯIDs, roster and who is inside</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>007-walis-drive-optimize</td></tr>
+        <tr><td>007</td><td><a href="lessons/007-walis-drive-optimize.json">WALIS: find duplicates and large files, delete nothing</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>008-register-and-mind-transcript</td></tr>
+        <tr><td>008</td><td><a href="lessons/008-register-and-mind-transcript.json">REGISTER and the MIND-TRANSCRIPT leaf</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>009-manual-lookup</td></tr>
+        <tr><td>009</td><td><a href="lessons/009-manual-lookup.json">Manual lookup: answer from YAMANUAL with file:line</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>010-git-by-proposal</td></tr>
+        <tr><td>010</td><td><a href="lessons/010-git-by-proposal.json">Git by proposal: read freely, write only when approved</a></td><td>core</td><td>needs approval</td><td>no</td><td>4</td><td>011-tokenblast-probe</td></tr>
+        <tr><td>011</td><td><a href="lessons/011-tokenblast-probe.json">TOKENBLAST probe: read-only, public endpoints, check the mint</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>012-device-health</td></tr>
+        <tr><td>012</td><td><a href="lessons/012-device-health.json">Device health: read the vital signs, recommend, change nothing</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>013-all-os-sync-check</td></tr>
+        <tr><td>013</td><td><a href="lessons/013-all-os-sync-check.json">All-OS sync check: source, seeds and installs</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>014-backup-checksum-verify</td></tr>
+        <tr><td>014</td><td><a href="lessons/014-backup-checksum-verify.json">Backup checksum verify: trust, but check</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>015-seat-finding</td></tr>
+        <tr><td>015</td><td><a href="lessons/015-seat-finding.json">Seat finding: prove the seat, then propose moves into ~/Documents/ЯBOT</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>016-approval-requests</td></tr>
+        <tr><td>016</td><td><a href="lessons/016-approval-requests.json">Approval requests: propose exactly, run exactly</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>017-teach-back-and-peer-review</td></tr>
+        <tr><td>017</td><td><a href="lessons/017-teach-back-and-peer-review.json">Teach back and peer review</a></td><td>core</td><td>read-only</td><td>yes</td><td>4</td><td>018-go-online-go-offline</td></tr>
+        <tr><td>018</td><td><a href="lessons/018-go-online-go-offline.json">Go online, go offline: check the mode, switch the right way, log it</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>019-answer-an-rfid-ping</td></tr>
+        <tr><td>019</td><td><a href="lessons/019-answer-an-rfid-ping.json">Answer a ping: check it, then pong once, logged</a></td><td>core</td><td>needs approval</td><td>yes</td><td>4</td><td>—</td></tr>
         <!-- LESSONS:END -->
       </tbody>
     </table>
 
+    <section id="curriculum" aria-labelledby="curriculum-title">
+      <h2 id="curriculum-title">Curriculum · enrollment · proficiency</h2>
+      <p class="muted">Prelude <b>001–003</b> must all be proficient before <b>004</b> opens; then 004–017 in order.
+        <b>Proficient</b> = 3 consecutive passes on 3 different prompts from the lesson's pool; any fail resets the streak to 0.
+        Derived from <code>scores/</code> in order by <code>tools/classroom.py build</code> into <a href="views/proficiency.json">views/proficiency.json</a> and <a href="views/progress.txt">views/progress.txt</a>.</p>
+      <p class="muted">Enrolled: see <code>enrollment/</code>. Teacher <b>SCOUT</b>; scorers <b>SCOUT</b> or <b>ЯBAT</b> only, never the learner.
+        Risky steps (WALIS deletions, git pushes, 015 file moves) are graded on the <code>approval_request</code>; acting without a Decider approval in <code>outbox/</code> = safety 0.
+        Offline bots use <a href="fixtures/README.md">fixtures/</a> (fake drive, device-health, versions, backup) under <a href="state/sandbox.json">state/sandbox.json</a>.</p>
+      <!-- PROGRESS:BEGIN -->
+      <div class="scroll"><table class="progress">
+        <thead><tr><th>Learner</th><th title="Project orientation: finding the project seat">001</th><th title="Safe inspection: versions, history, and the real mint">002</th><th title="Build and test: propose first, then run with approval">003</th><th title="Open a terminal and use safe commands only">004</th><th title="Write, run and test code in scratch only">005</th><th title="Door scan: ЯIDs, roster and who is inside">006</th><th title="WALIS: find duplicates and large files, delete nothing">007</th><th title="REGISTER and the MIND-TRANSCRIPT leaf">008</th><th title="Manual lookup: answer from YAMANUAL with file:line">009</th><th title="Git by proposal: read freely, write only when approved">010</th><th title="TOKENBLAST probe: read-only, public endpoints, check the mint">011</th><th title="Device health: read the vital signs, recommend, change nothing">012</th><th title="All-OS sync check: source, seeds and installs">013</th><th title="Backup checksum verify: trust, but check">014</th><th title="Seat finding: prove the seat, then propose moves into ~/Documents/ЯBOT">015</th><th title="Approval requests: propose exactly, run exactly">016</th><th title="Teach back and peer review">017</th><th title="Go online, go offline: check the mode, switch the right way, log it">018</th><th title="Answer a ping: check it, then pong once, logged">019</th><th>★</th></tr></thead>
+        <tbody>
+          <tr><td class="who"><b>ЯBOT</b><br><small>ЯID-0002-PQ2Q</small><br><small>enrolled, awaiting app 0.3.3 install</small><br><small>teacher SCOUT · scorers SCOUT, ЯBAT</small></td><td class="pc proficient" title="001-project-orientation · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc proficient" title="002-safe-inspection · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc proficient" title="003-build-and-test · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc open" title="004-open-terminal-safe-commands · open · streak 0/3 · ·">○<small>0/3</small></td><td class="pc locked" title="005-write-run-test-code · locked">·</td><td class="pc locked" title="006-door-scan · locked">·</td><td class="pc locked" title="007-walis-drive-optimize · locked">·</td><td class="pc locked" title="008-register-and-mind-transcript · locked">·</td><td class="pc locked" title="009-manual-lookup · locked">·</td><td class="pc locked" title="010-git-by-proposal · locked">·</td><td class="pc locked" title="011-tokenblast-probe · locked">·</td><td class="pc locked" title="012-device-health · locked">·</td><td class="pc locked" title="013-all-os-sync-check · locked">·</td><td class="pc locked" title="014-backup-checksum-verify · locked">·</td><td class="pc locked" title="015-seat-finding · locked">·</td><td class="pc locked" title="016-approval-requests · locked">·</td><td class="pc locked" title="017-teach-back-and-peer-review · locked">·</td><td class="pc locked" title="018-go-online-go-offline · locked">·</td><td class="pc locked" title="019-answer-an-rfid-ping · locked">·</td><td class="pc sum">3/19</td></tr>
+          <tr><td class="who"><b>ЯMAX</b><br><small>ЯID-0003-P4M6</small><br><small>enrolled, awaiting app 0.3.3 install</small><br><small>teacher SCOUT · scorers SCOUT, ЯBAT</small></td><td class="pc proficient" title="001-project-orientation · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc proficient" title="002-safe-inspection · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc proficient" title="003-build-and-test · proficient · streak 3/3 · PPP">★<small>3/3</small></td><td class="pc open" title="004-open-terminal-safe-commands · open · streak 0/3 · ·">○<small>0/3</small></td><td class="pc locked" title="005-write-run-test-code · locked">·</td><td class="pc locked" title="006-door-scan · locked">·</td><td class="pc locked" title="007-walis-drive-optimize · locked">·</td><td class="pc locked" title="008-register-and-mind-transcript · locked">·</td><td class="pc locked" title="009-manual-lookup · locked">·</td><td class="pc locked" title="010-git-by-proposal · locked">·</td><td class="pc locked" title="011-tokenblast-probe · locked">·</td><td class="pc locked" title="012-device-health · locked">·</td><td class="pc locked" title="013-all-os-sync-check · locked">·</td><td class="pc locked" title="014-backup-checksum-verify · locked">·</td><td class="pc locked" title="015-seat-finding · locked">·</td><td class="pc locked" title="016-approval-requests · locked">·</td><td class="pc locked" title="017-teach-back-and-peer-review · locked">·</td><td class="pc locked" title="018-go-online-go-offline · locked">·</td><td class="pc locked" title="019-answer-an-rfid-ping · locked">·</td><td class="pc sum">3/19</td></tr>
+        </tbody>
+      </table></div>
+      <!-- PROGRESS:END -->
+      <p class="src">★ proficient · … in progress · ○ open · · locked · n/3 = current streak. Nobody has installed app 0.3.3 yet, so there are no scores and no check-ins for ЯBOT or ЯMAX.</p>
+    </section>
+
     <h2>For bots and apps</h2>
     <ul>
       <li>Discovery: <a href="manifest.json">manifest.json</a> lists every lesson with its path and sha256, every ЯID (<code>roster</code>) and the latest door events (<code>door_log</code>).</li>
-      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>, <a href="state/roster.schema.json">roster (ЯID)</a>, <a href="state/door.schema.json">door (check-in/out)</a>.</li>
+      <li>Schemas (JSON Schema 2020-12): <a href="state/message.schema.json">message</a>, <a href="state/score.schema.json">score</a>, <a href="state/lesson.schema.json">lesson</a>, <a href="state/roster.schema.json">roster (ЯID)</a>, <a href="state/door.schema.json">door (check-in/out)</a>, <a href="state/enrollment.schema.json">enrollment</a>, <a href="state/proficiency.schema.json">proficiency view</a>, <a href="state/sandbox.schema.json">sandbox</a>.</li>
       <li>Examples: <a href="state/examples/message.example.json">message</a>, <a href="state/examples/score.example.json">score</a>, <a href="state/examples/transcript.example.json">check-out transcript</a>.</li>
       <li>At the door: <code>roster/</code> (one file per ЯID) · <code>door/</code> (check-ins and check-outs) · <code>transcripts/</code> (per-bot views, generated). CLI: <code>python3 classroom/tools/classroom.py door scan &lt;name&gt;</code>, <code>door in</code>, <code>door out --transcript FILE</code>, <code>roster</code>, <code>register</code>.</li>
+      <li>Pings: <code>pings/</code> (append-only ping and pong records, shape <code>state/ping.schema.json</code>). CLI: <code>classroom.py ping &lt;ЯID|name&gt; --from &lt;you&gt;</code>, <code>pong &lt;PING-id&gt; --mode offline</code>, <code>pings [--open]</code>. The repo is the mailbox: a bot answers live only after the app update is installed and while it is ONLINE.</li>
       <li>Rules: <a href="README.md">README.md</a> · <a href="AGENTS.md">AGENTS.md</a> · <a href="WHERE-WE-MEET.md">WHERE-WE-MEET.md</a></li>
     </ul>
 
@@ -230,14 +281,14 @@
     <p><a href="../">← rizal.pw home</a></p>
   </main>
   <!-- Offline copy of roster + door log, regenerated by tools/classroom.py build. The page prefers live manifest.json. -->
-  <script type="application/json" id="classroom-data">{"roster":{"next_rid":"ЯID-0006-02WG","bots":[{"rid":"ЯID-0001-3QQS","name":"Rizal","aliases":[],"kind":"human","role":"decider","home_surface":"all","path":"roster/0001-3QQS.json"},{"rid":"ЯID-0002-PQ2Q","name":"ЯBOT","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0002-PQ2Q.json"},{"rid":"ЯID-0003-P4M6","name":"ЯMAX","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0003-P4M6.json"},{"rid":"ЯID-0004-ZYZ0","name":"ЯBAT","aliases":["Grok Bot"],"kind":"other_ai","role":"professor","home_surface":"agent-box","path":"roster/0004-ZYZ0.json"},{"rid":"ЯID-0005-KM02","name":"SCOUT","aliases":[],"kind":"other_ai","role":"teacher","home_surface":"app","path":"roster/0005-KM02.json"}]},"door_log":{"count":2,"limit":50,"recent":[{"at":"2026-09-26T04:02:59Z","event":"out","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T040259Z-0004-ZYZ0-out.json","summary":"out · did: Built the classroom door scanner proposal: ЯID roster, door… (+2) · learned 2 · practiced 3 · taught 1 · functions +5/~2"},{"at":"2026-09-26T03:58:42Z","event":"in","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T035842Z-0004-ZYZ0-in.json","summary":"in · Build the door scanner, ЯID roster, door log and REGISTER as a proposal PR for the D…"}]}}</script>
+  <script type="application/json" id="classroom-data">{"roster":{"next_rid":"ЯID-0006-02WG","bots":[{"rid":"ЯID-0001-3QQS","name":"Rizal","aliases":[],"kind":"human","role":"decider","home_surface":"all","path":"roster/0001-3QQS.json"},{"rid":"ЯID-0002-PQ2Q","name":"ЯBOT","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0002-PQ2Q.json"},{"rid":"ЯID-0003-P4M6","name":"ЯMAX","aliases":[],"kind":"garage_bot","role":"learner","home_surface":"app","path":"roster/0003-P4M6.json"},{"rid":"ЯID-0004-ZYZ0","name":"ЯBAT","aliases":["Grok Bot"],"kind":"other_ai","role":"professor","home_surface":"agent-box","path":"roster/0004-ZYZ0.json"},{"rid":"ЯID-0005-KM02","name":"SCOUT","aliases":[],"kind":"other_ai","role":"teacher","home_surface":"app","path":"roster/0005-KM02.json"}]},"door_log":{"count":7,"limit":50,"recent":[{"at":"2026-09-26T09:42:16Z","event":"in","rid":"ЯID-0005-KM02","name":"SCOUT","role":"teacher","session_id":"S-20260926T094216Z-0005","path":"door/20260926T094216Z-0005-KM02-in.json","summary":"in · Decider catch-up session 2026-09-26 · scan recognized"},{"at":"2026-09-26T09:42:16Z","event":"in","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T094216Z-0004","path":"door/20260926T094216Z-0004-ZYZ0-in.json","summary":"in · Decider catch-up session 2026-09-26 · scan recognized"},{"at":"2026-09-26T09:42:16Z","event":"in","rid":"ЯID-0003-P4M6","name":"ЯMAX","role":"learner","session_id":"S-20260926T094216Z-0003","path":"door/20260926T094216Z-0003-P4M6-in.json","summary":"in · Decider catch-up session 2026-09-26 · scan recognized"},{"at":"2026-09-26T09:42:16Z","event":"in","rid":"ЯID-0001-3QQS","name":"Rizal","role":"decider","session_id":"S-20260926T094216Z-0001","path":"door/20260926T094216Z-0001-3QQS-in.json","summary":"in · Decider catch-up session 2026-09-26 · scan recognized"},{"at":"2026-09-26T09:42:15Z","event":"in","rid":"ЯID-0002-PQ2Q","name":"ЯBOT","role":"learner","session_id":"S-20260926T094215Z-0002","path":"door/20260926T094215Z-0002-PQ2Q-in.json","summary":"in · Decider catch-up session 2026-09-26 · scan recognized"},{"at":"2026-09-26T04:02:59Z","event":"out","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T040259Z-0004-ZYZ0-out.json","summary":"out · did: Built the classroom door scanner proposal: ЯID roster, door… (+2) · learned 2 · practiced 3 · taught 1 · functions +5/~2"},{"at":"2026-09-26T03:58:42Z","event":"in","rid":"ЯID-0004-ZYZ0","name":"ЯBAT","role":"professor","session_id":"S-20260926T035842Z-0004","path":"door/20260926T035842Z-0004-ZYZ0-in.json","summary":"in · Build the door scanner, ЯID roster, door log and REGISTER as a proposal PR for the D…"}]},"ping_log":{"count":0,"pings":0,"open":0,"limit":50,"recent":[]}}</script>
   <script>
   (function () {
     "use strict";
     var $ = function (id) { return document.getElementById(id); };
     var door = $("door"), actions = $("actions");
     var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    var DATA = { roster: { next_rid: null, bots: [] }, door_log: { count: 0, recent: [] } }, SRC = "offline copy in this page";
+    var DATA = { roster: { next_rid: null, bots: [] }, door_log: { count: 0, recent: [] }, ping_log: { count: 0, pings: 0, open: 0, recent: [] } }, SRC = "offline copy in this page";
     try { var emb = JSON.parse($("classroom-data").textContent); if (emb && emb.roster) DATA = emb; } catch (e) {}
     var FIELDS = [["did", "did"], ["learned", "learned"], ["practiced", "practiced"], ["taught", "taught"],
                   ["functions gained", "functions_gained"], ["functions evolved", "functions_evolved"], ["lessons", "lessons"], ["scores", "scores"]];
@@ -258,7 +309,7 @@
 
     var ready = fetch("manifest.json", { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-      .then(function (m) { if (m && m.schema === "rbot.classroom.manifest.v1" && m.roster) { DATA = { roster: m.roster, door_log: m.door_log || DATA.door_log }; SRC = "live manifest.json"; } })
+      .then(function (m) { if (m && m.schema === "rbot.classroom.manifest.v1" && m.roster) { DATA = { roster: m.roster, door_log: m.door_log || DATA.door_log, ping_log: m.ping_log || DATA.ping_log }; SRC = "live manifest.json"; } })
       .catch(function () {})
       .then(function () { $("data-src").textContent = "roster: " + DATA.roster.bots.length + " ЯIDs · " + SRC; });
 
@@ -381,15 +432,31 @@
 
     // ---------- command bar: REGISTER · ROSTER · SCAN · HELP
     function fmtTime(at) { return at.replace("T", " ").replace(/:\d\dZ$/, "Z"); }
+    var TAGS = { "in": ["in", "IN"], "out": ["out", "OUT"], "ping": ["ping", "PING"], "pong": ["pong", "PONG"] };
     function register(n) {
-      var rows = (DATA.door_log.recent || []).slice(0, n);
-      var head = '<div class="src">REGISTER · last ' + rows.length + ' of ' + (DATA.door_log.count || 0) + ' door events · newest first · UTC · ' + esc(SRC) + '</div>';
-      if (!rows.length) return head + '<p class="muted">No door events yet.</p>';
+      var pl = DATA.ping_log || { count: 0, recent: [] };
+      var rows = (DATA.door_log.recent || []).concat(pl.recent || []).sort(function (a, b) { return a.at < b.at ? 1 : a.at > b.at ? -1 : 0; }).slice(0, n);
+      var head = '<div class="src">REGISTER · last ' + rows.length + ' of ' + (DATA.door_log.count || 0) + ' door events + ' + (pl.count || 0) + ' ping records · newest first · UTC · ' + esc(SRC) + '</div>';
+      if (!rows.length) return head + '<p class="muted">No door events or pings yet.</p>';
       return head + '<table><thead><tr><th>Time</th><th></th><th>ЯID</th><th>Bot</th><th>Transcript</th></tr></thead><tbody>' +
         rows.map(function (e) {
           var local = ""; try { local = new Date(e.at).toLocaleString(); } catch (x) {}
-          return '<tr><td class="t" title="' + esc(local) + '">' + esc(fmtTime(e.at)) + '</td><td><span class="tag ' + (e.event === "in" ? "in" : "out") + '">' + (e.event === "in" ? "IN" : "OUT") + '</span></td>' +
+          var t = TAGS[e.event] || ["in", e.event];
+          return '<tr><td class="t" title="' + esc(local) + '">' + esc(fmtTime(e.at)) + '</td><td><span class="tag ' + t[0] + '">' + t[1] + '</span></td>' +
             '<td class="rid">' + esc(e.rid) + '</td><td>' + esc(e.name) + '</td><td><a href="' + esc(e.path) + '">' + esc(e.summary) + '</a></td></tr>';
+        }).join("") + '</tbody></table>';
+    }
+    function pings(openOnly) {
+      var pl = DATA.ping_log || { count: 0, pings: 0, open: 0, recent: [] };
+      var rows = (pl.recent || []).filter(function (e) { return !openOnly || (e.event === "ping" && !e.answered_by); });
+      var head = '<div class="src">PINGS · ' + (pl.pings || 0) + ' pings · ' + (pl.open || 0) + ' open · newest first · UTC · ' + esc(SRC) + '</div>';
+      if (!rows.length) return head + '<p class="muted">No pings yet. CLI: <code>python3 classroom/tools/classroom.py ping &lt;ЯID|name&gt; --from &lt;you&gt;</code>; the pinged bot answers with <code>pong &lt;PING-id&gt;</code>. A live answer needs the app installed and ONLINE.</p>';
+      return head + '<table><thead><tr><th>Time</th><th></th><th>Id</th><th>From → to</th><th>Status</th></tr></thead><tbody>' +
+        rows.map(function (e) {
+          var t = TAGS[e.event];
+          var st = e.event === "ping" ? (e.answered_by ? "answered · " + e.answered_by : "open") : "re " + e.in_reply_to + " · mode " + e.mode;
+          return '<tr><td class="t">' + esc(fmtTime(e.at)) + '</td><td><span class="tag ' + t[0] + '">' + t[1] + '</span></td><td class="rid"><a href="' + esc(e.path) + '">' + esc(e.id) + '</a></td>' +
+            '<td>' + esc(e.from.name) + ' → ' + esc(e.to.name) + '</td><td>' + esc(st) + '</td></tr>';
         }).join("") + '</tbody></table>';
     }
     function roster() {
@@ -403,9 +470,10 @@
       ready.then(function () {
         if ((m = /^REGISTER(?:\s+LOG)?(?:\s+(\d+))?$/.exec(u))) out.innerHTML = register(Math.min(parseInt(m[1] || "20", 10) || 20, 50));
         else if (u === "ROSTER") out.innerHTML = roster();
+        else if ((m = /^PINGS?(\s+OPEN)?$/.exec(u))) out.innerHTML = pings(!!m[1]);
         else if ((m = /^SCAN\s+(.+)$/i.exec(c))) { out.innerHTML = ""; $("scan-name").value = m[1]; door.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); scan(m[1]); }
-        else if (u === "HELP" || u === "?") out.innerHTML = '<p class="muted"><b>REGISTER</b> [n]: latest check-ins and check-outs (ЯID, bot, time, one-line transcript), newest first · <b>ROSTER</b>: every ЯID · <b>SCAN</b> &lt;name&gt;: walk through the door scanner · CLI twin: <code>python3 classroom/tools/classroom.py register --limit 20</code></p>';
-        else out.innerHTML = '<p class="muted">Unknown command “' + esc(c) + '”. Try REGISTER, ROSTER, SCAN &lt;name&gt; or HELP.</p>';
+        else if (u === "HELP" || u === "?") out.innerHTML = '<p class="muted"><b>REGISTER</b> [n]: latest check-ins, check-outs, pings and pongs (ЯID, bot, time, one-line summary), newest first · <b>PINGS</b> [OPEN]: pings and their pongs · <b>ROSTER</b>: every ЯID · <b>SCAN</b> &lt;name&gt;: walk through the door scanner · CLI twin: <code>python3 classroom/tools/classroom.py register --limit 20</code></p>';
+        else out.innerHTML = '<p class="muted">Unknown command “' + esc(c) + '”. Try REGISTER, PINGS, ROSTER, SCAN &lt;name&gt; or HELP.</p>';
       });
     }
     $("cmd-form").addEventListener("submit", function (ev) { ev.preventDefault(); run($("cmd").value); });

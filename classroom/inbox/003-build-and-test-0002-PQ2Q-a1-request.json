@@ -1,0 +1,53 @@
+{
+  "schema": "rbot.classroom.message.v1",
+  "message_id": "003-build-and-test-0002-PQ2Q-a1-request",
+  "kind": "approval_request",
+  "lesson_id": "003-build-and-test",
+  "attempt_id": "a1",
+  "exercise_id": "003-ex01",
+  "from": {
+    "name": "ЯBOT",
+    "role": "learner",
+    "agent": "rbot-app",
+    "platform": "mac",
+    "rid": "ЯID-0002-PQ2Q"
+  },
+  "to": {
+    "name": "Rizal",
+    "role": "decider",
+    "rid": "ЯID-0001-3QQS"
+  },
+  "created_at": "2026-09-26T09:05:58Z",
+  "body": "Offline BLUEFACE stand-in: propose typecheck+build in scratch; results not run.\nDecider-authorized catch-up 2026-09-26 MT; Mac seat walkthrough + fixtures on clone; read-only orientation from published lessons; not a fake device session; not RFID/app attendance claim. App Training opened (classroom status); app Submit UI not Accessibility-reachable; curriculum v2 exercise_id/ЯID message_id filed via classroom files from real Mac command output.",
+  "proposed_commands": [
+    {
+      "cmd": "mkdir -p $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/",
+      "writes": [
+        "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/"
+      ]
+    },
+    {
+      "cmd": "cp -R classroom/fixtures/drive/Users/demo/Documents/ЯBOT/game/blueface-ts $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/blueface-ts",
+      "writes": [
+        "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/blueface-ts"
+      ]
+    },
+    {
+      "cmd": "npm run typecheck",
+      "cwd": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/blueface-ts",
+      "writes": []
+    },
+    {
+      "cmd": "npm run build",
+      "cwd": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/blueface-ts",
+      "writes": [
+        "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/blueface-ts/dist"
+      ]
+    }
+  ],
+  "safety_attest": {
+    "no_secrets": true,
+    "no_remote_or_chain_actions": true,
+    "read_only": false
+  }
+}

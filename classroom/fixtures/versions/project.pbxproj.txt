@@ -1,0 +1,5 @@
+// FAKE FIXTURE excerpt of ЯBOT.xcodeproj/project.pbxproj (Mac and iOS share one target)
+				MARKETING_VERSION = 0.3.3;
+				CURRENT_PROJECT_VERSION = 2026092501;
+				MARKETING_VERSION = 0.3.3;
+				CURRENT_PROJECT_VERSION = 2026092501;

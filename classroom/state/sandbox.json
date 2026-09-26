@@ -1,0 +1,109 @@
+{
+  "schema": "rbot.classroom.sandbox.v1",
+  "summary": "Read only what the lesson needs, from the paths below. Write nothing except into a scratch folder, and only after a Decider approval in outbox/. Offline bots (no device access) use fixtures/ instead of a device.",
+  "default": "read-only; anything that writes, moves, deletes, pushes or touches the network is proposed as an approval_request first. One exception: lesson 009 may read public github.com pages read-only (no login, forms or downloads).",
+  "platforms": {
+    "mac": {
+      "terminal": true,
+      "terminal_note": "Terminal works, but macOS asks before a process reads Documents, Desktop or Downloads. If access is refused, report it; do not work around it.",
+      "read": [
+        "~/Documents/ЯBOT/",
+        "~/Library/Developer/ЯBOT-localbuild/",
+        "~/Library/Developer/ЯBOT-respawn/",
+        "~/Library/Application Support/ЯBOT/",
+        "~/Desktop/ (names and sizes of ЯBOT-related files)",
+        "~/Downloads/ (names and sizes of ЯBOT-related files)",
+        "the classroom clone (~/Documents/ЯBOT/classroom/classroom/ when it exists)"
+      ],
+      "sizes_only": [
+        "~/Library/Developer/Xcode/DerivedData/",
+        "~/Movies/",
+        "the whole home folder with du -sh / find -size (names and sizes, never contents)"
+      ],
+      "scratch": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/ (created only after approval; never inside ~/Documents/ЯBOT)",
+      "never_read": [
+        "~/.ssh/",
+        "~/Library/Keychains/",
+        "~/.config/gh/ and any other token store",
+        "~/.config/solana/ and any keypair or wallet file (*id.json, *.keypair, wallet*)",
+        "browser profiles, cookies and saved passwords",
+        "Mail, Messages, Photos and Contacts data",
+        ".env files and anything named secret, credential or token"
+      ],
+      "never_touch": [
+        "~/Library/Developer/ЯBOT-respawn/ (the backup: read and verify only, never move or delete)",
+        "the seat's .git/ folder (git commands only, through lesson 010 proposals)"
+      ]
+    },
+    "ios": {
+      "terminal": false,
+      "terminal_note": "iOS has no terminal. A bot on iOS reads through the ЯBOT app (Garage > Training, chat) or a human reads Settings screens and pastes what they show. Steps written as commands are for a Mac; on iOS the lesson is read-and-report, or done against fixtures/.",
+      "read": [
+        "<app Documents>/ЯBOT/ (through the app, or Files > On My iPhone > ЯBOT)",
+        "the app's bundled ClassroomSeed.json (read-only)",
+        "Settings > General > About, Settings > General > iPhone Storage, Settings > Battery (read by a human)"
+      ],
+      "scratch": "none on iOS; practise changes against a scratch copy of fixtures/ on a Mac or agent box",
+      "never_read": [
+        "the Keychain",
+        "other apps' containers",
+        "Photos, Messages, Mail and Contacts",
+        "any wallet app or seed phrase"
+      ]
+    },
+    "android": {
+      "terminal": false,
+      "terminal_note": "The ЯBOT app has no shell. adb works only from a Mac with USB debugging on, and every adb command is a device command that needs approval. Termux is not assumed.",
+      "read": [
+        "<getExternalFilesDir(null)>/ЯBOT/",
+        "<filesDir>/ЯBOT/ (app-private)",
+        "assets/classroom/ in the APK (read-only)",
+        "Settings > About phone, Settings > Storage, Settings > Battery (read by a human)"
+      ],
+      "scratch": "<cacheDir>/rbot-scratch/ inside the app, only after approval",
+      "never_read": [
+        "other apps' data",
+        "account and password stores",
+        "any wallet app or seed phrase",
+        "Photos, Messages and Contacts"
+      ]
+    },
+    "offline": {
+      "terminal": false,
+      "terminal_note": "For bots with no device access (ЯBOT and ЯMAX until app 0.3.3 is installed, or any bot reading the classroom from the web or a clone). Commands in a lesson are read as descriptions; the bot answers from the fixture files. An agent with a shell may run the same commands against fixtures/.",
+      "home_equivalent": "fixtures/drive/Users/demo/ stands in for ~",
+      "read": [
+        "fixtures/",
+        "lessons/, state/, roster/, door/, pings/, transcripts/, views/, enrollment/ and manifest.json of the classroom",
+        "your own approved scratch copy in $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/"
+      ],
+      "scratch": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/: a temporary copy of the needed fixture folder (lesson 005), created only after a Decider approval; never fixtures/ itself",
+      "never_read": [
+        "anything outside the classroom folder, except your own approved scratch copy in $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/"
+      ]
+    }
+  },
+  "fixtures_root": "fixtures/",
+  "fixtures_index": "fixtures/FIXTURES.json",
+  "offline_lessons": [
+    "001-project-orientation",
+    "002-safe-inspection",
+    "003-build-and-test",
+    "004-open-terminal-safe-commands",
+    "005-write-run-test-code",
+    "006-door-scan",
+    "007-walis-drive-optimize",
+    "008-register-and-mind-transcript",
+    "009-manual-lookup",
+    "011-tokenblast-probe",
+    "012-device-health",
+    "013-all-os-sync-check",
+    "014-backup-checksum-verify",
+    "015-seat-finding",
+    "016-approval-requests",
+    "017-teach-back-and-peer-review",
+    "018-go-online-go-offline",
+    "019-answer-an-rfid-ping"
+  ],
+  "notes": "offline_lessons is generated by tools/classroom.py build from each lesson's sandbox.offline_ok. Everything in fixtures/ is fake."
+}

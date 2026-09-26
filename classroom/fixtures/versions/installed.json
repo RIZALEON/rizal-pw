@@ -1,0 +1,17 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "stands_in_for": "what is actually installed on each device (a human reads the About screens)",
+  "mac": {
+    "version": "0.3.2",
+    "build": "2026092402"
+  },
+  "iphone": {
+    "version": "0.3.0",
+    "build": "2026092401"
+  },
+  "android": {
+    "version": "0.1-offline",
+    "versionCode": 1
+  }
+}

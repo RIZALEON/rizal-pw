@@ -1,0 +1,13 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Stands in for the iPhone app's saved mode (same ModeStore.swift as the Mac).",
+  "platform": "ios",
+  "app_version": "0.3.3",
+  "store": "UserDefaults",
+  "keys": {
+    "YaBOT.ModeStore.isOnline": false,
+    "YaBOT.ModeStore.lastOnlineBy": "",
+    "YaBOT.ModeStore.lastOnlineContext": ""
+  },
+  "mode_reply": "Mode: OFFLINE premier. Green nerve off.\nGate: US + Lab-resident bots only · flip ON only on the way out"
+}

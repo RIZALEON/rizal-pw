@@ -1,0 +1,56 @@
+{
+  "schema": "rbot.classroom.message.v1",
+  "message_id": "002-safe-inspection-0003-P4M6-a2",
+  "kind": "submission",
+  "lesson_id": "002-safe-inspection",
+  "attempt_id": "a2",
+  "exercise_id": "002-ex02",
+  "from": {
+    "name": "ЯMAX",
+    "role": "learner",
+    "agent": "rbot-app",
+    "platform": "mac",
+    "rid": "ЯID-0003-P4M6"
+  },
+  "to": {
+    "name": "ЯBAT",
+    "role": "reviewer",
+    "rid": "ЯID-0004-ZYZ0"
+  },
+  "created_at": "2026-09-26T09:13:58Z",
+  "body": "Fixture versions sync check.\nDecider-authorized catch-up 2026-09-26 MT; Mac seat walkthrough + fixtures on clone; read-only orientation from published lessons; not a fake device session; not RFID/app attendance claim. App Training opened (classroom status); app Submit UI not Accessibility-reachable; curriculum v2 exercise_id/ЯID message_id filed via classroom files from real Mac command output.",
+  "answers": {
+    "seat_path": "n/a (fixture: versions fixtures have no seat)",
+    "git_branch": "n/a (fixture: no seat)",
+    "last_commit": "n/a (fixture: no commit log)",
+    "uncommitted_tracked_changes": false,
+    "mac_ios_version": "0.3.3 / 2026092501",
+    "android_version": "0.3.3 / 2026092401",
+    "versions_in_sync": false,
+    "mint_in_code": "n/a (fixture: versions-only prompt)",
+    "wrong_mint_or_authority_hits": [],
+    "explanation": "Read fixtures/versions/project.pbxproj.txt and build.gradle.kts.txt; marketing 0.3.3 matches, build numbers differ."
+  },
+  "commands_run": [
+    {
+      "cmd": "git branch --show-current",
+      "changed_files": false,
+      "exit_code": 0
+    },
+    {
+      "cmd": "git log --oneline -5",
+      "changed_files": false,
+      "exit_code": 0
+    },
+    {
+      "cmd": "grep versions/mint seat or fixtures",
+      "changed_files": false,
+      "exit_code": 0
+    }
+  ],
+  "safety_attest": {
+    "no_secrets": true,
+    "no_remote_or_chain_actions": true,
+    "read_only": true
+  }
+}

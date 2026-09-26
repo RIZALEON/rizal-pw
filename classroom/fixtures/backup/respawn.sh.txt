@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# FAKE FIXTURE: a harmless stand-in for ~/Library/Developer/ЯBOT-respawn/respawn.sh, as TEXT (read it, do not run it).
+# Modes of the real script, as documented in its RESPAWN.md:
+#   verify   dry run: checks SHA256SUMS in the respawn point and prints OK / FAILED; writes nothing
+#   list     lists respawn points; writes nothing
+#   --go     RESTORES files over the live seat (writes!)  -> never in a lesson; Decider only
+#   --overwrite-live / --i-am-decider                    -> never in a lesson
+case "$1" in
+  verify) echo "(fixture) would run: shasum -a 256 -c SHA256SUMS" ;;
+  list)   echo "(fixture) 2026-09-24-pre-workshop" ;;
+  *)      echo "(fixture) refusing: only verify and list are described here"; exit 2 ;;
+esac

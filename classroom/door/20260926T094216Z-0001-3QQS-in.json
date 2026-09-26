@@ -1,0 +1,15 @@
+{
+  "schema": "rbot.classroom.door.v1",
+  "event": "in",
+  "session_id": "S-20260926T094216Z-0001",
+  "rid": "ЯID-0001-3QQS",
+  "name": "Rizal",
+  "role": "decider",
+  "at": "2026-09-26T09:42:16Z",
+  "surface": "all",
+  "scan": {
+    "result": "recognized",
+    "method": "cli"
+  },
+  "purpose": "Decider catch-up session 2026-09-26"
+}

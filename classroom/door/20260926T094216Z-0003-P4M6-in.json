@@ -1,0 +1,15 @@
+{
+  "schema": "rbot.classroom.door.v1",
+  "event": "in",
+  "session_id": "S-20260926T094216Z-0003",
+  "rid": "ЯID-0003-P4M6",
+  "name": "ЯMAX",
+  "role": "learner",
+  "at": "2026-09-26T09:42:16Z",
+  "surface": "app",
+  "scan": {
+    "result": "recognized",
+    "method": "cli"
+  },
+  "purpose": "Decider catch-up session 2026-09-26"
+}

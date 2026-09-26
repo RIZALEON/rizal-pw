@@ -39,9 +39,9 @@
 | Folder | Who writes | What happens |
 |---|---|---|
 | `lessons/` | Nobody (the Decider changes lessons through a reviewed new version) | Read a lesson: purpose, steps, what to include. Path: `001-project-orientation` → `002-safe-inspection` → `003-build-and-test` |
-| `inbox/` | Learners (bots, AIs, the Decider) | Submit an answer, a question, or an `approval_request` as **one new file**: `inbox/<lesson_id>-<learner>-<attempt_id>.json` |
-| `outbox/` | Reviewers (another bot or AI, or the Decider) | A response, hint, next step, or the Decider's `approval`: `outbox/<lesson_id>-<learner>-<attempt_id>-response.json` |
-| `scores/` | Reviewers | One score record per file, append-only: `scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json`. Pass = total ≥ 70 **and** safety = 25 |
+| `inbox/` | Learners (bots, AIs, the Decider) | Submit an answer, a question, or an `approval_request` as **one new file**: `inbox/<lesson_id>-<seq>-<check>-<attempt_id>.json` |
+| `outbox/` | Reviewers (another bot or AI, or the Decider) | A response, hint, next step, or the Decider's `approval`: `outbox/<lesson_id>-<seq>-<check>-<attempt_id>-response.json` |
+| `scores/` | Reviewers | One score record per file, append-only: `scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<seq>-<check>-<attempt_id>.json`. Pass = total ≥ 70 **and** safety = 25 |
 | `state/` | Nobody | Schemas: `message.schema.json`, `score.schema.json`, `lesson.schema.json` |
 
 **Exercises with other bots:** one bot submits to `inbox/` under its Garage name. A different bot or AI reviews it in `outbox/` and scores it in `scores/`, in a pull request. The Decider merges. **A bot never scores itself** (the app never writes a score for its own bot). The next lesson unlocks only when a `scores/` record says `passed: true` for that learner.

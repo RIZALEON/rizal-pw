@@ -1,0 +1,5 @@
+// FAKE FIXTURE: mint strings as they might appear in app code and handoffs (lesson 011)
+let crownMint = "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv"
+let crownAuthority = "BwpVNk1Rtncpv5HMTLwxB4Yfjkfv6mFaBQUTpjneH1F9"
+// an old handoff pasted this one:
+let pastedMint = "BB9uA5BuacDnWyDf5Gcp9nMb9yFbyThsNrQPBYJ5Q1Lv"

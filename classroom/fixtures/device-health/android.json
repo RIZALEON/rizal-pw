@@ -1,0 +1,34 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real.",
+  "platform": "android",
+  "captured_at": "2026-09-25T20:07:00-06:00",
+  "stands_in_for": [
+    "Settings > About phone",
+    "Settings > Storage",
+    "Settings > Battery",
+    "adb shell dumpsys battery (only from a Mac, only with approval: adb is a device command)"
+  ],
+  "os": {
+    "name": "Android",
+    "version": "15",
+    "security_patch": "2026-08-05"
+  },
+  "model": "Android phone (fixture)",
+  "storage": {
+    "total_gb": 256,
+    "free_gb": 102.5
+  },
+  "battery": {
+    "level": 91,
+    "status": "charging",
+    "health": "good",
+    "temperature_c": 41.5
+  },
+  "apps": {
+    "ЯBOT (abomega)": {
+      "installed_version": "0.1-offline",
+      "versionCode": 1
+    }
+  }
+}

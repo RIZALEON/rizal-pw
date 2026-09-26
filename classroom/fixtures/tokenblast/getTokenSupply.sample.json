@@ -1,0 +1,26 @@
+{
+  "fixture": true,
+  "note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. Safe to read; never copy it anywhere as if it were real. Shape of a public Solana RPC getTokenSupply answer; illustrative values.",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "getTokenSupply",
+    "params": [
+      "BB9uA5BuacDnWyDf5Npc9nMb9yFbyThsNrQPBYJ5Q1Lv"
+    ]
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "context": {
+        "slot": 1
+      },
+      "value": {
+        "amount": "1000000000000000",
+        "decimals": 9,
+        "uiAmountString": "1000000"
+      }
+    }
+  }
+}

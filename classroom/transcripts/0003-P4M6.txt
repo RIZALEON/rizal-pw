@@ -3,4 +3,6 @@
 # Source: classroom/door/*-0003-P4M6-in.json and -out.json (append-only).
 # Format: ---- ISO8601Z | party | role | surface | kind ----
 
-(no door events yet)
+---- 2026-09-26T09:42:16Z | ЯMAX | learner | classroom | door-in ----
+ЯID-0003-P4M6 · S-20260926T094216Z-0003 · surface app · scan recognized (cli)
+purpose: Decider catch-up session 2026-09-26

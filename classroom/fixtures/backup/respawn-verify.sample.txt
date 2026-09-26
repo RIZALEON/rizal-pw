@@ -1,0 +1,7 @@
+# FAKE FIXTURE: what `bash respawn.sh verify` prints for fixtures/backup/pre-workshop (sample output, not a live run)
+seat/BOT-LABELS.json: OK
+seat/ModeStore.txt: FAILED
+mind/MIND-TRANSCRIPT.txt: OK
+shasum: WARNING: 1 computed checksum did NOT match
+RESPAWN-NOTES.md: FAILED open or read
+verify: 2 OK, 1 FAILED, 1 missing · nothing was written
