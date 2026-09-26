@@ -1,0 +1,15 @@
+{
+  "fixture": true,
+  "x-note": "FAKE FIXTURE for the \u042fBOT Classroom. Not real device data. Stands in for the BLUEFACE TypeScript game seed.",
+  "name": "blueface-ts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "typescript": "5.5.4"
+  }
+}

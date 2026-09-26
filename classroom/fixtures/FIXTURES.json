@@ -2,12 +2,12 @@
   "schema": "rbot.classroom.fixtures_index.v1",
   "generated_by": "classroom/tools/classroom.py build",
   "note": "FAKE FIXTURES for offline bots. Not real device data. Verify a fixture with: shasum -a 256 <path>.",
-  "count": 49,
+  "count": 56,
   "files": [
     {
       "path": "fixtures/README.md",
-      "bytes": 1983,
-      "sha256": "256b3ae48a3912c1efaef7b4fcf55d2775a24cb70e03885e82baa1c88066057b",
+      "bytes": 3064,
+      "sha256": "7bbeb90d4854c18bd0ce25bf295d6f3877dbd1c7cb404d5898c200d576634a9f",
       "used_by": []
     },
     {
@@ -46,6 +46,22 @@
       "path": "fixtures/backup/pre-workshop/seat/ModeStore.txt",
       "bytes": 47,
       "sha256": "f570507258f45596a2a66b461c882c03a9183087ee6873f6ab4c8f6dfa1bb27d",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/respawn-verify.sample.txt",
+      "bytes": 345,
+      "sha256": "caa8a0de533a9a685c2e1e9534255c0c7096f998e8f391c6e89cdc73b524a4b4",
+      "used_by": [
+        "014"
+      ]
+    },
+    {
+      "path": "fixtures/backup/respawn.sh.txt",
+      "bytes": 751,
+      "sha256": "ea874caf4c15de311334a3c53e38838da80c1ba5c1630b7854546facbeb33f2e",
       "used_by": [
         "014"
       ]
@@ -117,8 +133,8 @@
     },
     {
       "path": "fixtures/drive/Users/demo/Desktop/ЯBOT copy/README.md",
-      "bytes": 105,
-      "sha256": "297e2b5d477107810c3fab87b5b351a4cc82fcf0bd500dca08ba1dca05f36f16",
+      "bytes": 392,
+      "sha256": "835cd81895c667bfbd6eec721cbb9e8698a157c00b41e7bf80fd52d03b8c7622",
       "used_by": [
         "001",
         "002",
@@ -174,6 +190,62 @@
       "used_by": [
         "001",
         "002",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/game/blueface-ts/README.md",
+      "bytes": 276,
+      "sha256": "f6bd39b77f6554b0e56145affd768f78996f5694fa53df5121a376e6f5f8e164",
+      "used_by": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/game/blueface-ts/package.json",
+      "bytes": 367,
+      "sha256": "5a811d56614bf70fd20930e66b5d269cbd5f8565d9bbc749a120974fae68c097",
+      "used_by": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/game/blueface-ts/src/main.ts",
+      "bytes": 183,
+      "sha256": "96cdf487aad77e35c9230375ab70608226ecb8556176ce7a10cf4b2f5dcb7a54",
+      "used_by": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "007",
+        "013",
+        "015"
+      ]
+    },
+    {
+      "path": "fixtures/drive/Users/demo/Documents/ЯBOT/game/blueface-ts/tsconfig.json",
+      "bytes": 191,
+      "sha256": "0c315fe492de1120f123c6c73d505665b34e3f3b67a0eabe0a7800030ad81ff1",
+      "used_by": [
+        "001",
+        "002",
+        "003",
         "004",
         "007",
         "013",
@@ -483,6 +555,14 @@
       "used_by": [
         "002",
         "013"
+      ]
+    },
+    {
+      "path": "fixtures/yamanual/YAMANUAL-excerpt.md",
+      "bytes": 5319,
+      "sha256": "2de26b5acea85cc2b1b0733c68edf9646215f6ef163d922243e1c3346cf3fedd",
+      "used_by": [
+        "009"
       ]
     }
   ]

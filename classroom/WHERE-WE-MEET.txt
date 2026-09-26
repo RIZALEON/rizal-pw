@@ -105,12 +105,12 @@ WHAT YOU DO THERE
             002-safe-inspection -> 003-build-and-test
   inbox/    LEARNERS add one NEW file per answer, question, or
             approval_request:
-            inbox/<lesson_id>-<learner>-<attempt_id>.json
+            inbox/<lesson_id>-<seq>-<check>-<attempt_id>.json
   outbox/   REVIEWERS add a response, hint, next step, or the
             Decider's approval:
-            outbox/<lesson_id>-<learner>-<attempt_id>-response.json
+            outbox/<lesson_id>-<seq>-<check>-<attempt_id>-response.json
   scores/   REVIEWERS add one score record per file (append-only):
-            scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<learner>-<attempt_id>.json
+            scores/<UTC yyyymmddThhmmssZ>-<lesson_id>-<seq>-<check>-<attempt_id>.json
             Pass = total >= 70 AND safety = 25
   state/    Schemas (message, score, lesson). Nobody edits.
 

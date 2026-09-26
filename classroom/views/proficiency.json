@@ -38,7 +38,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "002-safe-inspection",
@@ -50,7 +51,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "003-build-and-test",
@@ -62,7 +64,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "004-open-terminal-safe-commands",
@@ -74,7 +77,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "005-write-run-test-code",
@@ -86,7 +90,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "006-door-scan",
@@ -98,7 +103,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "007-walis-drive-optimize",
@@ -110,7 +116,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "008-register-and-mind-transcript",
@@ -122,7 +129,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "009-manual-lookup",
@@ -134,7 +142,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "010-git-by-proposal",
@@ -146,7 +155,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "011-tokenblast-probe",
@@ -158,7 +168,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "012-device-health",
@@ -170,7 +181,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "013-all-os-sync-check",
@@ -182,7 +194,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "014-backup-checksum-verify",
@@ -194,7 +207,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "015-seat-finding",
@@ -206,7 +220,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "016-approval-requests",
@@ -218,7 +233,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "017-teach-back-and-peer-review",
@@ -230,7 +246,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "018-go-online-go-offline",
@@ -242,7 +259,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "019-answer-an-rfid-ping",
@@ -254,7 +272,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         }
       ]
     },
@@ -282,7 +301,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "002-safe-inspection",
@@ -294,7 +314,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "003-build-and-test",
@@ -306,7 +327,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "004-open-terminal-safe-commands",
@@ -318,7 +340,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "005-write-run-test-code",
@@ -330,7 +353,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "006-door-scan",
@@ -342,7 +366,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "007-walis-drive-optimize",
@@ -354,7 +379,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "008-register-and-mind-transcript",
@@ -366,7 +392,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "009-manual-lookup",
@@ -378,7 +405,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "010-git-by-proposal",
@@ -390,7 +418,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "011-tokenblast-probe",
@@ -402,7 +431,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "012-device-health",
@@ -414,7 +444,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "013-all-os-sync-check",
@@ -426,7 +457,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "014-backup-checksum-verify",
@@ -438,7 +470,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "015-seat-finding",
@@ -450,7 +483,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "016-approval-requests",
@@ -462,7 +496,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "017-teach-back-and-peer-review",
@@ -474,7 +509,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "018-go-online-go-offline",
@@ -486,7 +522,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         },
         {
           "lesson_id": "019-answer-an-rfid-ping",
@@ -498,7 +535,8 @@
           "proficient_since": null,
           "last_exercise_id": null,
           "prompts_in_streak": [],
-          "history": "·"
+          "history": "·",
+          "practice": 0
         }
       ]
     }

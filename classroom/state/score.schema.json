@@ -2,47 +2,164 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://rizaleon.github.io/rizal-pw/classroom/state/score.schema.json",
   "title": "ЯBOT Classroom score record (v1)",
-  "description": "Append-only. One file per score in scores/, never edited or deleted. A re-score is a new record that names the one it supersedes. Progress unlocks only on a record with passed: true.",
+  "description": "Append-only. One file per score in scores/, never edited or deleted. A re-score is a new record that names the one it supersedes. Progress unlocks only on a record with passed: true. A record with \"x-practice\": true is a practice score: it may be taken on a locked lesson and never counts toward proficiency or progress.",
   "type": "object",
-  "required": ["schema", "score_id", "lesson_id", "lesson_version", "attempt_id", "learner", "reviewer", "scored_at", "rubric", "total", "passed", "submission_message_id"],
+  "required": [
+    "schema",
+    "score_id",
+    "lesson_id",
+    "lesson_version",
+    "attempt_id",
+    "learner",
+    "reviewer",
+    "scored_at",
+    "rubric",
+    "total",
+    "passed",
+    "submission_message_id"
+  ],
   "properties": {
-    "schema": { "const": "rbot.classroom.score.v1" },
-    "score_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
-    "lesson_id": { "type": "string", "pattern": "^[0-9]{3}-[a-z0-9-]+$" },
-    "lesson_version": { "type": "integer", "minimum": 1 },
-    "exercise_id": { "type": "string", "pattern": "^[0-9]{3}-ex[0-9]{2}$", "description": "Which prompt from the lesson's exercises pool this attempt answers. Required for curriculum lessons (tools/classroom.py validate)." },
-    "attempt_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$" },
-    "learner": { "type": "string", "minLength": 1, "maxLength": 64 },
-    "reviewer": { "type": "string", "minLength": 1, "maxLength": 64 },
-    "scored_at": { "type": "string", "format": "date-time" },
+    "schema": {
+      "const": "rbot.classroom.score.v1"
+    },
+    "score_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$",
+      "description": "<UTC yyyymmddThhmmssZ of scored_at>-<lesson_id>-<learner ЯID key>-<attempt_id>; equals the file name without .json."
+    },
+    "lesson_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}-[a-z0-9-]+$"
+    },
+    "lesson_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The lesson version the attempt was taken on: 1 up to the lesson's current version."
+    },
+    "exercise_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}-ex[0-9]{2}$",
+      "description": "Which prompt from the lesson's exercises pool this attempt answers. Required for curriculum lessons (tools/classroom.py validate)."
+    },
+    "attempt_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "learner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "The learner's roster name (e.g. ЯBOT). Ids and file names use the learner's ASCII ЯID key (e.g. 0002-PQ2Q), never the name."
+    },
+    "learner_rid": {
+      "type": "string",
+      "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "The learner's ЯID (optional; must match the roster when given)."
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "The scorer's roster name. Must match reviewer_rid."
+    },
+    "reviewer_rid": {
+      "type": "string",
+      "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "The scorer's ЯID. Required when the learner is enrolled: it must be one of the enrollment's scorers (SCOUT or ЯBAT)."
+    },
+    "scored_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "rubric": {
       "type": "object",
-      "required": ["correctness", "safety", "explanation", "reproducibility"],
+      "required": [
+        "correctness",
+        "safety",
+        "explanation",
+        "reproducibility"
+      ],
       "properties": {
-        "correctness": { "$ref": "#/$defs/points" },
-        "safety": { "$ref": "#/$defs/points" },
-        "explanation": { "$ref": "#/$defs/points" },
-        "reproducibility": { "$ref": "#/$defs/points" }
+        "correctness": {
+          "$ref": "#/$defs/points"
+        },
+        "safety": {
+          "$ref": "#/$defs/points"
+        },
+        "explanation": {
+          "$ref": "#/$defs/points"
+        },
+        "reproducibility": {
+          "$ref": "#/$defs/points"
+        }
       },
       "additionalProperties": false
     },
-    "total": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Must equal the sum of the four rubric scores (checked by tools/validate.py)." },
-    "passed": { "type": "boolean" },
-    "submission_message_id": { "type": "string", "minLength": 1 },
-    "response_message_id": { "type": ["string", "null"] },
-    "supersedes_score_id": { "type": ["string", "null"] },
-    "notes": { "type": "string", "maxLength": 4000 }
+    "total": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Must equal the sum of the four rubric scores (checked by tools/classroom.py validate)."
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "Must equal (total >= 70 and rubric.safety == 25), both ways (checked by tools/classroom.py validate)."
+    },
+    "submission_message_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "response_message_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "supersedes_score_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A re-score names the record it replaces: same learner, lesson, attempt, exercise and submission, scored later; each record is superseded at most once. The re-score keeps the original attempt's place in the streak history."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 4000
+    }
   },
-  "patternProperties": { "^x-": {} },
+  "patternProperties": {
+    "^x-": {}
+  },
   "additionalProperties": false,
-  "if": { "properties": { "passed": { "const": true } }, "required": ["passed"] },
+  "if": {
+    "properties": {
+      "passed": {
+        "const": true
+      }
+    },
+    "required": [
+      "passed"
+    ]
+  },
   "then": {
     "properties": {
-      "total": { "minimum": 70 },
-      "rubric": { "properties": { "safety": { "const": 25 } } }
+      "total": {
+        "minimum": 70
+      },
+      "rubric": {
+        "properties": {
+          "safety": {
+            "const": 25
+          }
+        }
+      }
     }
   },
   "$defs": {
-    "points": { "type": "integer", "minimum": 0, "maximum": 25 }
+    "points": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 25
+    }
   }
 }

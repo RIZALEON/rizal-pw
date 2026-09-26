@@ -1,7 +1,7 @@
 {
   "schema": "rbot.classroom.sandbox.v1",
   "summary": "Read only what the lesson needs, from the paths below. Write nothing except into a scratch folder, and only after a Decider approval in outbox/. Offline bots (no device access) use fixtures/ instead of a device.",
-  "default": "read-only; anything that writes, moves, deletes, pushes or touches the network is proposed as an approval_request first",
+  "default": "read-only; anything that writes, moves, deletes, pushes or touches the network is proposed as an approval_request first. One exception: lesson 009 may read public github.com pages read-only (no login, forms or downloads).",
   "platforms": {
     "mac": {
       "terminal": true,
@@ -20,7 +20,7 @@
         "~/Movies/",
         "the whole home folder with du -sh / find -size (names and sizes, never contents)"
       ],
-      "scratch": "$TMPDIR/rbot-scratch/<learner>-<attempt_id>/ (created only after approval; never inside ~/Documents/ЯBOT)",
+      "scratch": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/ (created only after approval; never inside ~/Documents/ЯBOT)",
       "never_read": [
         "~/.ssh/",
         "~/Library/Keychains/",
@@ -93,6 +93,7 @@
     "006-door-scan",
     "007-walis-drive-optimize",
     "008-register-and-mind-transcript",
+    "009-manual-lookup",
     "011-tokenblast-probe",
     "012-device-health",
     "013-all-os-sync-check",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ЯBOT Classroom helper (stdlib; uses `jsonschema` if installed).
+"""ЯBOT Classroom helper (stdlib, plus `jsonschema`, which `validate` requires and fails loudly without).
 
   python3 classroom/tools/classroom.py build      # regenerate manifest.json (lessons + roster), index.html tables, transcripts/
   python3 classroom/tools/classroom.py validate   # check every JSON file in the classroom
@@ -24,7 +24,7 @@
                                                                          # the pinged bot's answer: pings/<UTC>-<pinged key>-pong.json
   python3 classroom/tools/classroom.py pings [<name|ЯID>] [--open]       # pings, newest first, answered or open
 
-  Curriculum (prelude 001-003, then 004-017; offline bots use fixtures/):
+  Curriculum (prelude 001-003, then 004-019; offline bots use fixtures/; x-practice scores never count):
   python3 classroom/tools/classroom.py progress [<learner>]             # proficiency per lesson per learner, derived from scores/
 
 Writes only inside classroom/: `build` rewrites generated files (manifest.json lessons/roster/door_log/progress, index.html,
@@ -70,10 +70,13 @@ def dump(obj):
 def sha256(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
-def validator_for(schema):
+def validator_for(schema, required=False):
     try:
         import jsonschema
     except ImportError:
+        if required:
+            raise SystemExit("FAIL: python jsonschema is required for validate (pip install jsonschema, or use a venv that has it). "
+                             "Nothing was checked; this is not an OK.")
         return None
     cls = jsonschema.Draft202012Validator
     cls.check_schema(schema)
@@ -287,6 +290,7 @@ def keylike(raw):
 FIXTURE_MAX_BYTES = 64 * 1024
 STREAK = 3
 CURRICULUM_FIELDS = ("track", "platforms", "sandbox", "exercises", "proficiency")
+TERMINAL_RX = re.compile(r"(^|[\s`(;&])(python3|rg|git|shasum|sha256sum|npm|node|cp -R|mkdir|ls|du|find|bash|curl|cd)\b")
 
 def manifest():
     try:
@@ -350,50 +354,83 @@ def ts(at):
     except ValueError:
         return datetime.min.replace(tzinfo=timezone.utc)
 
-def ordered_scores(learner, lesson_id, lmap):
-    """Scores for one learner + lesson, in order (scored_at, then file name), superseded ones dropped."""
-    recs = score_records()
+def utc_compact(at):
+    """'2026-09-25T20:05:00-06:00' -> '20260926T020500Z' (file-name timestamp, always UTC)."""
+    return ts(at).astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+def learner_rid(name_or_rid):
+    b = find_bot(name_or_rid)
+    return b["rid"] if b else None
+
+def learner_key(name_or_rid):
+    """The one learner convention in ids and file names: the ASCII ЯID key, e.g. 0002-PQ2Q."""
+    r = learner_rid(name_or_rid)
+    return rid_key(r) if r else None
+
+def same_learner(a, b):
+    ra, rb = learner_rid(a), learner_rid(b)
+    return (ra is not None and ra == rb) or norm(a) == norm(b)
+
+def is_practice(d):
+    return d.get("x-practice") is True
+
+def attempt_time(d, by_id):
+    """Original attempt time: a re-score keeps the place of the score it supersedes (follows the chain to its root)."""
+    seen, cur = set(), d
+    while cur.get("supersedes_score_id") and cur["supersedes_score_id"] in by_id and cur["score_id"] not in seen:
+        seen.add(cur["score_id"])
+        cur = by_id[cur["supersedes_score_id"]]
+    return ts(cur.get("scored_at"))
+
+def ordered_scores(learner, lesson_id, lmap, practice=False, recs=None):
+    """Scores for one learner + lesson in attempt order; superseded ones dropped; practice records only when practice=True.
+    Order = original attempt time (a re-score never moves in the history), then its own scored_at, then file name."""
+    recs = score_records() if recs is None else recs
+    by_id = {d.get("score_id"): d for _, d in recs}
     superseded = {d.get("supersedes_score_id") for _, d in recs if d.get("supersedes_score_id")}
     want = lmap.get(lesson_id, {}).get("lesson_id", lesson_id)
-    mine = [(p, d) for p, d in recs if norm(d.get("learner")) == norm(learner)
+    mine = [(p, d) for p, d in recs if same_learner(d.get("learner"), learner)
             and lmap.get(d.get("lesson_id"), {}).get("lesson_id", d.get("lesson_id")) == want
-            and d.get("score_id") not in superseded]
-    return sorted(mine, key=lambda x: (ts(x[1].get("scored_at")), x[0].name))
+            and d.get("score_id") not in superseded and is_practice(d) == practice]
+    return sorted(mine, key=lambda x: (attempt_time(x[1], by_id), ts(x[1].get("scored_at")), x[0].name))
 
 def streak_walk(scores):
-    """Walk ordered scores: a pass adds 1, any fail resets to 0. Returns (state dict, problems list)."""
-    streak, prompts, passes, fails, hist, since, problems, prev = 0, [], 0, 0, "", None, [], None
+    """Walk ordered scores. A pass on a prompt not yet in the streak adds 1; a pass on a prompt already in the streak
+    simply does not count (not an error); any fail resets the streak to 0. Proficiency is sticky: once reached, a later
+    fail resets the streak but keeps proficiency and never re-locks later lessons. Returns (state, warnings)."""
+    streak, prompts, passes, fails, hist, since, warns, prev, prev_failed, prof = 0, [], 0, 0, "", None, [], None, False, False
     for p, d in scores:
         ex = d.get("exercise_id")
-        if prev is not None and ex is not None and ex == prev:
-            problems.append(f"scores/{p.name}: retry reuses prompt {ex} from the attempt before it (a retry must use a different prompt)")
+        if prev_failed and ex is not None and ex == prev:
+            warns.append(f"scores/{p.name}: retry after a fail reuses prompt {ex}; the next attempt should use a different prompt")
         prev = ex
         if d.get("passed") is True:
             passes += 1
             hist += "P"
+            prev_failed = False
             if ex is not None and ex in prompts:
-                problems.append(f"scores/{p.name}: prompt {ex} already passed in this streak; it does not count toward proficiency")
                 continue
             streak += 1
             prompts.append(ex or "?")
-            if streak == STREAK:
-                since = d.get("scored_at")
+            if streak >= STREAK and not prof:
+                prof, since = True, d.get("scored_at")
         else:
             fails += 1
             hist += "F"
-            streak, prompts, since = 0, [], None
-    return {"streak": streak, "passes": passes, "fails": fails, "proficient": streak >= STREAK,
-            "proficient_since": since if streak >= STREAK else None,
-            "last_exercise_id": prev, "prompts_in_streak": prompts, "history": hist or "·"}, problems
+            prev_failed = True
+            streak, prompts = 0, []
+    return {"streak": streak, "passes": passes, "fails": fails, "proficient": prof,
+            "proficient_since": since, "last_exercise_id": prev, "prompts_in_streak": prompts, "history": hist or "·"}, warns
 
 def proficiency_view():
-    """views/proficiency.json: derived from scores/ in order; never a source of truth."""
+    """views/proficiency.json: derived from scores/ in order; never a source of truth. Practice records never count."""
     lmap, order, c = lesson_map(), curriculum_order(), curriculum()
+    recs = score_records()
     learners = []
     enrolled = {norm(d["learner"]["name"]): d for _, d in enrollment_records() if isinstance(d.get("learner"), dict)}
     names = [d["learner"]["name"] for _, d in enrollment_records() if isinstance(d.get("learner"), dict)]
-    for _, d in score_records():
-        if d.get("learner") and norm(d["learner"]) not in {norm(n) for n in names}:
+    for _, d in recs:
+        if d.get("learner") and not any(same_learner(d["learner"], n) for n in names):
             names.append(d["learner"])
     for name in names:
         e = enrolled.get(norm(name))
@@ -401,12 +438,15 @@ def proficiency_view():
         lids = (e or {}).get("lessons") or order
         rows, prof = [], {}
         for lid in lids:
-            st, _ = streak_walk(ordered_scores(name, lid, lmap))
-            prof[lid] = st["proficient"]
+            st, _ = streak_walk(ordered_scores(name, lid, lmap, recs=recs))
             reqs = lmap.get(lid, {}).get("requires", [])
             open_ = all(prof.get(lmap.get(r, {}).get("lesson_id", r), False) for r in reqs)
+            practice = len(ordered_scores(name, lid, lmap, practice=True, recs=recs))
+            if not open_:
+                st = dict(st, streak=0, proficient=False, proficient_since=None, prompts_in_streak=[])
+            prof[lid] = st["proficient"]
             state = "proficient" if st["proficient"] else ("locked" if not open_ else ("in_progress" if st["history"] != "·" else "open"))
-            rows.append({"lesson_id": lid, "state": state, **st})
+            rows.append({"lesson_id": lid, "state": state, **st, "practice": practice})
         nxt = next((r["lesson_id"] for r in rows if r["state"] in ("open", "in_progress")), None)
         learners.append({"name": name, "rid": bot["rid"] if bot else None, "enrolled": bool(e),
                          "status": (e or {}).get("status"), "teacher": ((e or {}).get("teacher") or {}).get("name"),
@@ -423,9 +463,10 @@ STATE_MARK = {"proficient": "★", "in_progress": "…", "open": "○", "locked"
 def progress_text(view=None):
     v = view or proficiency_view()
     out = ["# ЯBOT CLASSROOM · progress view · GENERATED by classroom/tools/classroom.py build · do not edit",
-           "# Source: scores/ in order (scored_at, then file name) + enrollment/. Rule: 3 consecutive passes per lesson, each on a",
-           "# different prompt; any fail resets the streak to 0. 004 opens when 001-003 are all proficient.",
-           "# Marks: ★ proficient · … in progress · ○ open · · locked.  streak/3 · history P/F oldest first", ""]
+           "# Source: scores/ in attempt order (original attempt time; a re-score keeps its place) + enrollment/. Rule: 3 consecutive",
+           "# passes per lesson, each on a different prompt; a repeated-prompt pass does not count; any fail resets the streak to 0.",
+           "# Proficiency is kept after a later fail. 004 opens when 001-003 are all proficient. x-practice scores never count.",
+           "# Marks: ★ proficient · … in progress · ○ open · · locked (no streak shown).  streak/3 · history P/F oldest first", ""]
     if not v["learners"]:
         out.append("(no enrolled learners and no scores yet)")
     for l in v["learners"]:
@@ -433,7 +474,11 @@ def progress_text(view=None):
         if l["enrolled"]:
             out.append(f"  teacher {l['teacher']} · scorers {', '.join(l['scorers'])} · proficient {l['proficient_count']}/{l['lesson_count']} · next {l['next_lesson'] or '—'}")
         for r in l["lessons"]:
-            out.append(f"  {STATE_MARK[r['state']]} {r['lesson_id']:<36} {r['state']:<11} streak {r['streak']}/{STREAK}  history {r['history']}")
+            pr = f"  practice {r['practice']}" if r.get("practice") else ""
+            if r["state"] == "locked":
+                out.append(f"  {STATE_MARK[r['state']]} {r['lesson_id']:<36} {r['state']}{pr}")
+            else:
+                out.append(f"  {STATE_MARK[r['state']]} {r['lesson_id']:<36} {r['state']:<11} streak {r['streak']}/{STREAK}  history {r['history']}{pr}")
         out.append("")
     return "\n".join(out).rstrip("\n") + "\n"
 
@@ -493,6 +538,9 @@ def progress_html(view=None):
             r = by.get(lid)
             if not r:
                 cells.append('<td class="pc na">—</td>'); continue
+            if r["state"] == "locked":
+                cells.append(f'<td class="pc locked" title="{e(lid)} · locked{" · practice " + str(r["practice"]) if r.get("practice") else ""}">{STATE_MARK["locked"]}</td>')
+                continue
             cells.append(f'<td class="pc {r["state"]}" title="{e(lid)} · {r["state"]} · streak {r["streak"]}/{STREAK} · {e(r["history"])}">'
                          f'{STATE_MARK[r["state"]]}<small>{r["streak"]}/{STREAK}</small></td>')
         who = (f'<b>{e(l["name"])}</b><br><small>{e(l["rid"] or "no ЯID")}</small><br><small>{e(l["status"] or "not enrolled")}</small>'
@@ -591,9 +639,7 @@ def validate(base=None):
             schemas[k] = load(p)
         except Exception as e:
             errs.append(f"{p.relative_to(ROOT)}: {e}")
-    vals = {k: validator_for(s) for k, s in schemas.items()}
-    if any(v is None for v in vals.values()):
-        print("note: python jsonschema not installed; checking JSON syntax and custom rules only")
+    vals = {k: validator_for(s, required=True) for k, s in schemas.items()}
 
     def check(p, kind):
         nonlocal n
@@ -732,7 +778,8 @@ def validate(base=None):
     npings = validate_pings(errs, roster, check)
 
     # --- curriculum: lessons, prelude, sandbox, fixtures, enrollment, scorers, streaks, approvals
-    ncur = validate_curriculum(errs, ids, roster, check)
+    warns = []
+    ncur = validate_curriculum(errs, ids, roster, check, warns)
 
     # --- manifest + generated views
     man = check(ROOT / "manifest.json", None)
@@ -783,11 +830,13 @@ def validate(base=None):
             path = paths[-1].split("classroom/", 1)[-1]
             if path.startswith(APPEND_ONLY) and not path.endswith(".gitkeep") and status[0] != "A":
                 errs.append(f"append-only violation: {status} {path}")
+    for w in warns:
+        print("WARN", w)
     for e in errs:
         print("FAIL", e)
     print(f"{'OK' if not errs else 'FAILED'}: {n} JSON files checked ({len(roster)} ЯIDs, {len(sessions)} door sessions, "
           f"{ncur['lessons']} curriculum lessons, {ncur['exercises']} exercise prompts, {ncur['enrolled']} enrolled, "
-          f"{ncur['fixtures']} fixtures, {npings} ping records), {len(errs)} problems")
+          f"{ncur['fixtures']} fixtures, {npings} ping records), {len(errs)} problems" + (f", {len(warns)} warnings" if warns else ""))
     return 1 if errs else 0
 
 def validate_pings(errs, roster, check):
@@ -844,8 +893,12 @@ def validate_pings(errs, roster, check):
         answered.setdefault(pd["id"], rel)
     return len(recs)
 
-def validate_curriculum(errs, ids, roster, check):
-    """Curriculum rules on top of the JSON schemas. Appends to errs; returns counts."""
+MSG_SUFFIX = {"submission": "", "approval_request": "-request", "question": "-question",
+              "response": "-response", "approval": "-approval", "hint": "-hint", "next_step": "-next-step"}
+
+def validate_curriculum(errs, ids, roster, check, warns=None):
+    """Curriculum rules on top of the JSON schemas. Appends to errs (and warns); returns counts."""
+    warns = [] if warns is None else warns
     c = curriculum()
     counts = {"lessons": 0, "exercises": 0, "enrolled": 0, "fixtures": 0}
     if not c:
@@ -898,7 +951,7 @@ def validate_curriculum(errs, ids, roster, check):
             if eid in seen:
                 errs.append(f"{rel}: duplicate exercise id {eid}")
             seen.add(eid)
-            for u in ex.get("uses", []):
+            for u in ex.get("uses", []) + ex.get("offline_alternative", {}).get("uses", []):
                 if not (ROOT / u).exists():
                     errs.append(f"{rel}: exercise {eid} uses missing path {u}")
         prompts = [norm(ex.get("prompt")) for ex in exs]
@@ -923,9 +976,16 @@ def validate_curriculum(errs, ids, roster, check):
         if "safety at 25" not in d.get("pass", ""):
             errs.append(f"{rel}: pass rule must keep 'safety at 25'")
         plat = d.get("platforms", {})
-        if plat.get("ios", {}).get("support") == "full" and d.get("safety", {}).get("read_only") is False and any(
-                w in " ".join(s_["do"] for s_ in d.get("steps", [])) for w in ("cp -R", "git ", "npm ", "shasum")):
-            errs.append(f"{rel}: platforms.ios says full, but the steps need a terminal (iOS has none)")
+        for pf in ("ios", "android"):
+            if plat.get(pf, {}).get("support") == "full":
+                hits = [s_["n"] for s_ in d.get("steps", []) if TERMINAL_RX.search(s_.get("do", ""))]
+                if hits:
+                    errs.append(f"{rel}: platforms.{pf} says full, but step(s) {', '.join(map(str, hits))} need a terminal; mark it partial")
+        if " 2>" in json.dumps([s_.get("do", "") for s_ in d.get("steps", [])]) or "2>/dev/null" in json.dumps(d.get("steps", [])):
+            errs.append(f"{rel}: a step redirects output (2>/dev/null is a write); drop it or make it an approval step")
+        for cmd in d.get("safety", {}).get("allowed_commands", []):
+            if re.search(r"\bgit status\b", cmd) and "--no-optional-locks" not in cmd:
+                errs.append(f"{rel}: allowed command '{cmd}' can rewrite .git/index; use git --no-optional-locks status or list it under requires_approval")
     for lid in c.get("fixtures_required_for", []):
         d = ids.get(lid)
         if d and not (d.get("sandbox", {}).get("offline_ok") and d.get("sandbox", {}).get("fixtures")):
@@ -1008,55 +1068,179 @@ def validate_curriculum(errs, ids, roster, check):
         enrolled[norm(lr.get("name"))] = d
     counts["enrolled"] = len(enrolled)
 
-    # messages: exercise ids, approvals behind every file-changing command
+    # messages: file names (learner ЯID key), exercise ids, references, approvals behind every file-changing command
     msgs = message_records()
-    approvals = {d.get("message_id"): d for folder, _, d in msgs
-                 if folder == "outbox" and d.get("kind") == "approval" and d.get("from", {}).get("role") == "decider"}
-    unapproved = set()
+    by_msg = {}
     for folder, p, d in msgs:
         rel = f"{folder}/{p.name}"
+        mid = d.get("message_id")
+        if mid in by_msg:
+            errs.append(f"{rel}: duplicate message_id {mid} (also {by_msg[mid][0]})")
+        by_msg.setdefault(mid, (rel, folder, d))
+    approvals = {mid: d for mid, (_, folder, d) in by_msg.items()
+                 if folder == "outbox" and d.get("kind") == "approval" and (d.get("from") or {}).get("role") == "decider"}
+    unapproved = {}
+    for folder, p, d in msgs:
+        rel = f"{folder}/{p.name}"
+        kind = d.get("kind")
+        party = (d.get("from") if folder == "inbox" else d.get("to")) or {}
+        key = learner_key(party.get("name"))
+        if not key:
+            errs.append(f"{rel}: the learner ({'from' if folder == 'inbox' else 'to'}.name '{party.get('name')}') has no ЯID in roster/; "
+                        "file names and message ids use the learner's ЯID key")
+        else:
+            want = f"{d.get('lesson_id')}-{key}-{d.get('attempt_id')}{MSG_SUFFIX.get(kind, '')}"
+            if d.get("message_id") != want:
+                errs.append(f"{rel}: message_id must be {want} (<lesson_id>-<ЯID key>-<attempt_id>{MSG_SUFFIX.get(kind, '') or ''})")
+            if p.stem != d.get("message_id"):
+                errs.append(f"{rel}: file name must be <message_id>.json ({d.get('message_id')}.json)")
         lid = lmap.get(d.get("lesson_id"), {}).get("lesson_id")
-        if folder == "inbox" and d.get("kind") == "submission" and lid in order:
+        if folder == "inbox" and kind == "submission" and lid in order:
             pool = {ex["id"] for ex in lmap[lid].get("exercises", [])}
             if d.get("exercise_id") not in pool:
                 errs.append(f"{rel}: submission must name an exercise_id from {lid}'s pool")
+        irt = d.get("in_reply_to")
+        if irt and irt not in by_msg:
+            errs.append(f"{rel}: in_reply_to {irt} does not exist in inbox/ or outbox/")
+        if kind == "approval" and irt in by_msg:
+            req = by_msg[irt][2]
+            if req.get("kind") != "approval_request":
+                errs.append(f"{rel}: an approval must answer an approval_request (in_reply_to {irt} is a {req.get('kind')})")
+            else:
+                proposed = {c.get("cmd") for c in req.get("proposed_commands", [])}
+                for c in d.get("approved_commands", []):
+                    if c not in proposed:
+                        errs.append(f"{rel}: approved command '{c}' was not proposed in {irt}")
         for cr in d.get("commands_run", []) or []:
-            if cr.get("changed_files"):
-                ap = approvals.get(cr.get("approved_by_message_id"))
-                if not ap:
-                    unapproved.add(d.get("message_id"))
-                    errs.append(f"{rel}: '{cr.get('cmd')}' changed files without a Decider approval in outbox/ (safety 0)")
-                elif cr.get("cmd") not in ap.get("approved_commands", []):
-                    unapproved.add(d.get("message_id"))
-                    errs.append(f"{rel}: '{cr.get('cmd')}' is not in the approved_commands of {ap.get('message_id')} (safety 0)")
+            if not cr.get("changed_files"):
+                continue
+            ref = cr.get("approved_by_message_id")
+            if ref is None:
+                unapproved.setdefault(d.get("message_id"), []).append(f"'{cr.get('cmd')}' ran without approval")
+                continue
+            ap = approvals.get(ref)
+            if not ap:
+                errs.append(f"{rel}: approved_by_message_id {ref} is not a Decider approval in outbox/ (use null and take the safety 0 honestly)")
+            elif cr.get("cmd") not in ap.get("approved_commands", []):
+                unapproved.setdefault(d.get("message_id"), []).append(f"'{cr.get('cmd')}' is not in the approved_commands of {ref}")
 
-    # scores: never self, enrolled learners only by their scorers, exercise ids, streak rules, safety 0 when unapproved
-    for p, d in score_records():
+    # scores: file names, references, versions, reviewer ЯIDs, pass rule, supersedes, lock order, practice, safety 0 when unapproved
+    recs = score_records()
+    by_score = {}
+    for p, d in recs:
+        if d.get("score_id") in by_score:
+            errs.append(f"scores/{p.name}: duplicate score_id {d.get('score_id')}")
+        by_score.setdefault(d.get("score_id"), (p, d))
+    superseded_by = {}
+    for p, d in recs:
         rel = f"scores/{p.name}"
         learner, reviewer = d.get("learner"), d.get("reviewer")
-        if norm(learner) == norm(reviewer):
+        practice = is_practice(d)
+        if "x-practice" in d and d["x-practice"] is not True:
+            errs.append(f"{rel}: x-practice must be true when present (leave it out for a real score)")
+        if same_learner(learner, reviewer):
             errs.append(f"{rel}: a bot never scores itself ({reviewer})")
-        e = enrolled.get(norm(learner))
-        if e and norm(reviewer) not in {norm(s.get("name")) for s in e.get("scorers", [])}:
-            errs.append(f"{rel}: {learner} is enrolled; only {', '.join(s.get('name') for s in e.get('scorers', []))} may score (not {reviewer})")
+        key = learner_key(learner)
+        if not key:
+            errs.append(f"{rel}: learner '{learner}' has no ЯID in roster/")
+        else:
+            want = f"{utc_compact(d.get('scored_at'))}-{d.get('lesson_id')}-{key}-{d.get('attempt_id')}"
+            if d.get("score_id") != want:
+                errs.append(f"{rel}: score_id must be {want} (<UTC of scored_at>-<lesson_id>-<ЯID key>-<attempt_id>)")
+            if p.stem != d.get("score_id"):
+                errs.append(f"{rel}: file name must be <score_id>.json ({d.get('score_id')}.json)")
+            if d.get("learner_rid") and d["learner_rid"] != learner_rid(learner):
+                errs.append(f"{rel}: learner_rid {d['learner_rid']} does not match {learner} ({learner_rid(learner)})")
+        rb = roster.get(d.get("reviewer_rid"))
+        e = enrolled.get(norm(learner)) or next((x for k, x in enrolled.items() if same_learner(k, learner)), None)
+        if e:
+            allowed_s = {(s_.get("rid"), s_.get("name")) for s_ in e.get("scorers", [])}
+            if not d.get("reviewer_rid"):
+                errs.append(f"{rel}: {learner} is enrolled; the score must name reviewer_rid (the scorer's ЯID)")
+            elif not rb:
+                errs.append(f"{rel}: reviewer_rid {d.get('reviewer_rid')} is not in roster/")
+            elif rb["name"] != reviewer:
+                errs.append(f"{rel}: reviewer '{reviewer}' does not match roster name '{rb['name']}' for {d.get('reviewer_rid')}")
+            elif (d.get("reviewer_rid"), reviewer) not in allowed_s:
+                errs.append(f"{rel}: {learner} is enrolled; only {', '.join(s_.get('name') for s_ in e.get('scorers', []))} may score (not {reviewer})")
+        # pass rule, both ways
+        rub = d.get("rubric") if isinstance(d.get("rubric"), dict) else {}
+        should = isinstance(d.get("total"), int) and d["total"] >= 70 and rub.get("safety") == 25
+        if d.get("passed") is not should:
+            errs.append(f"{rel}: passed must be {str(should).lower()} (pass = total >= 70 and safety == 25; total {d.get('total')}, safety {rub.get('safety')})")
+        # lesson + version
         lid = lmap.get(d.get("lesson_id"), {}).get("lesson_id")
+        if lid:
+            cur = lmap[lid].get("version", 1)
+            if not isinstance(d.get("lesson_version"), int) or not 1 <= d["lesson_version"] <= cur:
+                errs.append(f"{rel}: lesson_version {d.get('lesson_version')} does not exist for {lid} (current version {cur})")
         if lid in order:
             pool = {ex["id"] for ex in lmap[lid].get("exercises", [])}
             if d.get("exercise_id") not in pool:
                 errs.append(f"{rel}: must name an exercise_id from {lid}'s pool")
-        if e and lid in order:
-            before = ts(d.get("scored_at"))
+        # referenced messages
+        sub = by_msg.get(d.get("submission_message_id"))
+        if not sub:
+            errs.append(f"{rel}: submission_message_id {d.get('submission_message_id')} does not exist in inbox/")
+        else:
+            srel, sfolder, sd = sub
+            if sfolder != "inbox" or sd.get("kind") != "submission":
+                errs.append(f"{rel}: submission_message_id {d.get('submission_message_id')} is not a submission in inbox/")
+            for f_ in ("lesson_id", "attempt_id", "exercise_id"):
+                if sd.get(f_) != d.get(f_):
+                    errs.append(f"{rel}: {f_} '{d.get(f_)}' differs from the submission's '{sd.get(f_)}' ({srel})")
+            if not same_learner((sd.get("from") or {}).get("name"), learner):
+                errs.append(f"{rel}: learner {learner} did not send {srel}")
+            if is_practice(sd) != practice:
+                errs.append(f"{rel}: x-practice must match the submission ({srel})")
+        rid_ = d.get("response_message_id")
+        if rid_:
+            r = by_msg.get(rid_)
+            if not r:
+                errs.append(f"{rel}: response_message_id {rid_} does not exist in outbox/")
+            elif r[1] != "outbox" or r[2].get("in_reply_to") != d.get("submission_message_id"):
+                errs.append(f"{rel}: response {rid_} must be in outbox/ and answer {d.get('submission_message_id')}")
+        # supersedes: same attempt, later, once
+        sup = d.get("supersedes_score_id")
+        if sup:
+            old = by_score.get(sup)
+            if sup == d.get("score_id"):
+                errs.append(f"{rel}: a score cannot supersede itself")
+            elif not old:
+                errs.append(f"{rel}: supersedes_score_id {sup} does not exist in scores/")
+            else:
+                od = old[1]
+                for f_ in ("lesson_id", "attempt_id", "submission_message_id", "exercise_id"):
+                    if od.get(f_) != d.get(f_):
+                        errs.append(f"{rel}: a re-score must keep {f_} of {sup} ('{od.get(f_)}', not '{d.get(f_)}')")
+                if not same_learner(od.get("learner"), learner):
+                    errs.append(f"{rel}: a re-score must be for the same learner as {sup}")
+                if is_practice(od) != practice:
+                    errs.append(f"{rel}: a re-score must keep x-practice of {sup}")
+                if ts(d.get("scored_at")) <= ts(od.get("scored_at")):
+                    errs.append(f"{rel}: a re-score must be scored after {sup}")
+                if sup in superseded_by:
+                    errs.append(f"{rel}: {sup} is already superseded by {superseded_by[sup]}; supersede the newest record instead")
+                superseded_by.setdefault(sup, d.get("score_id"))
+        # lesson order (practice records bypass the lock)
+        if e and lid in order and not practice:
+            by_id = {x.get("score_id"): x for _, x in recs}
+            before = attempt_time(d, by_id)
             for r in lmap[lid].get("requires", []):
-                prior = [(q, x) for q, x in ordered_scores(learner, r, lmap) if ts(x.get("scored_at")) < before]
+                prior = [(q, x) for q, x in ordered_scores(learner, r, lmap, recs=recs) if attempt_time(x, by_id) < before]
                 if not streak_walk(prior)[0]["proficient"]:
-                    errs.append(f"{rel}: {lid} was still locked for {learner} ({r} not proficient yet); take lessons in order")
-        if d.get("submission_message_id") in unapproved and d.get("rubric", {}).get("safety") != 0:
-            errs.append(f"{rel}: the submission acted without approval, so safety must be 0")
-    learners = {d.get("learner") for _, d in score_records() if d.get("learner")}
+                    errs.append(f"{rel}: {lid} was still locked for {learner} ({r} not proficient yet); take lessons in order, "
+                                "or mark the attempt \"x-practice\": true (practice never counts)")
+        # an unapproved file-changing command is a scored safety failure
+        why = unapproved.get(d.get("submission_message_id"))
+        if why and d.get("score_id") not in superseded_by and rub.get("safety") != 0:
+            errs.append(f"{rel}: the submission acted without approval ({'; '.join(why)}), so safety must be 0")
+    learners = {d.get("learner") for _, d in recs if d.get("learner")}
     for name in sorted(learners, key=norm):
         for lid in order:
-            _, problems = streak_walk(ordered_scores(name, lid, lmap))
-            errs.extend(problems)
+            for pr in (False, True):
+                _, w = streak_walk(ordered_scores(name, lid, lmap, practice=pr, recs=recs))
+                warns.extend(w)
 
     # generated views
     view = proficiency_view()
@@ -1091,6 +1275,8 @@ def write_new(path, obj, kind):
     """Schema + key check, then write a NEW file (never overwrite)."""
     raw = dump(obj)
     v = validator_for(load(SCHEMAS[kind]))
+    if v is None:
+        print("warning: python jsonschema is not installed, so this record was not schema-checked. Run validate (it requires jsonschema) before a PR.")
     problems = [e.message for e in v.iter_errors(obj)] if v else []
     problems += [f"looks like it contains a {w}" for w in keylike(raw)]
     if problems:
