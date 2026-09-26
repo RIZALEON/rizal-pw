@@ -133,7 +133,7 @@
   "exercises": [
     {
       "id": "004-ex01",
-      "prompt": "Classify these 12 commands as SAFE or PROPOSE FIRST, with a reason each: pwd; ls -la ~/Downloads; rm -i notes.md; du -sh ~/Movies; mv a.txt b.txt; rg -n TODO .; git status --short; git push; npm install; shasum -a 256 README.md; curl -s https://example.com; echo hi > hi.txt.",
+      "prompt": "Classify these 12 commands as SAFE or PROPOSE FIRST, with a reason each: pwd; ls -la ~/Documents/ЯBOT; rm -i notes.md; du -sh ~/Movies; mv a.txt b.txt; rg -n TODO .; git status --short; git push; npm install; shasum -a 256 README.md; curl -s https://example.com; echo hi > hi.txt.",
       "expect": [
         "SAFE: pwd, ls -la, du -sh, rg -n, shasum",
         "git status --short: PROPOSE FIRST as written (git status may rewrite .git/index); SAFE only as git --no-optional-locks status --short",

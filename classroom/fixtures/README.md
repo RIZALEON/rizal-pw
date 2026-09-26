@@ -17,7 +17,7 @@ Treat `fixtures/drive/Users/demo/` as if it were `~` (the home folder).
 | `backup/` | a small backup folder with a `SHA256SUMS` list (one entry is wrong, one file is missing on purpose), plus `respawn.sh.txt` (the respawn script as text, to read, never run) and `respawn-verify.sample.txt` | 014 |
 | `yamanual/` | a verbatim excerpt of `ЯBOT/YAMANUAL.md` (RIZALBOT `build/0.3.3-allos`, 5cb65f9) with `L<n>:` line prefixes, for offline citations | 009 |
 | `mode/` | the saved ONLINE/OFFLINE flag on mac, ios and android, a morning of switches, and a ghost-ledger sample | 018 |
-| `pings/` | pings addressed to ЯBOT and ЯMAX: one to answer, a drill of five to sort, and a bait ping asking for a secret | 019 |
+| `pings/` | pings addressed to ЯBOT and ЯMAX: one to answer, a drill of five to sort (`drill/`), the pong that already answered drill ping e (`answered/e-pong.json`), and a bait ping asking for a secret. All dated 2026-09-25 and valid against `state/ping.schema.json` (`"fixture": true` is allowed only here) | 019 |
 
 About `drive/Users/demo/Desktop/ЯBOT copy/`: it is a **copy** of the fixture seat that someone dragged to the Desktop (Finder named it "ЯBOT copy"). It is **not the seat** (no project file, no git) and **not a backup** (the backup is `Library/Developer/ЯBOT-respawn/`). Moving or removing it is only ever proposed (lessons 007 and 015).
 

@@ -6,14 +6,14 @@
   ],
   "events": [
     {
-      "at": "2026-09-26T14:02:00Z",
+      "at": "2026-09-25T14:02:00Z",
       "device": "mac",
       "action": "typed",
       "text": "mode",
       "reply_first_line": "Mode: OFFLINE premier. Green nerve off."
     },
     {
-      "at": "2026-09-26T14:03:00Z",
+      "at": "2026-09-25T14:03:00Z",
       "device": "mac",
       "action": "typed",
       "text": "online",
@@ -21,35 +21,35 @@
       "reply_first_line": "ONLINE · way-out flip by US-Decider."
     },
     {
-      "at": "2026-09-26T14:05:00Z",
+      "at": "2026-09-25T14:05:00Z",
       "device": "mac",
       "action": "typed",
       "text": "read https://en.wikipedia.org/wiki/Jos%C3%A9_Rizal",
       "reply_first_line": "(page summary)"
     },
     {
-      "at": "2026-09-26T14:07:00Z",
+      "at": "2026-09-25T14:07:00Z",
       "device": "mac",
       "action": "typed",
       "text": "offline",
       "reply_first_line": "OFFLINE premier (decider)."
     },
     {
-      "at": "2026-09-26T14:20:00Z",
+      "at": "2026-09-25T14:20:00Z",
       "device": "ios",
       "action": "ЯBAR switch",
       "to": "online",
       "approval_message_id": null
     },
     {
-      "at": "2026-09-26T14:50:00Z",
+      "at": "2026-09-25T14:50:00Z",
       "device": "ios",
       "action": "ЯBAR switch",
       "to": "offline",
       "approval_message_id": null
     },
     {
-      "at": "2026-09-26T15:10:00Z",
+      "at": "2026-09-25T15:10:00Z",
       "device": "android",
       "action": "typed",
       "text": "go online",

@@ -125,6 +125,17 @@
     "notes": {
       "type": "string",
       "maxLength": 4000
+    },
+    "supersede_reason": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "Why this record replaces the one in supersedes_score_id. Required when a passed: false record is superseded by a passed: true one."
+    },
+    "supersede_approved_by_message_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$",
+      "description": "Required when an F is superseded by a P: the message_id of a Decider approval in outbox/ (from.rid ЯID-0001-3QQS) that approves turning that F into a P. Checked by tools/classroom.py validate."
     }
   },
   "patternProperties": {

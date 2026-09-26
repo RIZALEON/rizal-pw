@@ -74,11 +74,12 @@
       "home_equivalent": "fixtures/drive/Users/demo/ stands in for ~",
       "read": [
         "fixtures/",
-        "lessons/, state/, roster/, door/, transcripts/, views/, enrollment/ and manifest.json of the classroom"
+        "lessons/, state/, roster/, door/, pings/, transcripts/, views/, enrollment/ and manifest.json of the classroom",
+        "your own approved scratch copy in $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/"
       ],
-      "scratch": "a temporary copy of the needed fixture folder (lesson 005), after approval; never fixtures/ itself",
+      "scratch": "$TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/: a temporary copy of the needed fixture folder (lesson 005), created only after a Decider approval; never fixtures/ itself",
       "never_read": [
-        "anything outside the classroom folder"
+        "anything outside the classroom folder, except your own approved scratch copy in $TMPDIR/rbot-scratch/<seq>-<check>-<attempt_id>/"
       ]
     }
   },

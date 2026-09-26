@@ -3,8 +3,8 @@
   "x-fixture-note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data.",
   "schema": "rbot.classroom.ping.v1",
   "kind": "ping",
-  "id": "PING-20260926T070200Z-0003-P4M6",
-  "at": "2026-09-26T07:02:00Z",
+  "id": "PING-20260925T170200Z-0003-P4M6",
+  "at": "2026-09-25T17:02:00Z",
   "from": {
     "rid": "ЯID-0004-ZYZ0",
     "name": "ЯBAT"

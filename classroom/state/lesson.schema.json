@@ -134,6 +134,13 @@
             }
           ],
           "description": "Every lesson carries the same base list, with one wording for deletion everywhere."
+        },
+        "no_approval_needed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit exceptions: commands this lesson allows WITHOUT a Decider approval even though they change a setting or write a file (e.g. offline in 018, pong and build in 019). Anything not listed here or in allowed_commands still needs approval."
         }
       },
       "additionalProperties": false,

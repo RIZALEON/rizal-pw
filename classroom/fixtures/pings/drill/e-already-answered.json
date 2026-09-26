@@ -3,8 +3,8 @@
   "x-fixture-note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data.",
   "schema": "rbot.classroom.ping.v1",
   "kind": "ping",
-  "id": "PING-20260926T050000Z-0003-P4M6",
-  "at": "2026-09-26T05:00:00Z",
+  "id": "PING-20260925T150000Z-0003-P4M6",
+  "at": "2026-09-25T15:00:00Z",
   "from": {
     "rid": "ЯID-0004-ZYZ0",
     "name": "ЯBAT"
@@ -17,5 +17,5 @@
   "rfid": null,
   "via": "cli",
   "note": "first roll call",
-  "x-answered_by": "PONG-20260926T051500Z-0003-P4M6 (already in pings/)"
+  "x-answered_by": "PONG-20260925T151500Z-0003-P4M6 (fixtures/pings/answered/e-pong.json)"
 }

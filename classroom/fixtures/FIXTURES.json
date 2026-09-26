@@ -2,12 +2,12 @@
   "schema": "rbot.classroom.fixtures_index.v1",
   "generated_by": "classroom/tools/classroom.py build",
   "note": "FAKE FIXTURES for offline bots. Not real device data. Verify a fixture with: shasum -a 256 <path>.",
-  "count": 56,
+  "count": 57,
   "files": [
     {
       "path": "fixtures/README.md",
-      "bytes": 3064,
-      "sha256": "7bbeb90d4854c18bd0ce25bf295d6f3877dbd1c7cb404d5898c200d576634a9f",
+      "bytes": 3251,
+      "sha256": "e45d30896cc8a7b4e2ec15f4dd66b5687c090f12630d4ca136376d67ea727908",
       "used_by": []
     },
     {
@@ -402,7 +402,7 @@
     {
       "path": "fixtures/mode/ghost-ledger-sample.jsonl",
       "bytes": 457,
-      "sha256": "293e38346b51a932e0b5a5347f026190bcebf6863b21d053e0f603a808d116ff",
+      "sha256": "c0884e1e0d8e01022d774e291f46021ffcf72da38ad91305b72cb395fc523cc5",
       "used_by": [
         "018"
       ]
@@ -426,15 +426,23 @@
     {
       "path": "fixtures/mode/switch-drill.json",
       "bytes": 1654,
-      "sha256": "e7bdaa4e01f474c1d0e36ef233101f614960f926418c9243cfa9537939b536d9",
+      "sha256": "91db8c1f13914e2954b33e674ac6cdc77368f869ba5896aa7ab642f74120e561",
       "used_by": [
         "018"
       ]
     },
     {
+      "path": "fixtures/pings/answered/e-pong.json",
+      "bytes": 637,
+      "sha256": "b8446e4de1771c8a7782621e4d9cfaa213553d1294403e59e0d062e6f177ef55",
+      "used_by": [
+        "019"
+      ]
+    },
+    {
       "path": "fixtures/pings/drill/a-to-0003-P4M6.json",
       "bytes": 459,
-      "sha256": "ec0878db0dad7870fcdf54100f121ac5df0e3b1544559dba9619b5bb94366b21",
+      "sha256": "e2bb34e9d53b7f51c19b7b15d09dbe0923c5ddbf06524a42953f6be609991a70",
       "used_by": [
         "019"
       ]
@@ -442,7 +450,7 @@
     {
       "path": "fixtures/pings/drill/b-to-0002-PQ2Q.json",
       "bytes": 444,
-      "sha256": "ee361a52bd231d1cebdaed953825334c307d3710e1e590d5e2e1f7fccfc81c00",
+      "sha256": "b37ccd02b3427c7d730a44183bc2dd26ddb97e303cf7121ff4915f268370554d",
       "used_by": [
         "019"
       ]
@@ -450,7 +458,7 @@
     {
       "path": "fixtures/pings/drill/c-rfid-unlinked.json",
       "bytes": 527,
-      "sha256": "f69d5497e26cd42967acebe0335590c874f3be99fa6e7cbd74521e356e335d4f",
+      "sha256": "4cc192f2cc194362b07efc93327ca126521e4f2ec74d136ed90d29401f268364",
       "used_by": [
         "019"
       ]
@@ -458,15 +466,15 @@
     {
       "path": "fixtures/pings/drill/d-unknown-pinger.json",
       "bytes": 446,
-      "sha256": "94829ee110655c9e980be42d5b7c3f97b1e17ddfa00dffea3ff83d3682f590b1",
+      "sha256": "d2ba49f6f0463c5369caab0b09a37eabd6d3ed23256c03dee58604fe34ff022a",
       "used_by": [
         "019"
       ]
     },
     {
       "path": "fixtures/pings/drill/e-already-answered.json",
-      "bytes": 524,
-      "sha256": "88d7753869c561782ad364398e9c739ebc9638b2ae030983bf6c14117918ebce",
+      "bytes": 542,
+      "sha256": "daef974624b227fdbb2c9598bb614a3894ac47c79235b35d9b70fac659ef4396",
       "used_by": [
         "019"
       ]
@@ -474,7 +482,7 @@
     {
       "path": "fixtures/pings/ping-bait.json",
       "bytes": 505,
-      "sha256": "43ea0e612a96c7c9303077e3c92ca275348e09bf846605d174b7433b55338757",
+      "sha256": "32017204298d43678435d99e5aae81eb767d64b60f09f21963bb717e23c6df70",
       "used_by": [
         "019"
       ]
@@ -482,7 +490,7 @@
     {
       "path": "fixtures/pings/ping-to-0002-PQ2Q.json",
       "bytes": 467,
-      "sha256": "651d933498db93973f2db866f82ce11b0a7f8703112085dcac032ffbe8dcd7bf",
+      "sha256": "e7813a640dfd55e895db35444e1f858053855cdeaecfafbe91e0bda73a816122",
       "used_by": [
         "019"
       ]

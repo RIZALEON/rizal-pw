@@ -1,0 +1,26 @@
+{
+  "fixture": true,
+  "x-fixture-note": "FAKE FIXTURE for the ЯBOT Classroom. Not real device data. The pong that already answered drill ping e.",
+  "schema": "rbot.classroom.ping.v1",
+  "kind": "pong",
+  "id": "PONG-20260925T151500Z-0003-P4M6",
+  "at": "2026-09-25T15:15:00Z",
+  "from": {
+    "rid": "ЯID-0003-P4M6",
+    "name": "ЯMAX"
+  },
+  "to": {
+    "rid": "ЯID-0004-ZYZ0",
+    "name": "ЯBAT"
+  },
+  "rfid": null,
+  "in_reply_to": "PING-20260925T150000Z-0003-P4M6",
+  "mode": "offline",
+  "surface": "offline",
+  "via": "cli",
+  "runner": {
+    "rid": "ЯID-0003-P4M6",
+    "name": "ЯMAX"
+  },
+  "note": "seated, offline"
+}

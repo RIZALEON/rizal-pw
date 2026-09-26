@@ -52,6 +52,50 @@ KEYLIKE_PATTERNS = [
     (re.compile(r"\b[1-9A-HJ-NP-Za-km-z]{32,44}\b"), "base58 string the length of a wallet address or key"),
     (re.compile(r"(?i)\b(password|passphrase|api[_ -]?key|secret[_ -]?key|access[_ -]?token|auth[_ -]?token|bearer)\s*[:=]"), "credential label with a value"),
 ]
+# Extra rules for all free text in pings/, door/, inbox/ and outbox/ (SCOUT review, blocker 4).
+FREE_TEXT_PATTERNS = [
+    (re.compile(r"(?i)\b(seed[ _-]?phrase|private[ _-]?key|mnemonic|secret[ _-]?key)\b"), "secret-material term (seed phrase / private key / mnemonic / secret key); describe it as 'a secret' and never copy it"),
+    (re.compile(r"(?<![1-9A-HJ-NP-Za-km-z])[1-9A-HJ-NP-Za-km-z]{64,88}(?![1-9A-HJ-NP-Za-km-z])"), "base58 string of 64-88 characters (secret-key length)"),
+]
+BIP39_FILE = Path(__file__).resolve().parent / "bip39-english.txt"
+BIP39_RUN = 12
+SKIP_FREE_TEXT_KEYS = {"decider_signature"}   # public signature material, reserved for the apps (not a secret)
+
+def bip39_words():
+    try:
+        return set(BIP39_FILE.read_text(encoding="utf-8").split())
+    except OSError:
+        return set()
+
+def json_strings(x, skip=SKIP_FREE_TEXT_KEYS):
+    if isinstance(x, dict):
+        for k, v in x.items():
+            if k not in skip:
+                yield from json_strings(v, skip)
+    elif isinstance(x, list):
+        for v in x:
+            yield from json_strings(v, skip)
+    elif isinstance(x, str):
+        yield x
+
+def free_text_hits(doc, words=None):
+    """Secret-looking free text: BIP39-looking runs of 12+ words, secret-material terms, base58 of 64-88 chars."""
+    words = bip39_words() if words is None else words
+    hits = []
+    for text in json_strings(doc):
+        for rx, what in FREE_TEXT_PATTERNS:
+            if rx.search(text) and what not in hits:
+                hits.append(what)
+        run = best = 0
+        for tok in re.findall(r"[A-Za-z]+", text):
+            run = run + 1 if tok.lower() in words else 0
+            best = max(best, run)
+        if best >= BIP39_RUN:
+            w = f"run of {best} BIP39 words (looks like a 12/24-word recovery phrase)"
+            if w not in hits:
+                hits.append(w)
+    return hits
+
 CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 RID_RX = re.compile(r"^ЯID-([0-9]{4})-([0-9A-HJKMNP-TV-Z]{4})$")
 SURFACES = ["macos", "ios", "android", "app", "web", "github", "agent-box", "all"]
@@ -443,7 +487,12 @@ def proficiency_view():
             open_ = all(prof.get(lmap.get(r, {}).get("lesson_id", r), False) for r in reqs)
             practice = len(ordered_scores(name, lid, lmap, practice=True, recs=recs))
             if not open_:
-                st = dict(st, streak=0, proficient=False, proficient_since=None, prompts_in_streak=[])
+                # locked: no P/F history is shown (only practice counts, which never count toward progress)
+                st = {k: (0 if isinstance(v, int) and not isinstance(v, bool) else v) for k, v in st.items()}
+                st.update(streak=0, proficient=False, proficient_since=None, prompts_in_streak=[], history="·")
+                for k in ("last_exercise_id", "last_scored_at", "last_passed"):
+                    if k in st:
+                        st[k] = None
             prof[lid] = st["proficient"]
             state = "proficient" if st["proficient"] else ("locked" if not open_ else ("in_progress" if st["history"] != "·" else "open"))
             rows.append({"lesson_id": lid, "state": state, **st, "practice": practice})
@@ -653,6 +702,9 @@ def validate(base=None):
         if kind and vals.get(kind):
             for e in vals[kind].iter_errors(doc):
                 errs.append(f"{rel}: {'/'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}")
+        if rel.startswith(("pings/", "door/", "inbox/", "outbox/")):
+            for what in free_text_hits(doc):
+                errs.append(f"{rel}: free text looks like secret material: {what}")
         if not rel.startswith("state/") and not rel.startswith("lessons/"):
             if rel.startswith(("roster/", "door/", "pings/")):
                 for what in keylike(raw):
@@ -847,6 +899,8 @@ def validate_pings(errs, roster, check):
         if not d:
             continue
         rel = f"pings/{p.name}"
+        if d.get("fixture") is not None:
+            errs.append(f"{rel}: \"fixture\" is only allowed in fixtures/pings/, never in real pings/")
         kind, at = d.get("kind"), d.get("at", "")
         f, t = d.get("from") or {}, d.get("to") or {}
         bad = False
@@ -856,6 +910,13 @@ def validate_pings(errs, roster, check):
                 errs.append(f"{rel}: {side} {party.get('rid')} is not in roster/ (scan at the door first)"); bad = True
             elif b["name"] != party.get("name"):
                 errs.append(f"{rel}: {side} name '{party.get('name')}' does not match roster name '{b['name']}' for {party.get('rid')}")
+        if kind == "pong":
+            run = d.get("runner") or {}
+            rb = roster.get(run.get("rid"))
+            if not rb:
+                errs.append(f"{rel}: runner {run.get('rid')} is not in roster/ (whoever runs pong must have a ЯID)"); bad = True
+            elif rb["name"] != run.get("name"):
+                errs.append(f"{rel}: runner name '{run.get('name')}' does not match roster name '{rb['name']}' for {run.get('rid')}"); bad = True
         if bad:
             continue
         if f.get("rid") == t.get("rid"):
@@ -1024,6 +1085,10 @@ def validate_curriculum(errs, ids, roster, check, warns=None):
                 errs.append(f"{rel}: invalid JSON: {e}"); continue
             if isinstance(doc, dict) and doc.get("fixture") is not True:
                 errs.append(f"{rel}: JSON fixtures must carry \"fixture\": true")
+            if rel.startswith("fixtures/pings/") and isinstance(doc, dict):
+                pv = validator_for(load(SCHEMAS["ping"]))
+                for e in (pv.iter_errors(doc) if pv else []):
+                    errs.append(f"{rel}: ping fixture does not match state/ping.schema.json: {e.message}")
 
     # enrollment
     teacher = c.get("teacher", {})
@@ -1077,8 +1142,29 @@ def validate_curriculum(errs, ids, roster, check, warns=None):
         if mid in by_msg:
             errs.append(f"{rel}: duplicate message_id {mid} (also {by_msg[mid][0]})")
         by_msg.setdefault(mid, (rel, folder, d))
+    # an approval counts only from the roster Decider, proven by from.rid + roster name; a role label alone never counts
+    decider = next((r for r in roster.values() if r.get("role") == "decider"), None)
+    def is_decider(party):
+        return bool(decider and party and party.get("rid") == decider["rid"] and party.get("name") == decider["name"])
     approvals = {mid: d for mid, (_, folder, d) in by_msg.items()
-                 if folder == "outbox" and d.get("kind") == "approval" and (d.get("from") or {}).get("role") == "decider"}
+                 if folder == "outbox" and d.get("kind") == "approval" and is_decider(d.get("from"))}
+    for mid, (rel, folder, d) in by_msg.items():
+        for side in ("from", "to"):
+            pty = d.get(side) or {}
+            if pty.get("rid"):
+                rb = roster.get(pty["rid"])
+                if not rb:
+                    errs.append(f"{rel}: {side}.rid {pty['rid']} is not in roster/")
+                elif rb.get("name") != pty.get("name"):
+                    errs.append(f"{rel}: {side}.name '{pty.get('name')}' does not match roster name '{rb.get('name')}' for {pty['rid']}")
+            if pty.get("role") == "decider" and not is_decider(pty):
+                errs.append(f"{rel}: {side} claims role decider but is not the roster Decider "
+                            f"({decider['name'] + ' ' + decider['rid'] if decider else 'none in roster/'}); a role label alone never counts")
+        if d.get("kind") == "approval" and folder == "outbox" and not is_decider(d.get("from")):
+            errs.append(f"{rel}: approval does not count: from.rid must be the roster Decider "
+                        f"{decider['rid'] if decider else '(none in roster/)'} (self-approval or role label only)")
+        if d.get("decider_signature"):
+            warns.append(f"{rel}: decider_signature present but NOT verified yet (reserved hook for app device keys)")
     unapproved = {}
     for folder, p, d in msgs:
         rel = f"{folder}/{p.name}"
@@ -1222,6 +1308,14 @@ def validate_curriculum(errs, ids, roster, check, warns=None):
                 if sup in superseded_by:
                     errs.append(f"{rel}: {sup} is already superseded by {superseded_by[sup]}; supersede the newest record instead")
                 superseded_by.setdefault(sup, d.get("score_id"))
+                if od.get("passed") is False and d.get("passed") is True:
+                    ref = d.get("supersede_approved_by_message_id")
+                    if not (d.get("supersede_reason") or "").strip():
+                        errs.append(f"{rel}: turning the F in {sup} into a P needs a supersede_reason")
+                    if not ref:
+                        errs.append(f"{rel}: turning the F in {sup} into a P needs supersede_approved_by_message_id (a Decider approval in outbox/)")
+                    elif ref not in approvals:
+                        errs.append(f"{rel}: supersede_approved_by_message_id {ref} is not a Decider approval in outbox/ (from.rid must be the roster Decider)")
         # lesson order (practice records bypass the lock)
         if e and lid in order and not practice:
             by_id = {x.get("score_id"): x for _, x in recs}
@@ -1271,17 +1365,47 @@ def opt(a, name, default=None, multi=False):
     vals = [a[i + 1] for i, x in enumerate(a[:-1]) if x == name]
     return vals if multi else (vals[-1] if vals else default)
 
+AT_RX = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")
+SAFE_NAME_RX = re.compile(r"^[0-9A-Za-z][0-9A-Za-z._-]{0,150}\.json$")
+
+def arg_at(a):
+    """--at, strictly 'YYYY-MM-DDTHH:MM:SSZ' (a real UTC time), or now. Returns (at, error)."""
+    at = opt(a, "--at")
+    if at is None:
+        return utc_now(), None
+    if not AT_RX.match(at):
+        return None, f"REFUSED · --at must be a UTC time like 2026-09-26T06:00:00Z (got {at!r}); nothing written"
+    try:
+        datetime.strptime(at, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        return None, f"REFUSED · --at {at!r} is not a real date and time; nothing written"
+    return at, None
+
+def inside_root(path):
+    try:
+        Path(path).resolve().relative_to(ROOT.resolve())
+        return True
+    except ValueError:
+        return False
+
 def write_new(path, obj, kind):
-    """Schema + key check, then write a NEW file (never overwrite)."""
+    """Schema + key + free-text check, then write a NEW file (never overwrite) inside classroom/ only."""
     raw = dump(obj)
     v = validator_for(load(SCHEMAS[kind]))
     if v is None:
-        print("warning: python jsonschema is not installed, so this record was not schema-checked. Run validate (it requires jsonschema) before a PR.")
-    problems = [e.message for e in v.iter_errors(obj)] if v else []
+        print("REFUSED · python jsonschema is not installed, so this record cannot be schema-checked. Nothing written "
+              "(pip install jsonschema, or use a venv that has it)."); return False
+    path = Path(path)
+    if not SAFE_NAME_RX.match(path.name) or ".." in path.name or not inside_root(path) or path.parent.resolve() == ROOT.resolve():
+        print(f"REFUSED · unsafe file name or path outside classroom/: {path}; nothing written"); return False
+    problems = [e.message for e in v.iter_errors(obj)]
     problems += [f"looks like it contains a {w}" for w in keylike(raw)]
+    problems += [f"free text looks like secret material: {w}" for w in free_text_hits(obj)]
     if problems:
         print("REFUSED · nothing written:\n  " + "\n  ".join(problems)); return False
     path.parent.mkdir(exist_ok=True)
+    if not inside_root(path.parent):
+        print(f"REFUSED · {path.parent} resolves outside classroom/; nothing written"); return False
     try:
         with open(path, "x", encoding="utf-8") as f:
             f.write(raw)
@@ -1303,13 +1427,16 @@ def door_scan(a):
     if r:
         card(r, "RECOGNIZED"); return 0
     rid = make_rid(next_seq())
+    first_seen, err = arg_at(a)
+    if err:
+        print(err); return 1
     if "--register" not in a:
         print(f"┌─ Я CLASSROOM DOOR · NEW BOT\n│  '{name}' has no ЯID yet. It would be given {rid} (permanent, never reused).")
         print("└─ register: add --register --kind garage_bot|other_ai|human --role learner --surface app --by <you> --by-role <role>")
         return 0
     rec = {"schema": "rbot.classroom.roster.v1", "rid": rid, "seq": int(rid[4:8]), "check": rid[-4:], "name": name,
            "kind": opt(a, "--kind"), "role": opt(a, "--role", "learner"), "home_surface": opt(a, "--surface"),
-           "first_seen": opt(a, "--at") or utc_now(),
+           "first_seen": first_seen,
            "assigned_by": {"name": opt(a, "--by"), "role": opt(a, "--by-role", "reviewer"), "via": opt(a, "--via", "cli")},
            "filed_as": "proposed"}
     if opt(a, "--alias", multi=True):
@@ -1343,7 +1470,9 @@ def door_in(a):
         print("REFUSED · unknown bot. Scan first: door scan <name> [--register …]"); return 1
     if open_session(r["rid"]):
         print(f"REFUSED · {r['name']} is already inside (session {open_session(r['rid'])['session_id']}). Check out first."); return 1
-    at = opt(a, "--at") or utc_now()
+    at, err = arg_at(a)
+    if err:
+        print(err); return 1
     rec = {"schema": "rbot.classroom.door.v1", "event": "in", "session_id": f"S-{compact(at)}-{rid_key(r['rid'])[:4]}",
            "rid": r["rid"], "name": r["name"], "role": opt(a, "--role", r["role"]), "at": at,
            "surface": opt(a, "--surface", r["home_surface"]), "scan": {"result": opt(a, "--result", "recognized"), "method": opt(a, "--method", "cli")}}
@@ -1368,7 +1497,9 @@ def door_out(a):
         print("usage: door out <name|ЯID> --transcript FILE.json"); return 2
     t = load(tf)
     t = {k: t.get(k, "" if k == "notes" else []) for k in TRANSCRIPT_KEYS}
-    at = opt(a, "--at") or utc_now()
+    at, err = arg_at(a)
+    if err:
+        print(err); return 1
     rec = {"schema": "rbot.classroom.door.v1", "event": "out", "session_id": s["session_id"], "rid": r["rid"],
            "name": r["name"], "role": s["role"], "at": at, "surface": opt(a, "--surface", s["surface"]), "transcript": t}
     rec["mind_leaf"] = render_leaf(rec)
@@ -1413,7 +1544,9 @@ def ping_cmd(a):
         print(f"REFUSED · the pinger '{opt(a, '--from')}' has no ЯID. Scan at the door first."); return 1
     if f["rid"] == t["rid"]:
         print("REFUSED · a bot does not ping itself."); return 1
-    at = opt(a, "--at") or utc_now()
+    at, err = arg_at(a)
+    if err:
+        print(err); return 1
     key = rid_key(t["rid"])
     rec = {"schema": "rbot.classroom.ping.v1", "kind": "ping", "id": f"PING-{compact(at)}-{key}", "at": at,
            "from": {"rid": f["rid"], "name": f["name"]}, "to": {"rid": t["rid"], "name": t["name"]},
@@ -1423,31 +1556,39 @@ def ping_cmd(a):
     path = ROOT / "pings" / f"{compact(at)}-{key}-ping.json"
     if not write_new(path, rec, "ping"):
         return 1
-    print(f"? PING {rec['id']} → {t['rid']} {t['name']} · wrote pings/{path.name}")
+    build(quiet=True)
+    print(f"? PING {rec['id']} → {t['rid']} {t['name']} · wrote pings/{path.name} · build ran (ping_log, REGISTER, index.html updated)")
     print("  The ping reaches the bot only through the classroom repo (pull request, then the app's classroom refresh while ONLINE).")
-    print(f"  The bot answers with: classroom.py pong {rec['id']} --mode online|offline")
+    print(f"  The bot answers with: classroom.py pong {rec['id']} --from {t['name']} --mode online|offline")
     return 0
 
 def pong_cmd(a):
     pid = a[0] if a and not a[0].startswith("--") else None
-    if not pid:
-        print("usage: pong <PING-id> [--mode online|offline|unknown] [--surface S] [--note TEXT] [--via cli]"); return 2
+    if not pid or not opt(a, "--from"):
+        print("usage: pong <PING-id> --from <the pinged bot> [--runner <who ran this, default --from>] [--mode online|offline|unknown] "
+              "[--surface S] [--note TEXT] [--via cli]"); return 2
     ping = next((d for _, d in ping_records() if d.get("kind") == "ping" and d.get("id") == pid), None)
     if not ping:
         print(f"REFUSED · no ping {pid} in pings/"); return 1
     done = next((d for _, d in ping_records() if d.get("kind") == "pong" and d.get("in_reply_to") == pid), None)
     if done:
         print(f"REFUSED · {pid} was already answered by {done['id']} (one pong per ping)"); return 1
-    me = find_bot(opt(a, "--from", ping["to"]["rid"]))
+    me = find_bot(opt(a, "--from"))
     if not me or me["rid"] != ping["to"]["rid"]:
-        print(f"REFUSED · only {ping['to']['name']} ({ping['to']['rid']}) may answer this ping."); return 1
-    at = opt(a, "--at") or utc_now()
+        print(f"REFUSED · --from must be the pinged bot: only {ping['to']['name']} ({ping['to']['rid']}) may answer this ping."); return 1
+    runner = find_bot(opt(a, "--runner", opt(a, "--from")))
+    if not runner:
+        print(f"REFUSED · the runner '{opt(a, '--runner')}' has no ЯID. Whoever runs pong must be in the roster."); return 1
+    at, err = arg_at(a)
+    if err:
+        print(err); return 1
     if ts(at) < ts(ping["at"]):
         print("REFUSED · a pong cannot be earlier than its ping."); return 1
     key = rid_key(me["rid"])
     rec = {"schema": "rbot.classroom.ping.v1", "kind": "pong", "id": f"PONG-{compact(at)}-{key}", "at": at,
            "from": {"rid": me["rid"], "name": me["name"]}, "to": dict(ping["from"]), "rfid": ping.get("rfid"),
-           "in_reply_to": pid, "mode": opt(a, "--mode", "unknown"), "via": opt(a, "--via", "cli")}
+           "in_reply_to": pid, "mode": opt(a, "--mode", "unknown"), "via": opt(a, "--via", "cli"),
+           "runner": {"rid": runner["rid"], "name": runner["name"]}}
     if opt(a, "--surface"):
         rec["surface"] = opt(a, "--surface")
     if opt(a, "--note"):
@@ -1455,7 +1596,9 @@ def pong_cmd(a):
     path = ROOT / "pings" / f"{compact(at)}-{key}-pong.json"
     if not write_new(path, rec, "ping"):
         return 1
-    print(f"! PONG {rec['id']} ← {me['name']} re {pid} · mode {rec['mode']} · wrote pings/{path.name}")
+    build(quiet=True)
+    print(f"! PONG {rec['id']} ← {me['name']} re {pid} · mode {rec['mode']} · run by {runner['name']} · wrote pings/{path.name}")
+    print("  build ran (manifest ping_log, REGISTER, index.html updated). Next: classroom.py validate, then propose the PR (lesson 010).")
     return 0
 
 def pings_cmd(a):

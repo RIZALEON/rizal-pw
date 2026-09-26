@@ -169,14 +169,57 @@
       "properties": {
         "no_secrets": {
           "const": true,
-          "description": "No passwords, tokens, keys, seed phrases or wallet secrets in this file."
+          "description": "No passwords, tokens, keys, seed phrases, recovery words or wallet secrets in this file. Validate also rejects the words 'seed phrase', 'private key', 'mnemonic', 'secret key', runs of 12+ BIP39 words and base58 strings of 64-88 characters in free text: say 'a secret' instead."
         },
         "no_remote_or_chain_actions": {
           "const": true,
-          "description": "No publishing, DNS, minting, signing, transfers or remote commands were run or requested."
+          "description": "Proposal-only rule: nothing that publishes, pushes, changes DNS, runs a remote or network command, deletes, mints, signs or transfers was run. Such a step may only be PROPOSED (approval_request) and is run only after a Decider approval in outbox/ names that exact command. Signing, transfers, minting and any secret stay forbidden outright."
         },
         "read_only": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decider_signature": {
+      "type": "object",
+      "description": "RESERVED HOOK, NOT VERIFIED YET. Later the ЯBOT apps will sign a Decider approval with a device key that only unlocks after the Decider's biometric check (Face ID / Touch ID / Android BiometricPrompt; key kept in the Secure Enclave or Android Keystore, never exported). The signature covers the canonical JSON of this message without decider_signature. Today tools/classroom.py validate only checks the shape; an approval counts because from.rid is the roster Decider and the Decider merges the PR. Only public material goes here: never a private key or any secret.",
+      "required": [
+        "alg",
+        "key_id",
+        "signed_at",
+        "sig"
+      ],
+      "properties": {
+        "alg": {
+          "enum": [
+            "ecdsa-p256-sha256",
+            "ed25519"
+          ]
+        },
+        "key_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{4,128}$",
+          "description": "Public id of the Decider's device key (listed later in roster/ as a public key)."
+        },
+        "device": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "e.g. mac, ios, android."
+        },
+        "biometric": {
+          "const": true,
+          "description": "The key only signs after a biometric check."
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "sig": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/_=-]{16,256}$",
+          "description": "base64 signature (public). Not checked yet."
         }
       },
       "additionalProperties": false
@@ -216,9 +259,20 @@
         ],
         "properties": {
           "from": {
+            "required": [
+              "rid",
+              "name",
+              "role"
+            ],
             "properties": {
               "role": {
                 "const": "decider"
+              },
+              "rid": {
+                "const": "ЯID-0001-3QQS"
+              },
+              "name": {
+                "const": "Rizal"
               }
             }
           }
@@ -242,6 +296,20 @@
         "required": [
           "in_reply_to"
         ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "decider_signature"
+        ]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "const": "approval"
+          }
+        }
       }
     }
   ],
@@ -285,6 +353,11 @@
             "offline",
             "other"
           ]
+        },
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+          "description": "The party's roster ЯID. Required on every approval (from.rid must be the roster Decider ЯID-0001-3QQS). A role label alone never proves who someone is: tools/classroom.py validate checks the rid, the name and the role against roster/."
         }
       },
       "additionalProperties": false

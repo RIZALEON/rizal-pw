@@ -25,7 +25,13 @@ Proposed changes:
 1. **Mac/iOS ЯBAR switch** (`ClayButtons.swift:103`, `isOnline.toggle()`): call `ModeStore.shared.toggle()` instead of toggling the binding. That routes the switch through `goOnline`/`goOffline`, so the switch gets the same gate and the same ghost-ledger line as typed `online`/`offline`.
 2. **Android** (`ModeStore.kt goOnline/goOffline`): append the same ledger row shape as Swift `GhostChainLedger.append(op:"claim", bio:"mode-online|mode-offline", source:"mode-store", …)`, for example to a `ghost-ledger.jsonl` in app files. Today Android logs nothing.
 3. **Both**: on every flip, also call `MindTranscript.append(role:"system", kind:"mode", body:"mode <from>→<to> via <typed|switch> by <actor>")`, so the next door check-out transcript can quote it.
-4. Keep the default OFFLINE. Do not add auto-online. Optionally add an honest reachability hint (`NWPathMonitor` on Apple, `ConnectivityManager` on Android) to the `mode` reply, labelled "hint, not a gate".
+4. **Bot self-flip route** (`NeoBabyScout.swift:187`, `.labResidentBot` for ids in `ModeStore.labResidentIds` at `ModeStore.swift:44-49`, which include ЯBOT): remove it, or route it through the Decider approval in step 5. A bot must never flip itself ONLINE. Lesson 018 lists it under requires_approval and risky_steps.
+5. Keep the default OFFLINE. Do not add auto-online. Optionally add an honest reachability hint (`NWPathMonitor` on Apple, `ConnectivityManager` on Android) to the `mode` reply, labelled "hint, not a gate".
+
+### Planned app-side fixes for when 0.3.3 resumes (Decider decision)
+- **Every online switch is logged and needs Decider biometric approval**, on every route: typed `online` / `go online`, the ЯBAR switch, Android `toggle()`, and the bot self-flip. The app asks for Face ID / Touch ID (Apple `LocalAuthentication`) or Android `BiometricPrompt` before `isOnline` becomes true; a failed or cancelled check leaves the app OFFLINE and logs the refusal. Every switch (both directions, approved or refused) writes a ghost-ledger / ledger row and a MindTranscript `kind:"mode"` leaf. Going OFFLINE never needs approval.
+- The same biometric-gated device key (Secure Enclave / Android Keystore, never exported) will later sign Decider approvals: the reserved `decider_signature` field in `state/message.schema.json`. The classroom validator does not verify it yet.
+- **Android's classroom refresh respects OFFLINE** (`ClassroomStore.kt:56-77` gets the mode guard, as Swift has at `ClassroomStore.swift:186`).
 
 ## 3. Classroom pings in the app (lesson 019)
 
@@ -44,16 +50,16 @@ Proposed changes:
 - The app never pushes, never opens a PR itself, and never answers a ping addressed to another ЯID.
 
 **Mac-side fast path (same machine, no network):**
-- `ClayCommandInbox` (`MindTranscript.swift:104-200`, drained every 2 s from `MyApp.swift:10`): a line `pong PING-…` dropped into `Application Support/ЯBOT/mind/INBOX-COMMANDS.txt` runs the same chat word. That lets a local agent on the Mac trigger the pong without the internet.
+- `ClayCommandInbox` (`MindTranscript.swift:104-200`, drained every 2 s from `MyApp.swift:10`): a line `pong PING-…` dropped into `Application Support/ЯBOT/mind/INBOX-COMMANDS.txt` runs the same chat word. That lets a local agent on the Mac trigger the pong without the internet. **Allowlist: the inbox runs only `pong PING-…`, never a mode word** (`online`, `go online`, `offline`, `go offline`, `mode`) and nothing else; any other line is logged and dropped. Otherwise any process that can write that file could flip the app ONLINE while it trusts the typist as the Decider. Each inbox pong also records `runner` (who dropped the line, a roster ЯID) as `classroom.py pong` does.
 - `GrokYabotLink` (`GrokYabotLink.swift:114,174`; `ContentView.swift:670-672`): extend `yabot://ping?id=PING-…` so that, when `id` has the `PING-` form and matches a seated ping, it also writes the classroom pong before `acknowledge(state:"pong")`. It works on the same device or Mac→iPhone via devicectl only. It is not remote.
 
 **RFID:** accept the ЯID now. When the Decider links an RFID (roster `legacy_ids`, a new roster record, or a future link record), `asked_as` / `rfid` fill in. The app must never map an RFID to a ЯID on its own. (`RFID-YA-GENESIS-001` = "ЯBOT (clay seat)" in the Mac `BOT-RFID-REGISTRY.json` is **not** linked in the classroom yet.)
 
 ## 4. Order of work (after the Decider approves)
 1. Android refresh mode guard (a safety fix; tiny).
-2. ЯBAR switch through `ModeStore.toggle()`, plus Android ledger and mind rows (lesson 018 logging).
+2. ЯBAR switch through `ModeStore.toggle()`, plus Android ledger and mind rows (lesson 018 logging); remove or gate the bot self-flip; Decider biometric approval on every online switch.
 3. Read `ping_log` in refresh (both platforms), plus the `classroom` reply line.
-4. The `pong` chat word (both), plus the ClayCommandInbox path (free, because it reuses the chat word).
+4. The `pong` chat word (both), plus the ClayCommandInbox path (reuses the chat word; allowlisted to `pong` only, never mode words).
 5. The `yabot://ping?id=PING-…` extension (optional).
 
 Each step is its own PR on RIZALBOT, built and smoke-tested per platform. Nothing ships until the Decider approves. App 0.3.3 stays paused until then.

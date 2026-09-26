@@ -4,37 +4,186 @@
   "title": "ЯBOT Classroom ping / pong record (v1)",
   "description": "Append-only, one file per record in pings/, never edited or deleted. A ping asks one bot (by ЯID; RFID once the Decider links one) to answer. The pong is that bot's logged answer. File names carry the PINGED bot's ASCII ЯID key: pings/<UTC yyyymmddThhmmssZ>-<seq>-<check>-ping.json and -pong.json. A ЯID or RFID is a name tag only: never a key, token, password or wallet. The classroom repo is the mailbox: a pong arrives only when the pinged bot (or someone carrying its answer) adds the file by pull request.",
   "type": "object",
-  "required": ["schema", "kind", "id", "at", "from", "to", "rfid", "via"],
+  "required": [
+    "schema",
+    "kind",
+    "id",
+    "at",
+    "from",
+    "to",
+    "rfid",
+    "via"
+  ],
   "properties": {
-    "schema": { "const": "rbot.classroom.ping.v1" },
-    "kind": { "enum": ["ping", "pong"] },
-    "id": { "type": "string", "pattern": "^(PING|PONG)-[0-9]{8}T[0-9]{6}Z-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$", "description": "PING-<compact UTC>-<pinged key> or PONG-<compact UTC>-<pinged key>; must match the file name." },
-    "at": { "type": "string", "format": "date-time", "pattern": "Z$" },
-    "from": { "$ref": "#/$defs/bot" },
-    "to": { "$ref": "#/$defs/bot" },
-    "asked_as": { "type": "string", "minLength": 1, "maxLength": 64, "description": "ping only: what the pinger typed (ЯID, name, alias or RFID)." },
-    "rfid": { "type": ["string", "null"], "pattern": "^RFID-[A-Z0-9-]{3,40}$", "description": "null until the Decider links an RFID to the ЯID (roster legacy_ids). Never guessed." },
-    "in_reply_to": { "type": "string", "pattern": "^PING-[0-9]{8}T[0-9]{6}Z-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$", "description": "pong only: the ping's id." },
-    "mode": { "enum": ["online", "offline", "unknown"], "description": "pong only: the responder's mode when it answered (ЯBOT app `mode`)." },
-    "surface": { "enum": ["macos", "ios", "android", "app", "web", "github", "agent-box", "offline"] },
-    "via": { "enum": ["cli", "app", "web", "agent-box", "pr"], "description": "How the record was made. App 0.3.3 cannot answer pings yet (see classroom/APP-INTEGRATION-PLAN.md)." },
-    "note": { "type": "string", "maxLength": 280 }
+    "schema": {
+      "const": "rbot.classroom.ping.v1"
+    },
+    "kind": {
+      "enum": [
+        "ping",
+        "pong"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^(PING|PONG)-[0-9]{8}T[0-9]{6}Z-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "PING-<compact UTC>-<pinged key> or PONG-<compact UTC>-<pinged key>; must match the file name."
+    },
+    "at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "from": {
+      "$ref": "#/$defs/bot"
+    },
+    "to": {
+      "$ref": "#/$defs/bot"
+    },
+    "asked_as": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "ping only: what the pinger typed (ЯID, name, alias or RFID)."
+    },
+    "rfid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^RFID-[A-Z0-9-]{3,40}$",
+      "description": "null until the Decider links an RFID to the ЯID (roster legacy_ids). Never guessed."
+    },
+    "in_reply_to": {
+      "type": "string",
+      "pattern": "^PING-[0-9]{8}T[0-9]{6}Z-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$",
+      "description": "pong only: the ping's id."
+    },
+    "mode": {
+      "enum": [
+        "online",
+        "offline",
+        "unknown"
+      ],
+      "description": "pong only: the responder's mode when it answered (ЯBOT app `mode`)."
+    },
+    "surface": {
+      "enum": [
+        "macos",
+        "ios",
+        "android",
+        "app",
+        "web",
+        "github",
+        "agent-box",
+        "offline"
+      ]
+    },
+    "via": {
+      "enum": [
+        "cli",
+        "app",
+        "web",
+        "agent-box",
+        "pr"
+      ],
+      "description": "How the record was made. App 0.3.3 cannot answer pings yet (see classroom/APP-INTEGRATION-PLAN.md)."
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 280
+    },
+    "runner": {
+      "$ref": "#/$defs/bot",
+      "description": "pong only: who actually ran the pong command (roster ЯID + name). Defaults to the pinged bot itself. Validate checks the runner is in the roster; a pong's from must always be the pinged bot."
+    },
+    "fixture": {
+      "const": true,
+      "description": "Fixtures only (fixtures/pings/). tools/classroom.py validate rejects fixture: true in the real pings/ folder."
+    }
   },
-  "patternProperties": { "^x-": {} },
+  "patternProperties": {
+    "^x-": {}
+  },
   "additionalProperties": false,
   "allOf": [
-    { "if": { "properties": { "kind": { "const": "ping" } } },
-      "then": { "required": ["asked_as"], "properties": { "id": { "pattern": "^PING-" } }, "not": { "anyOf": [ { "required": ["in_reply_to"] }, { "required": ["mode"] } ] } } },
-    { "if": { "properties": { "kind": { "const": "pong" } } },
-      "then": { "required": ["in_reply_to", "mode"], "properties": { "id": { "pattern": "^PONG-" } } } }
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "ping"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "asked_as"
+        ],
+        "properties": {
+          "id": {
+            "pattern": "^PING-"
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "in_reply_to"
+              ]
+            },
+            {
+              "required": [
+                "mode"
+              ]
+            },
+            {
+              "required": [
+                "runner"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "pong"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "in_reply_to",
+          "mode",
+          "runner"
+        ],
+        "properties": {
+          "id": {
+            "pattern": "^PONG-"
+          }
+        }
+      }
+    }
   ],
   "$defs": {
     "bot": {
       "type": "object",
-      "required": ["rid", "name"],
+      "required": [
+        "rid",
+        "name"
+      ],
       "properties": {
-        "rid": { "type": "string", "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$" },
-        "name": { "type": "string", "minLength": 1, "maxLength": 64 }
+        "rid": {
+          "type": "string",
+          "pattern": "^ЯID-[0-9]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
       },
       "additionalProperties": false
     }
